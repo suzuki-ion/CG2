@@ -18,34 +18,34 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
+    <ClCompile Include="KashipanEngine\Engine.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\ConvertString.cpp">
+    <ClCompile Include="KashipanEngine\Common\ConvertString.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\DirectXCommon.cpp">
+    <ClCompile Include="KashipanEngine\Base\DirectXCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\WinApp.cpp">
+    <ClCompile Include="KashipanEngine\Base\WinApp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\PrimitiveDrawer.cpp">
+    <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\CrashHandler.cpp">
+    <ClCompile Include="KashipanEngine\Base\CrashHandler.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\TimeGet.cpp">
+    <ClCompile Include="KashipanEngine\Common\TimeGet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix4x4.cpp">
+    <ClCompile Include="KashipanEngine\Math\Matrix4x4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector3.cpp">
+    <ClCompile Include="KashipanEngine\Math\Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\RenderingPipeline.cpp">
+    <ClCompile Include="KashipanEngine\Math\RenderingPipeline.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Externals\imgui\imgui.cpp">
@@ -69,93 +69,93 @@
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\ImGuiManager.cpp">
+    <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\TextureManager.cpp">
+    <ClCompile Include="KashipanEngine\Base\TextureManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\ConvertColor.cpp">
+    <ClCompile Include="KashipanEngine\Common\ConvertColor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Drawer.cpp">
+    <ClCompile Include="KashipanEngine\Base\Drawer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\Logs.cpp">
+    <ClCompile Include="KashipanEngine\Common\Logs.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\ResourceLeakChecker.cpp">
+    <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\AffineMatrix.cpp">
+    <ClCompile Include="KashipanEngine\Math\AffineMatrix.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Camera.cpp">
+    <ClCompile Include="KashipanEngine\Math\Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\Descriptors\DSV.cpp">
+    <ClCompile Include="KashipanEngine\Common\Descriptors\DSV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\Descriptors\RTV.cpp">
+    <ClCompile Include="KashipanEngine\Common\Descriptors\RTV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Common\Descriptors\SRV.cpp">
+    <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Input.cpp">
+    <ClCompile Include="KashipanEngine\Base\Input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Tetrahedron.cpp">
+    <ClCompile Include="KashipanEngine\Objects\Tetrahedron.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\ShadowMap.cpp">
+    <ClCompile Include="KashipanEngine\3d\ShadowMap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Objects\Model.cpp">
+    <ClCompile Include="KashipanEngine\Objects\Model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\Sound.cpp">
+    <ClCompile Include="KashipanEngine\Base\Sound.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Engine.h">
+    <ClInclude Include="KashipanEngine\Engine.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\ConvertString.h">
+    <ClInclude Include="KashipanEngine\Common\ConvertString.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\DirectXCommon.h">
+    <ClInclude Include="KashipanEngine\Base\DirectXCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\WinApp.h">
+    <ClInclude Include="KashipanEngine\Base\WinApp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\PrimitiveDrawer.h">
+    <ClInclude Include="KashipanEngine\3d\PrimitiveDrawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector3.h">
+    <ClInclude Include="KashipanEngine\Math\Vector3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector2.h">
+    <ClInclude Include="KashipanEngine\Math\Vector2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector4.h">
+    <ClInclude Include="KashipanEngine\Math\Vector4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix4x4.h">
+    <ClInclude Include="KashipanEngine\Math\Matrix4x4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\CrashHandler.h">
+    <ClInclude Include="KashipanEngine\Base\CrashHandler.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\TimeGet.h">
+    <ClInclude Include="KashipanEngine\Common\TimeGet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Transform.h">
+    <ClInclude Include="KashipanEngine\Math\Transform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\RenderingPipeline.h">
+    <ClInclude Include="KashipanEngine\Math\RenderingPipeline.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -182,58 +182,58 @@
     <ClInclude Include="Externals\imgui\imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\2d\ImGuiManager.h">
+    <ClInclude Include="KashipanEngine\2d\ImGuiManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\TextureManager.h">
+    <ClInclude Include="KashipanEngine\Base\TextureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\VertexData.h">
+    <ClInclude Include="KashipanEngine\Common\VertexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\ConvertColor.h">
+    <ClInclude Include="KashipanEngine\Common\ConvertColor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Object.h">
+    <ClInclude Include="KashipanEngine\Objects\Object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Drawer.h">
+    <ClInclude Include="KashipanEngine\Base\Drawer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\PipeLineSet.h">
+    <ClInclude Include="KashipanEngine\Common\PipeLineSet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Mesh.h">
+    <ClInclude Include="KashipanEngine\Common\Mesh.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Logs.h">
+    <ClInclude Include="KashipanEngine\Common\Logs.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Texture.h">
+    <ClInclude Include="KashipanEngine\Common\Texture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\ResourceLeakChecker.h">
+    <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Sphere.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Triangle.h">
+    <ClInclude Include="KashipanEngine\Objects\Triangle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Sprite.h">
+    <ClInclude Include="KashipanEngine\Objects\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\AffineMatrix.h">
+    <ClInclude Include="KashipanEngine\Math\AffineMatrix.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Camera.h">
+    <ClInclude Include="KashipanEngine\Math\Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Sphere.h">
+    <ClInclude Include="KashipanEngine\Objects\Sphere.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\BillBoard.h">
+    <ClInclude Include="KashipanEngine\Objects\BillBoard.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Common\DescriptorHeap\DSV.h">
@@ -245,72 +245,72 @@
     <ClInclude Include="Engine\Common\DescriptorHeap\SRV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Descriptors\DSV.h">
+    <ClInclude Include="KashipanEngine\Common\Descriptors\DSV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Descriptors\RTV.h">
+    <ClInclude Include="KashipanEngine\Common\Descriptors\RTV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Descriptors\SRV.h">
+    <ClInclude Include="KashipanEngine\Common\Descriptors\SRV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Material.h">
+    <ClInclude Include="KashipanEngine\Common\Material.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\TransformationMatrix.h">
+    <ClInclude Include="KashipanEngine\Common\TransformationMatrix.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\DirectionalLight.h">
+    <ClInclude Include="KashipanEngine\3d\DirectionalLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Descriptors\CPUHandle.h">
+    <ClInclude Include="KashipanEngine\Common\Descriptors\CPUHandle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\Descriptors\GPUHandle.h">
+    <ClInclude Include="KashipanEngine\Common\Descriptors\GPUHandle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Input.h">
+    <ClInclude Include="KashipanEngine\Base\Input.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\DiffuseLight.h">
+    <ClInclude Include="KashipanEngine\3d\DiffuseLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\SpecularLight.h">
+    <ClInclude Include="KashipanEngine\3d\SpecularLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\EmissiveLight.h">
+    <ClInclude Include="KashipanEngine\3d\EmissiveLight.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Model.h">
+    <ClInclude Include="KashipanEngine\Objects\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Tetrahedron.h">
+    <ClInclude Include="KashipanEngine\Objects\Tetrahedron.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Objects\Plane.h">
+    <ClInclude Include="KashipanEngine\Objects\Plane.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\ShadowMap.h">
+    <ClInclude Include="KashipanEngine\3d\ShadowMap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Common\ScreenBuffer.h">
+    <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\Sound.h">
+    <ClInclude Include="KashipanEngine\Base\Sound.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Shader\Object3d.VS.hlsl" />
-    <FxCompile Include="Engine\Shader\Object3d.PS.hlsl" />
-    <FxCompile Include="Engine\Shader\ShadowMap.VS.hlsl" />
-    <FxCompile Include="Engine\Shader\ShadowMap.PS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Object3d.PS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\ShadowMap.VS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\ShadowMap.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Shader\Object3d.hlsli" />
+    <None Include="KashipanEngine\Shader\Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="DpiAwarenessPerMonitor.manifest" />
