@@ -19,7 +19,7 @@
 #include "Objects/Model.h"
 #include "Objects/Plane.h"
 
-using namespace MyEngine;
+using namespace KashipanEngine;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //==================================================
 
     // エンジンのインスタンスを作成
-    std::unique_ptr<Engine> myGameEngine = std::make_unique<Engine>("MyEngine", 1920, 1080, true);
+    std::unique_ptr<Engine> myGameEngine = std::make_unique<Engine>("KashipanEngine", 1920, 1080, true);
 
     // WinAppクラスへのポインタ
     WinApp *winApp = myGameEngine->GetWinApp();
@@ -91,7 +91,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // モデル
     //==================================================
 
-    Model model("Resources", "monkey.obj", textureManager);
+    Model model("Resources", "multiMaterial.obj", textureManager);
     for (auto &modelData : model.models) {
         // 位置を設定
         modelData.transform.translate.y = 0.0f;
