@@ -10,13 +10,15 @@ namespace KashipanEngine {
 
 // 前方宣言
 class Camera;
+class DirectXCommon;
+class Drawer;
 
 enum NormalType {
     kNormalTypeVertex,
     kNormalTypeFace,
 };
 
-struct Object {
+class Object {
     Object() {
         // マテリアルリソースのマップを取得
         materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialMap));
@@ -58,6 +60,21 @@ struct Object {
         fillMode = other.fillMode;
     }
 
+    /// @brief オブジェクトの初期化
+    /// @param dxCommon DirectXCommonへのポインタ
+    /// @param drawer Drawerへのポインタ
+    static void Initialize(DirectXCommon *dxCommon, Drawer *drawer);
+
+    /// @brief objファイルからのオブジェクトの生成
+    /// @param directoryPath objファイルのディレクトリパス
+    /// @param fileName objファイル名
+    /// @return 生成されたオブジェクト
+    static Object Create(const std::string &directoryPath, const std::string &fileName);
+
+    /// @brief 描画処理
+    virtual void Draw();
+
+private:
     /// @brief カメラへのポインタ
     Camera *camera = nullptr;
 
