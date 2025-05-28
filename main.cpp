@@ -85,13 +85,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     sphere.transform.translate.y = 4.0f;
     sphere.radius = 1.0f;
     sphere.camera = camera.get();
-    sphere.normalType = kNormalTypeFace;
+    sphere.normalType = kNormalTypeVertex;
 
     //==================================================
     // モデル
     //==================================================
 
-    Model model("Resources", "multiMaterial.obj", textureManager);
+    Model model("Resources/nahida", "nahida.obj", textureManager);
     for (auto &modelData : model.models) {
         // 位置を設定
         modelData.transform.translate.y = 0.0f;
