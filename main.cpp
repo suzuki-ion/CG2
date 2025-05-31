@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Vector3( 1.0f, 1.0f, 1.0f )
     );
     // デバッグカメラの有効化フラグ
-    bool isUseDebugCamera = true;
+    bool isUseDebugCamera = false;
     // レンダラーにカメラを設定
     renderer->SetCamera(camera.get());
 
@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // モデル
     //==================================================
 
-    Model model("Resources/nahida", "nahida.obj");
+    Model model("Resources", "multiMaterial.obj");
     model.SetRenderer(renderer);
 
     //==================================================
