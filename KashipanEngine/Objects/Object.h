@@ -9,9 +9,7 @@
 namespace KashipanEngine {
 
 // 前方宣言
-class Camera;
-class DirectXCommon;
-class Drawer;
+class Renderer;
 
 enum NormalType {
     kNormalTypeVertex,
@@ -19,102 +17,94 @@ enum NormalType {
 };
 
 class Object {
-    Object() {
-        // マテリアルリソースのマップを取得
-        materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialMap));
-        // TransformationMatrixリソースのマップを取得
-        transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixMap));
-        // UVTransformの初期化
-        material.uvTransform.MakeIdentity();
-        uvTransform = {
-            { 1.0f, 1.0f, 1.0f },
-            { 0.0f, 0.0f, 0.0f },
-            { 0.0f, 0.0f, 0.0f }
-        };
-    }
-    virtual ~Object() {
-        // マテリアルリソースのアンマップ
-        if (materialMap != nullptr) {
-            materialResource->Unmap(0, nullptr);
-        }
-        // TransformationMatrixリソースのアンマップ
-        if (transformationMatrixMap != nullptr) {
-            transformationMatrixResource->Unmap(0, nullptr);
-        }
-    }
-    Object(Object &&other) noexcept {
-        mesh = std::move(other.mesh);
-        // マテリアルリソースのマップを取得
-        materialResource->Map(0, nullptr, reinterpret_cast<void **>(&materialMap));
-        // TransformationMatrixリソースのマップを取得
-        transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixMap));
-        // UVTransformの初期化
-        material.uvTransform.MakeIdentity();
-        uvTransform = {
-            { 1.0f, 1.0f, 1.0f },
-            { 0.0f, 0.0f, 0.0f },
-            { 0.0f, 0.0f, 0.0f }
-        };
-        useTextureIndex = other.useTextureIndex;
-        normalType = other.normalType;
-        fillMode = other.fillMode;
+public:
+    struct StatePtr {
+        Mesh *mesh = nullptr;
+        Transform *transform = nullptr;
+        Transform *uvTransform = nullptr;
+        Material *material = nullptr;
+        int *useTextureIndex = nullptr;
+        NormalType *normalType = nullptr;
+        FillMode *fillMode = nullptr;
+    };
+
+    Object() = default;
+    Object(Object &&other);
+
+    /// @brief レンダラーの設定
+    /// @param renderer レンダラーへのポインタ
+    void SetRenderer(Renderer *renderer) {
+        renderer_ = renderer;
     }
 
-    /// @brief オブジェクトの初期化
-    /// @param dxCommon DirectXCommonへのポインタ
-    /// @param drawer Drawerへのポインタ
-    static void Initialize(DirectXCommon *dxCommon, Drawer *drawer);
+    /// @brief オブジェクト情報へのポインタを取得
+    /// @return オブジェクト情報へのポインタ
+    [[nodiscard]] virtual StatePtr GetStatePtr() {
+        return { mesh_.get(), &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &fillMode_};
+    }
+    
+protected:
+    //==================================================
+    // メンバ関数
+    //==================================================
 
-    /// @brief objファイルからのオブジェクトの生成
-    /// @param directoryPath objファイルのディレクトリパス
-    /// @param fileName objファイル名
-    /// @return 生成されたオブジェクト
-    static Object Create(const std::string &directoryPath, const std::string &fileName);
+    /// @brief オブジェクトの生成
+    /// @param vertexCount 頂点数
+    /// @param indexCount インデックス数
+    void Create(UINT vertexCount, UINT indexCount);
 
-    /// @brief 描画処理
-    virtual void Draw();
+    /// @brief オブジェクト共通の描画処理
+    void DrawCommon();
 
-private:
-    /// @brief カメラへのポインタ
-    Camera *camera = nullptr;
+    //==================================================
+    // メンバ変数
+    //==================================================
+
+    /// @brief レンダラーへのポインタ
+    Renderer *renderer_ = nullptr;
 
     /// @brief マテリアル用のリソース
-    const Microsoft::WRL::ComPtr<ID3D12Resource> materialResource =
-        PrimitiveDrawer::CreateBufferResources(sizeof(Material));
+    Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_;
     /// @brief TransformationMatrix用のリソース
-    const Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource =
-        PrimitiveDrawer::CreateBufferResources(sizeof(TransformationMatrix));
+    Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
     /// @brief メッシュ
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<Mesh> mesh_;
+    /// @brief 頂点数
+    UINT vertexCount_ = 0;
+    /// @brief インデックス数
+    UINT indexCount_ = 0;
 
     /// @brief マテリアルマップ
-    Material *materialMap = nullptr;
+    Material *materialMap_ = nullptr;
     /// @brief TransformationMatrixマップ
-    TransformationMatrix *transformationMatrixMap = nullptr;
+    TransformationMatrix *transformationMatrixMap_ = nullptr;
 
     /// @brief 変形用のtransform
-    Transform transform = {
+    Transform transform_ = {
         { 1.0f, 1.0f, 1.0f },   // スケール
         { 0.0f, 0.0f, 0.0f },   // 回転
         { 0.0f, 0.0f, 0.0f }    // 平行移動
     };
     /// @brief UV用のtransform
-    Transform uvTransform = {
+    Transform uvTransform_ = {
         { 1.0f, 1.0f, 1.0f },   // スケール
         { 0.0f, 0.0f, 0.0f },   // 回転
         { 0.0f, 0.0f, 0.0f }    // 平行移動
     };
     /// @brief ワールド行列
-    Matrix4x4 worldMatrix;
+    Matrix4x4 worldMatrix_;
     /// @brief マテリアルデータ
-    Material material;
+    Material material_;
 
     /// @brief 使用するテクスチャのインデックス
-    int useTextureIndex = -1;
+    int useTextureIndex_ = -1;
     /// @brief 法線のタイプ
-    NormalType normalType = kNormalTypeVertex;
+    NormalType normalType_ = kNormalTypeVertex;
     /// @brief 塗りつぶしモード
-    FillMode fillMode = kFillModeSolid;
+    FillMode fillMode_ = kFillModeSolid;
+
+    /// @brief カメラ使用フラグ
+    bool isUseCamera_ = false;
 };
 
 } // namespace KashipanEngine

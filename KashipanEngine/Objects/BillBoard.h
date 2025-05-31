@@ -3,21 +3,27 @@
 
 namespace KashipanEngine {
 
-struct BillBoard : public Object {
-    /// @brief 必ずカメラを設定してもらいたいのでデフォルトコンストラクタは削除
+class BillBoard : public Object {
+public:
+    /// @brief 必ずカメラの回転角を設定してもらいたいのでデフォルトコンストラクタは削除
     BillBoard() = delete;
     /// @brief ビルボードのコンストラクタ
-    /// @param camera カメラ
-    BillBoard(Camera *camera) {
-        mesh = PrimitiveDrawer::CreateMesh(4, 6);
-        this->camera = camera;
-        mesh->indexBufferMap[0] = 0;
-        mesh->indexBufferMap[1] = 1;
-        mesh->indexBufferMap[2] = 2;
-        mesh->indexBufferMap[3] = 1;
-        mesh->indexBufferMap[4] = 3;
-        mesh->indexBufferMap[5] = 2;
-    }
+    /// @param cameraRotete カメラの回転角
+    BillBoard(Vector3 *cameraRotete);
+
+    /// @brief 描画処理
+    void Draw();
+
+private:
+    /// @brief カメラの回転角
+    Vector3 *cameraRotate_ = nullptr;
+
+    /// @brief カメラのX軸に追従させるかのフラグ
+    bool isUseX_ = true;
+    /// @brief カメラのY軸に追従させるかのフラグ
+    bool isUseY_ = true;
+    /// @brief カメラのZ軸に追従させるかのフラグ
+    bool isUseZ_ = true;
 };
 
 } // namespace KashipanEngine

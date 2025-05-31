@@ -162,7 +162,6 @@ const Texture &TextureManager::GetTexture(uint32_t index) const {
     return textures_[index];
 }
 
-
 void TextureManager::CreateTextureResource(const DirectX::TexMetadata &metadata) {
     //==================================================
     // metadataを基にResourceの設定

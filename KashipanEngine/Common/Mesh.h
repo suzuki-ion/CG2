@@ -8,19 +8,6 @@ namespace KashipanEngine {
 
 // メッシュ
 struct Mesh {
-    ~Mesh() {
-        // 頂点バッファのアンマップ
-        if (vertexBuffer.Get()) {
-            vertexBuffer->Unmap(0, nullptr);
-            vertexBufferMap = nullptr;
-        }
-        // インデックスバッファのアンマップ
-        if (indexBuffer.Get()) {
-            indexBuffer->Unmap(0, nullptr);
-            indexBufferMap = nullptr;
-        }
-    }
-
     // 頂点バッファ
     Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
     // インデックスバッファ
