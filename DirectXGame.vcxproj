@@ -106,8 +106,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KashipanEngine\3d\ShadowMap.cpp" />
-    <ClCompile Include="KashipanEngine\Base\Drawer.cpp" />
+    <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
     <ClCompile Include="KashipanEngine\Common\ConvertColor.cpp" />
@@ -127,8 +126,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Math\Matrix4x4.cpp" />
     <ClCompile Include="KashipanEngine\Math\RenderingPipeline.cpp" />
     <ClCompile Include="KashipanEngine\Math\Vector3.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Model.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Object.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Plane.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Sphere.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Sprite.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Tetrahedron.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
@@ -138,6 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="KashipanEngine\Base\Input.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Triangle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp" />
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
@@ -146,9 +150,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\3d\DiffuseLight.h" />
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\3d\EmissiveLight.h" />
-    <ClInclude Include="KashipanEngine\3d\ShadowMap.h" />
     <ClInclude Include="KashipanEngine\3d\SpecularLight.h" />
-    <ClInclude Include="KashipanEngine\Base\Drawer.h" />
+    <ClInclude Include="KashipanEngine\Base\Renderer.h" />
     <ClInclude Include="KashipanEngine\2d\ImGuiManager.h" />
     <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertColor.h" />

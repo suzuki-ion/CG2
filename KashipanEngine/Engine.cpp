@@ -18,7 +18,7 @@
 #include "Base/TextureManager.h"
 #include "Base/CrashHandler.h"
 #include "Base/ResourceLeakChecker.h"
-#include "Base/Drawer.h"
+#include "Base/Renderer.h"
 #include "Base/Input.h"
 #include "Base/Sound.h"
 #include "2d/ImGuiManager.h"
@@ -27,6 +27,8 @@
 #include "Math/Matrix4x4.h"
 #include "Math/Transform.h"
 #include "Math/RenderingPipeline.h"
+#include "Objects/Object.h"
+#include "Objects/Model.h"
 #include "Engine.h"
 
 using namespace KashipanEngine;
@@ -47,7 +49,7 @@ std::unique_ptr<WinApp> sWinApp;
 std::unique_ptr<DirectXCommon> sDxCommon;
 std::unique_ptr<TextureManager> sTextureManager;
 std::unique_ptr<ImGuiManager> sImGuiManager;
-std::unique_ptr<Drawer> sDrawer;
+std::unique_ptr<Renderer> sRenderer;
 
 // フレーム時間計算用変数
 LONGLONG sFrequency = 0;
@@ -105,10 +107,13 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     sTextureManager = std::make_unique<TextureManager>(sWinApp.get(), sDxCommon.get());
 
     // 描画用クラス初期化
-    sDrawer = std::make_unique<Drawer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get(), sTextureManager.get());
+    sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get(), sTextureManager.get());
 
     // 音声初期化
     Sound::Initialize();
+
+    // モデルの初期化
+    Model::SetTextureManager(sTextureManager.get());
 
     // 初期化完了のログを出力
     Log("Engine Initialized.");
@@ -174,8 +179,8 @@ KashipanEngine::DirectXCommon *Engine::GetDxCommon() const {
     return sDxCommon.get();
 }
 
-KashipanEngine::Drawer *Engine::GetDrawer() const {
-    return sDrawer.get();
+KashipanEngine::Renderer *Engine::GetRenderer() const {
+    return sRenderer.get();
 }
 
 KashipanEngine::TextureManager *Engine::GetTextureManager() const {

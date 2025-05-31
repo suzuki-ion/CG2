@@ -13,6 +13,9 @@ namespace KashipanEngine {
 
 namespace {
 
+/// @brief TextureManagerへのポインタ
+TextureManager *sTextureManager = nullptr;
+
 /// @brief 指定のマテリアル情報を取得
 /// @param directoryPath ディレクトリのパス
 /// @param fileName マテリアルのファイル名
@@ -74,11 +77,42 @@ MaterialData LoadMaterialFile(const std::string &directoryPath, const std::strin
 
 } // namespace
 
-Model::Model(std::string directoryPath, std::string fileName, TextureManager *textureManager) {
+void ModelData::CreateData(std::vector<VertexData> &vertexData, std::vector<uint32_t> &indexData, MaterialData &materialData) {
+    isUseCamera_ = true;
+    // メッシュの生成
+    Create(static_cast<UINT>(vertexData.size()), static_cast<UINT>(indexData.size()));
+    // メッシュの頂点バッファにデータをコピー
+    std::memcpy(mesh_->vertexBufferMap, vertexData.data(), sizeof(VertexData) * vertexData.size());
+    // メッシュのインデックスバッファにデータをコピー
+    std::memcpy(mesh_->indexBufferMap, indexData.data(), sizeof(uint32_t) * indexData.size());
+
+    // マテリアルの設定
+    materialData_ = materialData;
+    if (materialData_.textureFilePath.empty()) {
+        // テクスチャが指定されていない場合は0を指定
+        useTextureIndex_ = 0;
+    } else {
+        useTextureIndex_ = sTextureManager->Load(materialData_.textureFilePath);
+    }
+}
+
+void ModelData::Draw() {
+    worldMatrix_ = parentWorldMatrix_;
+
+    // 共通の描画処理を呼び出す
+    DrawCommon();
+}
+
+void Model::SetTextureManager(TextureManager *textureManager) {
+    sTextureManager = textureManager;
+}
+
+Model::Model(std::string directoryPath, std::string fileName) {
     std::vector<Vector4> positions;     // 位置
     std::vector<Vector3> normals;       // 法線
     std::vector<Vector2> texCoords;     // テクスチャ座標
     std::vector<uint32_t> index;        // インデックスデータ
+    std::vector<VertexData> vertices;   // 頂点データ
     std::string materialFileName;       // マテリアルファイルの名前
     std::string usemtl;                 // 使用するマテリアル名
     std::string line;                   // ファイルから読み込んだ1行を格納するもの
@@ -108,25 +142,11 @@ Model::Model(std::string directoryPath, std::string fileName, TextureManager *te
         // 前まで面情報を読み込んでいて、
         // かつ今は面情報じゃない行を読み込んでいたらモデルデータに書き込み
         if (preIdentifier == "f" && identifier != "f") {
-            // インデックスの数を設定
-            models.back().indexCount = static_cast<UINT>(index.size());
-            // メッシュの生成
-            models.back().mesh = PrimitiveDrawer::CreateMesh(static_cast<UINT>(models.back().vertices.size()), models.back().indexCount);
-            // メッシュの頂点バッファにデータをコピー
-            std::memcpy(models.back().mesh->vertexBufferMap, models.back().vertices.data(), sizeof(VertexData) * models.back().vertices.size());
-            // メッシュのインデックスバッファにデータをコピー
-            std::memcpy(models.back().mesh->indexBufferMap, index.data(), sizeof(uint32_t) * index.size());
-
-            // マテリアルの読み込み
-            models.back().materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-            if (models.back().materialData.textureFilePath.empty()) {
-                // テクスチャが指定されていない場合は0を指定
-                models.back().useTextureIndex = 0;
-            } else {
-                models.back().useTextureIndex = textureManager->Load(models.back().materialData.textureFilePath);
-            }
+            MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
+            models.back().CreateData(vertices, index, materialData);
 
             // 読み込んだデータを一部リセット
+            vertices.clear();
             index.clear();
             usemtl.clear();
         }
@@ -140,6 +160,7 @@ Model::Model(std::string directoryPath, std::string fileName, TextureManager *te
             //--------- メッシュ読み込み ---------//
 
             // 使うマテリアル名やインデックスなどをリセット
+            vertices.clear();
             index.clear();
             usemtl.clear();
 
@@ -176,7 +197,7 @@ Model::Model(std::string directoryPath, std::string fileName, TextureManager *te
 
             // 前までのIDがfでなければ新しくモデルデータを追加
             if (preIdentifier != "f") {
-                models.emplace_back();
+                models.push_back(ModelData());
             }
 
             std::vector<VertexData> faceVertices;
@@ -212,11 +233,11 @@ Model::Model(std::string directoryPath, std::string fileName, TextureManager *te
 
             // 元々は逆順に格納するための部分だったけど、たぶんここもう意味ないかも
             for (size_t i = 0; i < faceVertices.size(); ++i) {
-                models.back().vertices.push_back(faceVertices[i]);
+                vertices.push_back(faceVertices[i]);
             }
             
             // インデックスを設定する
-            size_t indexOffset = models.back().vertices.size() - faceVertices.size();
+            size_t indexOffset = vertices.size() - faceVertices.size();
             for (size_t i = 0; i <= faceVertices.size() - 3; ++i) {
                 if (i % 2 == 0) {
                     index.push_back(static_cast<uint32_t>(indexOffset + (i + 2)));
@@ -240,24 +261,33 @@ Model::Model(std::string directoryPath, std::string fileName, TextureManager *te
     }
 
     // モデルデータの最後の要素のmeshがemptyなら書き込み
-    if (!models.back().mesh) {
-        // インデックスの数を設定
-        models.back().indexCount = static_cast<UINT>(index.size());
-        // メッシュの生成
-        models.back().mesh = PrimitiveDrawer::CreateMesh(static_cast<UINT>(models.back().vertices.size()), models.back().indexCount);
-        // メッシュの頂点バッファにデータをコピー
-        std::memcpy(models.back().mesh->vertexBufferMap, models.back().vertices.data(), sizeof(VertexData) *models.back().vertices.size());
-        // メッシュのインデックスバッファにデータをコピー
-        std::memcpy(models.back().mesh->indexBufferMap, index.data(), sizeof(uint32_t) *index.size());
+    if (!models.back().isMeshExist()) {
+        MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
+        models.back().CreateData(vertices, index, materialData);
+    }
+}
 
-        // マテリアルの読み込み
-        models.back().materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-        if (models.back().materialData.textureFilePath.empty()) {
-            // テクスチャが指定されていない場合は0を指定
-            models.back().useTextureIndex = 0;
-        } else {
-            models.back().useTextureIndex = textureManager->Load(models.back().materialData.textureFilePath);
-        }
+void Model::Draw() {
+    // ワールド行列の計算
+    worldMatrix.SetSRT(
+        transform.scale,
+        transform.rotate,
+        transform.translate
+    );
+
+    // 親のワールド行列を設定
+    for (auto &model : models) {
+        model.SetParentWorldMatrix(worldMatrix.GetWorldMatrix());
+    }
+    // 各モデルデータの描画
+    for (auto &model : models) {
+        model.Draw();
+    }
+}
+
+void Model::SetRenderer(Renderer *renderer) {
+    for (auto &model : models) {
+        model.SetRenderer(renderer);
     }
 }
 

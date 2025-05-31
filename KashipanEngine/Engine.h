@@ -13,7 +13,7 @@ namespace KashipanEngine {
 // 前方宣言
 class WinApp;
 class DirectXCommon;
-class Drawer;
+class Renderer;
 class TextureManager;
 
 } // namespace KashipanEngine
@@ -51,9 +51,9 @@ public:
     /// @return DirectXCommonクラスのポインタ
     KashipanEngine::DirectXCommon *GetDxCommon() const;
 
-    /// @brief 描画用クラスのポインタ取得
-    /// @return 描画用クラスのポインタ
-    KashipanEngine::Drawer *GetDrawer() const;
+    /// @brief レンダラーのポインタ取得
+    /// @return レンダラーへのポインタ
+    KashipanEngine::Renderer *GetRenderer() const;
 
     /// @brief テクスチャ管理クラスのポインタ取得
     /// @return テクスチャ管理クラスのポインタ

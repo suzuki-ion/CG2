@@ -398,10 +398,10 @@ PipeLineSet PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYP
 
     // シェーダーコンパイル
     Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(
-        L"Engine/Shader/Object3d.VS.hlsl", L"vs_6_0",
+        L"KashipanEngine/Shader/Object3d.VS.hlsl", L"vs_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
     Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(
-        L"Engine/Shader/Object3d.PS.hlsl", L"ps_6_0",
+        L"KashipanEngine/Shader/Object3d.PS.hlsl", L"ps_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
 
     //==================================================

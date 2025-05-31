@@ -4,7 +4,7 @@
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
-#include "Base/Drawer.h"
+#include "Base/Renderer.h"
 #include "Base/TextureManager.h"
 #include "Base/Input.h"
 #include "Base/Sound.h"
@@ -35,10 +35,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     winApp->SetSizeChangeMode(SizeChangeMode::kNormal);
     // DirectXCommonクラスへのポインタ
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
-    // 描画用クラスへのポインタ
-    Drawer *drawer = myGameEngine->GetDrawer();
     // テクスチャ管理クラスへのポインタ
     TextureManager *textureManager = myGameEngine->GetTextureManager();
+    // レンダラーへのポインタ
+    Renderer *renderer = myGameEngine->GetRenderer();
 
     // テクスチャを読み込む
     uint32_t textures[2];
@@ -60,12 +60,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     );
     // デバッグカメラの有効化フラグ
     bool isUseDebugCamera = true;
+    // レンダラーにカメラを設定
+    renderer->SetCamera(camera.get());
 
     //==================================================
     // 背景の色
     //==================================================
 
     Vector4 clearColor = { 32.0f, 32.0f, 32.0f, 255.0f };
+    dxCommon->SetClearColor(ConvertColor(clearColor));
 
     //==================================================
     // 平行光源
@@ -82,52 +85,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //==================================================
 
     Sphere sphere(16);
-    sphere.transform.translate.y = 4.0f;
-    sphere.radius = 1.0f;
-    sphere.camera = camera.get();
-    sphere.normalType = kNormalTypeFace;
+    Object::StatePtr sphereState = sphere.GetStatePtr();
+    sphereState.transform->translate.y = 4.0f;
+    *sphereState.normalType = kNormalTypeFace;
+    sphere.SetRenderer(renderer);
 
     //==================================================
     // モデル
     //==================================================
 
-    Model model("Resources", "multiMaterial.obj", textureManager);
-    for (auto &modelData : model.models) {
-        // 位置を設定
-        modelData.transform.translate.y = 0.0f;
-        // カメラを設定
-        modelData.camera = camera.get();
-    }
+    Model model("Resources/nahida", "nahida.obj");
+    model.SetRenderer(renderer);
 
     //==================================================
     // 床用の板
     //==================================================
 
-    Plane floor(camera.get());
+    Plane floor;
+    Object::StatePtr floorState = floor.GetStatePtr();
     // 左前
-    floor.mesh->vertexBufferMap[0].position = { -5.0f, 0.0f, -5.0f, 1.0f };
-    floor.mesh->vertexBufferMap[0].texCoord = { 0.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[0].position = { -5.0f, 0.0f, -5.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[0].texCoord = { 0.0f, 1.0f };
     // 左奥
-    floor.mesh->vertexBufferMap[1].position = { -5.0f, 0.0f, 5.0f, 1.0f };
-    floor.mesh->vertexBufferMap[1].texCoord = { 0.0f, 0.0f };
+    floorState.mesh->vertexBufferMap[1].position = { -5.0f, 0.0f, 5.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[1].texCoord = { 0.0f, 0.0f };
     // 右前
-    floor.mesh->vertexBufferMap[2].position = { 5.0f, 0.0f, -5.0f, 1.0f };
-    floor.mesh->vertexBufferMap[2].texCoord = { 1.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[2].position = { 5.0f, 0.0f, -5.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[2].texCoord = { 1.0f, 1.0f };
     // 右奥
-    floor.mesh->vertexBufferMap[3].position = { 5.0f, 0.0f, 5.0f, 1.0f };
-    floor.mesh->vertexBufferMap[3].texCoord = { 1.0f, 0.0f };
-    floor.transform = {
-        { 1.0f, 1.0f, 1.0f },
-        { 0.0f, 0.0f, 0.0f },
-        { 0.0f, 0.0f, 0.0f }
-    };
-    floor.material.enableLighting = true;
+    floorState.mesh->vertexBufferMap[3].position = { 5.0f, 0.0f, 5.0f, 1.0f };
+    floorState.mesh->vertexBufferMap[3].texCoord = { 1.0f, 0.0f };
+    floorState.material->enableLighting = true;
     // テクスチャを設定
-    floor.useTextureIndex = textures[0];
+    *floorState.useTextureIndex = textures[0];
     // 法線の種類
-    floor.normalType = kNormalTypeFace;
+    *floorState.normalType = kNormalTypeFace;
     // 塗りつぶしモードを設定
-    floor.fillMode = kFillModeSolid;
+    *floorState.fillMode = kFillModeSolid;
+    floor.SetRenderer(renderer);
 
     //==================================================
     // 音声
@@ -145,7 +140,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
-        drawer->PreDraw();
+        renderer->PreDraw();
         Input::Update();
 
         //==================================================
@@ -155,7 +150,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // F3キーでデバッグカメラの有効化
         if (Input::IsKeyTrigger(DIK_F3)) {
             isUseDebugCamera = !isUseDebugCamera;
-            drawer->ToggleDebugCamera();
+            renderer->ToggleDebugCamera();
         }
 
         // 1 ～ 6 でブレンドモードを変更
@@ -189,7 +184,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // デバッグカメラの有効化
         if (ImGui::Checkbox("デバッグカメラ有効化", &isUseDebugCamera)) {
-            drawer->ToggleDebugCamera();
+            renderer->ToggleDebugCamera();
         }
 
         // 背景色
@@ -217,63 +212,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             ImGui::TreePop();
         }
 
-        // モデル
-        if (ImGui::TreeNode("モデル")) {
-            // モデル内のモデルデータの選択
-            static int modelIndex = 0;
-            ImGui::Combo("モデルデータ", &modelIndex, {
-                "モデルデータ0\0"
-                "モデルデータ1\0"
-                "モデルデータ2\0"
-                "モデルデータ3\0"
-                "モデルデータ4\0"
-                "モデルデータ5\0"
-                "モデルデータ6\0"
-                "モデルデータ7\0"
-                "モデルデータ8\0"
-                "モデルデータ9\0"
-                "モデルデータ10\0"
-                "モデルデータ11\0"
-                "モデルデータ12\0"
-                "モデルデータ13\0"
-                "モデルデータ14\0"
-                "モデルデータ15\0"
-                "モデルデータ16\0"
-                "モデルデータ17\0"
-                "モデルデータ18\0"
-                "モデルデータ19\0"
-                "モデルデータ20\0"
-                "モデルデータ21\0"
-                "モデルデータ22\0"
-            }, static_cast<int>(model.models.size()));
-            // モデルの選択が変更されたら、モデルを変更
-            if (modelIndex >= 0 && modelIndex < model.models.size()) {
-                // モデルの位置
-                ImGui::DragFloat3("Model Translate", &model.models[modelIndex].transform.translate.x, 0.01f);
-                // モデルの回転
-                ImGui::DragFloat3("Model Rotate", &model.models[modelIndex].transform.rotate.x, 0.01f);
-                // モデルのスケール
-                ImGui::DragFloat3("Model Scale", &model.models[modelIndex].transform.scale.x, 0.01f);
-                // モデルのマテリアルカラー
-                ImGui::DragFloat4("Model MaterialColor", &model.models[modelIndex].material.color.x, 1.0f, 0.0f, 255.0f);
-                // モデルのテクスチャインデックス
-                ImGui::InputInt("Model TextureIndex", &model.models[modelIndex].useTextureIndex);
-            }
-
-            ImGui::TreePop();
-        }
-
         // 板
         if (ImGui::TreeNode("板")) {
-            ImGui::DragFloat3("Plane Translate", &floor.transform.translate.x, 0.01f);
-            ImGui::DragFloat3("Plane Rotate", &floor.transform.rotate.x, 0.01f);
-            ImGui::DragFloat3("Plane Scale", &floor.transform.scale.x, 0.01f);
-            ImGui::DragFloat4("Plane MaterialColor", &floor.material.color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::InputInt("Plane TextureIndex", &floor.useTextureIndex);
+            ImGui::DragFloat3("Plane Translate", &floorState.transform->translate.x, 0.01f);
+            ImGui::DragFloat3("Plane Rotate", &floorState.transform->rotate.x, 0.01f);
+            ImGui::DragFloat3("Plane Scale", &floorState.transform->scale.x, 0.01f);
+            ImGui::DragFloat4("Plane MaterialColor", &floorState.material->color.x, 1.0f, 0.0f, 255.0f);
+            ImGui::InputInt("Plane TextureIndex", floorState.useTextureIndex);
             if (ImGui::TreeNode("Plane uvTransform")) {
-                ImGui::DragFloat2("Plane uvTransform Translate", &floor.uvTransform.translate.x, 0.01f);
-                ImGui::DragFloat3("Plane uvTransform Rotate", &floor.uvTransform.rotate.x, 0.01f);
-                ImGui::DragFloat2("Plane uvTransform Scale", &floor.uvTransform.scale.x, 0.01f);
+                ImGui::DragFloat2("Plane uvTransform Translate", &floorState.uvTransform->translate.x, 0.01f);
+                ImGui::DragFloat3("Plane uvTransform Rotate", &floorState.uvTransform->rotate.x, 0.01f);
+                ImGui::DragFloat2("Plane uvTransform Scale", &floorState.uvTransform->scale.x, 0.01f);
                 ImGui::TreePop();
             }
             ImGui::TreePop();
@@ -287,21 +236,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // 背景色を設定
         dxCommon->SetClearColor(ConvertColor(clearColor));
-        // ブレンドモードを設定
-        drawer->SetBlendMode(blendMode);
         // 平行光源を設定
-        drawer->SetLight(&directionalLight);
+        renderer->SetLight(&directionalLight);
 
         // 球体の描画
-        drawer->DrawSet(&sphere);
+        sphere.Draw();
         // モデルの描画
-        for (auto &modelData : model.models) {
-            drawer->DrawSet(&modelData);
+        for (auto &modelData : model.GetModels()) {
+            modelData.Draw();
         }
         // 板の描画
-        drawer->DrawSet(&floor);
+        floor.Draw();
         
-        drawer->PostDraw();
+        renderer->PostDraw();
         myGameEngine->EndFrame();
 
         // ESCで終了

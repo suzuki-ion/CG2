@@ -3,8 +3,12 @@
 
 namespace KashipanEngine {
 
-struct Tetrahedron : public Object {
+class Tetrahedron : public Object {
+public:
     Tetrahedron();
+
+    /// @brief 描画処理
+    void Draw();
 };
 
 } // namespace KashipanEngine
