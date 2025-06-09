@@ -1,11 +1,11 @@
-#include <Engine.h>
+#include <KashipanEngine.h>
 #include <memory>
 #include <imgui.h>
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
 #include "Base/Renderer.h"
-#include "Base/TextureManager.h"
+#include "Base/Texture.h"
 #include "Base/Input.h"
 #include "Base/Sound.h"
 
@@ -35,25 +35,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     winApp->SetSizeChangeMode(SizeChangeMode::kNormal);
     // DirectXCommonクラスへのポインタ
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
-    // テクスチャ管理クラスへのポインタ
-    TextureManager *textureManager = myGameEngine->GetTextureManager();
     // レンダラーへのポインタ
     Renderer *renderer = myGameEngine->GetRenderer();
 
     // テクスチャを読み込む
     uint32_t textures[2];
-    textures[0] = textureManager->Load("Resources/uvChecker.png");
-    textures[1] = textureManager->Load("Resources/monsterBall.png");
+    textures[0] = Texture::Load("Resources/uvChecker.png");
+    textures[1] = Texture::Load("Resources/monsterBall.png");
 
     // ブレンドモード
     BlendMode blendMode = kBlendModeNormal;
+
+    // フレームレート
+    int frameRate = 60;
 
     //==================================================
     // カメラ
     //==================================================
 
     std::unique_ptr<Camera> camera = std::make_unique<Camera>(
-        winApp,
         Vector3( 0.0f, 2.0f, -16.0f ),
         Vector3( 0.0f, 0.0f, 0.0f ),
         Vector3( 1.0f, 1.0f, 1.0f )
@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // モデル
     //==================================================
 
-    Model model("Resources", "multiMaterial.obj");
+    Model model("Resources/nahida", "nahida.obj");
     model.SetRenderer(renderer);
 
     //==================================================
@@ -137,7 +137,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
         myGameEngine->BeginFrame();
-        if (myGameEngine->BeginGameLoop() == false) {
+        if (myGameEngine->BeginGameLoop(frameRate) == false) {
             continue;
         }
         renderer->PreDraw();
@@ -153,20 +153,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             renderer->ToggleDebugCamera();
         }
 
-        // 1 ～ 6 でブレンドモードを変更
-        if (Input::IsKeyTrigger(DIK_1)) {
-            blendMode = kBlendModeNone;
-        } else if (Input::IsKeyTrigger(DIK_2)) {
-            blendMode = kBlendModeNormal;
-        } else if (Input::IsKeyTrigger(DIK_3)) {
-            blendMode = kBlendModeAdd;
-        } else if (Input::IsKeyTrigger(DIK_4)) {
-            blendMode = kBlendModeSubtract;
-        } else if (Input::IsKeyTrigger(DIK_5)) {
-            blendMode = kBlendModeMultiply;
-        } else if (Input::IsKeyTrigger(DIK_6)) {
-            blendMode = kBlendModeScreen;
-        }
+        ImGuiManager::Begin("KashipanEngine");
+        ImGui::InputInt("フレームレート", &frameRate);
+        ImGui::Combo("ブレンドモード", reinterpret_cast<int *>(&blendMode), "ブレンド無し\0通常\0加算\0減算\0乗算\0反転\0");
+        ImGui::End();
+        // ブレンドモードの設定
+        renderer->SetBlendMode(blendMode);
 
         ImGuiManager::Begin("オブジェクト");
 
@@ -242,9 +234,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 球体の描画
         sphere.Draw();
         // モデルの描画
-        for (auto &modelData : model.GetModels()) {
-            modelData.Draw();
-        }
+        model.Draw();
         // 板の描画
         floor.Draw();
         

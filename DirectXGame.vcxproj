@@ -62,6 +62,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,6 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,21 +111,30 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
+    <ClCompile Include="KashipanEngine\Base\Texture.cpp" />
     <ClCompile Include="KashipanEngine\Common\ConvertColor.cpp" />
     <ClCompile Include="KashipanEngine\Base\CrashHandler.cpp" />
     <ClCompile Include="KashipanEngine\Common\ConvertString.cpp" />
     <ClCompile Include="KashipanEngine\Base\DirectXCommon.cpp" />
-    <ClCompile Include="KashipanEngine\Base\TextureManager.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\DSV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\RTV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
     <ClCompile Include="KashipanEngine\Common\TimeGet.cpp" />
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
-    <ClCompile Include="KashipanEngine\Engine.cpp" />
+    <ClCompile Include="KashipanEngine\KashipanEngine.cpp" />
     <ClCompile Include="KashipanEngine\Math\AffineMatrix.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Bezier.cpp" />
     <ClCompile Include="KashipanEngine\Math\Camera.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Collider.cpp" />
+    <ClCompile Include="KashipanEngine\Math\MathObjects\AABB.cpp" />
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Lines.cpp" />
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Plane.cpp" />
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Sphere.cpp" />
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Triangle.cpp" />
     <ClCompile Include="KashipanEngine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Physics\ConicalPendulum.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Physics\Pendulum.cpp" />
     <ClCompile Include="KashipanEngine\Math\RenderingPipeline.cpp" />
     <ClCompile Include="KashipanEngine\Math\Vector3.cpp" />
     <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp" />
@@ -142,6 +153,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="KashipanEngine\Base\Input.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Triangle.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\WorldTransform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp" />
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
@@ -149,44 +161,48 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="KashipanEngine\3d\DiffuseLight.h" />
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
-    <ClInclude Include="KashipanEngine\3d\EmissiveLight.h" />
-    <ClInclude Include="KashipanEngine\3d\SpecularLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />
     <ClInclude Include="KashipanEngine\2d\ImGuiManager.h" />
     <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h" />
+    <ClInclude Include="KashipanEngine\Base\Texture.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertColor.h" />
     <ClInclude Include="KashipanEngine\Base\CrashHandler.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertString.h" />
     <ClInclude Include="KashipanEngine\Base\DirectXCommon.h" />
-    <ClInclude Include="KashipanEngine\Base\TextureManager.h" />
-    <ClInclude Include="Engine\Common\DescriptorHeap\DSV.h" />
-    <ClInclude Include="KashipanEngine\Common\Descriptors\CPUHandle.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\DSV.h" />
-    <ClInclude Include="KashipanEngine\Common\Descriptors\GPUHandle.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\RTV.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\SRV.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
-    <ClInclude Include="Engine\Common\DescriptorHeap\RTV.h" />
-    <ClInclude Include="Engine\Common\DescriptorHeap\SRV.h" />
     <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h" />
-    <ClInclude Include="KashipanEngine\Common\Texture.h" />
+    <ClInclude Include="KashipanEngine\Common\TextureData.h" />
     <ClInclude Include="KashipanEngine\Common\TimeGet.h" />
     <ClInclude Include="KashipanEngine\Common\TransformationMatrix.h" />
     <ClInclude Include="KashipanEngine\Common\VertexData.h" />
     <ClInclude Include="KashipanEngine\Base\WinApp.h" />
     <ClInclude Include="KashipanEngine\Common\Mesh.h" />
     <ClInclude Include="KashipanEngine\Common\Material.h" />
+    <ClInclude Include="KashipanEngine\KashipanEngine.h" />
+    <ClInclude Include="KashipanEngine\Math\Bezier.h" />
+    <ClInclude Include="KashipanEngine\Math\Collider.h" />
+    <ClInclude Include="KashipanEngine\Math\MathObjects\AABB.h" />
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Lines.h" />
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Plane.h" />
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Sphere.h" />
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Triangle.h" />
+    <ClInclude Include="KashipanEngine\Math\Physics\Ball.h" />
+    <ClInclude Include="KashipanEngine\Math\Physics\ConicalPendulum.h" />
+    <ClInclude Include="KashipanEngine\Math\Physics\Pendulum.h" />
+    <ClInclude Include="KashipanEngine\Math\Physics\Spring.h" />
+    <ClInclude Include="KashipanEngine\Objects.h" />
     <ClInclude Include="KashipanEngine\Objects\BillBoard.h" />
     <ClInclude Include="KashipanEngine\Objects\Model.h" />
     <ClInclude Include="KashipanEngine\Objects\Object.h" />
     <ClInclude Include="KashipanEngine\Common\PipeLineSet.h" />
-    <ClInclude Include="KashipanEngine\Engine.h" />
     <ClInclude Include="KashipanEngine\3d\PrimitiveDrawer.h" />
     <ClInclude Include="KashipanEngine\Math\AffineMatrix.h" />
     <ClInclude Include="KashipanEngine\Math\Camera.h" />
     <ClInclude Include="KashipanEngine\Math\Matrix4x4.h" />
     <ClInclude Include="KashipanEngine\Math\RenderingPipeline.h" />
-    <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="KashipanEngine\Math\Transform.h" />
     <ClInclude Include="KashipanEngine\Math\Vector2.h" />
     <ClInclude Include="KashipanEngine\Math\Vector3.h" />
@@ -206,6 +222,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Externals\imgui\imstb_truetype.h" />
     <ClInclude Include="KashipanEngine\Base\Input.h" />
     <ClInclude Include="KashipanEngine\Base\Sound.h" />
+    <ClInclude Include="KashipanEngine\Objects\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Object3d.PS.hlsl">
@@ -220,15 +237,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="KashipanEngine\Shader\ShadowMap.PS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="KashipanEngine\Shader\ShadowMap.VS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</EntryPointName>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
@@ -239,10 +247,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="KashipanEngine\Shader\Object3d.hlsli" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="DpiAwarenessPerMonitor.manifest" />
+    <None Include="KashipanEngine\Shader\Object3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

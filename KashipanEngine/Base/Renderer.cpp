@@ -4,7 +4,7 @@
 #include "Renderer.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
-#include "TextureManager.h"
+#include "Texture.h"
 #include "2d/ImGuiManager.h"
 
 #include "Math/Camera.h"
@@ -41,7 +41,7 @@ DirectionalLight sDefaultDirectionalLight = {
 
 } // namespace
 
-Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, TextureManager *textureManager) {
+Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager) {
     // nullチェック
     if (!winApp) {
         Log("winApp is null.", kLogLevelFlagError);
@@ -55,15 +55,10 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Log("imguiManager is null.", kLogLevelFlagError);
         assert(false);
     }
-    if (!textureManager) {
-        Log("textureManager is null.", kLogLevelFlagError);
-        assert(false);
-    }
     // 各クラスへのポインタを設定
     winApp_ = winApp;
     dxCommon_ = dxCommon;
     imguiManager_ = imguiManager;
-    textureManager_ = textureManager;
 
     // 2D描画用の行列を初期化
     viewMatrix2D_.MakeIdentity();
@@ -78,7 +73,6 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
 
     // デバッグカメラの初期化
     sDebugCamera = std::make_unique<Camera>(
-        winApp_,
         Vector3(0.0f, 0.0f, -5.0f),
         Vector3(0.0f, 0.0f, 0.0f),
         Vector3(1.0f, 1.0f, 1.0f)
@@ -210,7 +204,7 @@ void Renderer::SetCamera(Camera *camera) {
     sCameraPtr = camera;
 }
 
-void Renderer::DrawSet(ObjectState objectState, bool isUseCamera, bool isSemitransparent) {
+void Renderer::DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent) {
     // カメラが設定されていないものは2Dオブジェクトとして扱う
     if (isUseCamera == false) {
         draw2DObjects_.push_back(objectState);
@@ -247,17 +241,16 @@ void Renderer::SetLightBuffer(DirectionalLight *light) {
 
 void Renderer::DrawCommon(std::vector<ObjectState> &objects) {
     // 描画処理
-    for (auto object : objects) {
+    for (auto &object : objects) {
         DrawCommon(&object);
     }
 }
 
 void Renderer::DrawCommon(ObjectState *objectState) {
     // Cameraがnullptrの場合は2D描画
-    if (sCameraPtr == nullptr) {
+    if (objectState->isUseCamera == false) {
         wvpMatrix2D_ = *objectState->worldMatrix * (viewMatrix2D_ * projectionMatrix2D_);
         objectState->transformationMatrixMap->wvp = wvpMatrix2D_;
-        objectState->transformationMatrixMap->world = *objectState->worldMatrix;
     } else {
         if (isUseDebugCamera_) {
             sDebugCamera->SetWorldMatrix(*objectState->worldMatrix);
@@ -268,15 +261,14 @@ void Renderer::DrawCommon(ObjectState *objectState) {
             sCameraPtr->CalculateMatrix();
             objectState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
         }
-        objectState->transformationMatrixMap->world = *objectState->worldMatrix;
     }
 
     // SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
     if (objectState->useTextureIndex != -1) {
-        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetTexture(objectState->useTextureIndex).srvHandleGPU);
+        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
     } else {
         // テクスチャを使用しない場合は0を設定
-        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager_->GetTexture(0).srvHandleGPU);
+        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(0).srvHandleGPU);
     }
 
     dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -289,7 +281,6 @@ void Renderer::DrawCommon(ObjectState *objectState) {
     dxCommon_->GetCommandList()->IASetIndexBuffer(&objectState->mesh->indexBufferView);
     // マテリアルCBufferの場所を指定
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, objectState->materialResource->GetGPUVirtualAddress());
-
     // TransformationMatrix用のCBufferの場所を指定
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, objectState->transformationMatrixResource->GetGPUVirtualAddress());
 

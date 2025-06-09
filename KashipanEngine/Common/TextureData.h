@@ -1,10 +1,11 @@
 #pragma once
 #include <d3d12.h>
 #include <wrl.h>
+#include <string>
 
 namespace KashipanEngine {
 
-struct Texture {
+struct TextureData {
     /// @brief テクスチャの名前
     std::string name;
     /// @brief テクスチャリソース

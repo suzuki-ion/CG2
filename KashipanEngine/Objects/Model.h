@@ -7,7 +7,7 @@
 namespace KashipanEngine {
 
 // 前方宣言
-class TextureManager;
+class Texture;
 
 /// @brief モデルのマテリアルデータ
 struct MaterialData {
@@ -31,30 +31,23 @@ public:
         return mesh_.get() != nullptr;
     }
 
-    /// @brief 親のワールド行列を設定
-    /// @param parentWorldMatrix 親のワールド行列
-    void SetParentWorldMatrix(const Matrix4x4 &parentWorldMatrix) {
-        parentWorldMatrix_ = parentWorldMatrix;
-    }
-
     /// @brief 描画処理
     void Draw();
+
+    /// @brief 描画処理
+    /// @param worldTransform ワールド変換データ
+    void Draw(WorldTransform &worldTransform);
 
 private:
     /// @brief インデックス数
     UINT indexCount_ = 0;
     /// @brief モデルのマテリアル
     MaterialData materialData_;
-
-    /// @brief 親のワールド行列
-    Matrix4x4 parentWorldMatrix_;
 };
 
 /// @brief モデルクラス
 class Model {
 public:
-    static void SetTextureManager(TextureManager *textureManager);
-
     /// @brief 必ずモデルのデータを設定してもらいたいので、デフォルトコンストラクタは削除
     Model() = delete;
     /// @brief Modelのコンストラクタ
@@ -65,6 +58,10 @@ public:
     /// @brief 描画処理
     void Draw();
 
+    /// @brief 描画処理
+    /// @param worldTransform ワールド変換データ
+    void Draw(WorldTransform &worldTransform);
+
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
     void SetRenderer(Renderer *renderer);
@@ -72,23 +69,23 @@ public:
     /// @brief transformへのアクセス
     /// @return モデル全体のtransform
     Transform &GetTransform() {
-        return transform;
+        return transform_;
     }
 
     /// @brief modelデータへのアクセス
     /// @return モデルデータの参照
     std::vector<ModelData> &GetModels() {
-        return models;
+        return models_;
     }
 
 private:
     /// @brief モデルデータ全体のtransform
-    Transform transform;
+    Transform transform_;
     /// @brief ワールド行列
-    AffineMatrix worldMatrix;
+    AffineMatrix worldMatrix_{};
 
     /// @brief モデルデータ
-    std::vector<ModelData> models;
+    std::vector<ModelData> models_;
 };
 
 } // namespace KashipanEngine

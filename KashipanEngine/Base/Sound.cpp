@@ -1,5 +1,9 @@
 #define XAUDIO2_HELPER_FUNCTIONS
 
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+
 #include <xaudio2.h>
 #include <wrl.h>
 #include <cassert>
@@ -12,38 +16,18 @@
 #include "Common/Logs.h"
 
 #pragma comment(lib, "xaudio2.lib")
+#pragma comment(lib, "mf.lib")
+#pragma comment(lib, "mfplat.lib")
+#pragma comment(lib, "mfreadwrite.lib")
+#pragma comment(lib, "mfuuid.lib")
 
 namespace KashipanEngine {
 
 namespace {
 
 //==================================================
-// 音声データの構造体
+// 音声用構造体
 //==================================================
-
-/// @brief チャンクヘッダ
-struct ChunkHeader {
-    /// @brief チャンク毎のID
-    char id[4];
-    /// @brief チャンクサイズ
-    uint32_t size;
-};
-
-/// @brief RIFFヘッダチャンク
-struct RiffHeader {
-    /// @brief RIFF
-    ChunkHeader chunk;
-    /// @brief WAVE
-    char type[4];
-};
-
-/// @brief FMTチャンク
-struct FormatChunk {
-    /// @brief fmt
-    ChunkHeader chunk;
-    /// @brief 波形フォーマット
-    WAVEFORMATEX fmt;
-};
 
 /// @brief 音声データ
 struct SoundData {
@@ -101,10 +85,24 @@ void Sound::Initialize() {
         assert(SUCCEEDED(hr));
     }
 
+    // Media Foundationの初期化
+    hr = MFStartup(MF_VERSION);
+    if (FAILED(hr)) {
+        Log("Failed to initialize Media Foundation.", kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
+    }
+
     Log("XAudio2 initialized successfully.", kLogLevelFlagInfo);
 }
 
 void Sound::Finalize() {
+    // Media Foundationの終了
+    HRESULT hr = MFShutdown();
+    if (FAILED(hr)) {
+        Log("Failed to shutdown Media Foundation.", kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
+    }
+
     // XAudio2の解放
     sXaudio2.Reset();
     // 音声データの解放
@@ -116,74 +114,124 @@ void Sound::Finalize() {
 }
 
 int Sound::Load(const std::string &filePath) {
-    HRESULT hr;
+    //==================================================
+    // ソースリーダーの作成
+    //==================================================
 
-    // ファイル入力ストリームのインスタンス
-    std::ifstream file(filePath, std::ios::binary);
-    if (!file.is_open()) {
-        Log("Failed to open sound file: " + filePath, kLogLevelFlagError);
-        assert(false);
+    Microsoft::WRL::ComPtr<IMFSourceReader> pReader;
+    HRESULT hr = MFCreateSourceReaderFromURL(std::wstring(filePath.begin(), filePath.end()).c_str(), nullptr, &pReader);
+    if (FAILED(hr)) {
+        Log("Failed to create source reader for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
     }
 
-    // RIFFヘッダの読み込み
-    RiffHeader riff;
-    file.read(reinterpret_cast<char *>(&riff), sizeof(RiffHeader));
-    // ファイルがRIFFかチェック
-    if (strncmp(riff.chunk.id, "RIFF", 4) != 0) {
-        Log("Not a RIFF file: " + filePath, kLogLevelFlagError);
-        assert(false);
-    }
-    // ファイルがWAVEかチェック
-    if (strncmp(riff.type, "WAVE", 4) != 0) {
-        Log("Not a WAVE file: " + filePath, kLogLevelFlagError);
-        assert(false);
-    }
+    //==================================================
+    // メディアタイプの取得
+    //==================================================
 
-    // Formatチャンクの読み込み
-    FormatChunk format;
-    file.read(reinterpret_cast<char *>(&format), sizeof(ChunkHeader));
-    // チャンクIDがfmtかチェック
-    if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
-        Log("Not a fmt chunk: " + filePath, kLogLevelFlagError);
-        assert(false);
+    Microsoft::WRL::ComPtr<IMFMediaType> pType;
+    hr = MFCreateMediaType(&pType);
+    if (FAILED(hr)) {
+        Log("Failed to create media type for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
     }
-
-    // チャンク全体の読み込み
-    assert(format.chunk.size <= sizeof(format.fmt));
-    file.read(reinterpret_cast<char *>(&format.fmt), format.chunk.size);
-
-    // Dataチャンクの読み込み
-    ChunkHeader data;
-    file.read(reinterpret_cast<char *>(&data), sizeof(ChunkHeader));
-    // JUNKチャンクを検出した場合
-    if (strncmp(data.id, "JUNK", 4) == 0) {
-        // 読み取り位置をJUNKチャンクの終わりまで進める
-        file.seekg(data.size, std::ios::cur);
-        // 再読み込み
-        file.read(reinterpret_cast<char *>(&data), sizeof(ChunkHeader));
+    hr = pType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
+    if (FAILED(hr)) {
+        Log("Failed to set major type for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
+    }
+    hr = pType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
+    if (FAILED(hr)) {
+        Log("Failed to set subtype for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
+    }
+    hr = pReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pType.Get());
+    if (FAILED(hr)) {
+        Log("Failed to set current media type for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
     }
 
-    if (strncmp(data.id, "data", 4) != 0) {
-        Log("Not a data chunk: " + filePath, kLogLevelFlagError);
-        assert(false);
+    pType.Reset();
+    pReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &pType);
+
+    //==================================================
+    // オーディオデータ形式の作成
+    //==================================================
+
+    WAVEFORMATEX *pFormat = nullptr;
+    hr = MFCreateWaveFormatExFromMFMediaType(pType.Get(), &pFormat, nullptr);
+    if (FAILED(hr)) {
+        Log("Failed to create wave format from media type for: " + filePath, kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
     }
 
-    // Dataチャンクのデータ部（波形データ）の読み込み
-    char *pBuffer = new char[data.size];
-    file.read(pBuffer, data.size);
+    //==================================================
+    // 音声データの読み込み
+    //==================================================
 
-    // Waveファイルを閉じる
-    file.close();
+    std::vector<BYTE> mediaData;
+    while (true) {
+        IMFSample *pSample = nullptr;
+        DWORD dwStreamFlags = 0;
+        hr = pReader->ReadSample(
+            MF_SOURCE_READER_FIRST_AUDIO_STREAM,
+            0,
+            nullptr,
+            &dwStreamFlags,
+            nullptr,
+            &pSample
+        );
+        if (FAILED(hr)) {
+            Log("Failed to read sample from: " + filePath, kLogLevelFlagError);
+            assert(SUCCEEDED(hr));
+        }
 
-    // 読み込んだデータをSoundDataに格納
-    SoundData soundData;
-    soundData.wfex = format.fmt;
-    soundData.pBuffer = reinterpret_cast<BYTE *>(pBuffer);
-    soundData.bufferSize = data.size;
-    sSoundData.push_back(soundData);
+        if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM) {
+            // すべてのサンプルを読み終えた場合
+            break;
+        }
+
+        IMFMediaBuffer *pMediaBuffer = nullptr;
+        hr = pSample->ConvertToContiguousBuffer(&pMediaBuffer);
+        if (FAILED(hr)) {
+            Log("Failed to convert sample to contiguous buffer for: " + filePath, kLogLevelFlagError);
+            assert(SUCCEEDED(hr));
+        }
+
+        BYTE *pBuffer = nullptr;
+        DWORD cbCurrentLength = 0;
+        hr = pMediaBuffer->Lock(&pBuffer, nullptr, &cbCurrentLength);
+        if (FAILED(hr)) {
+            Log("Failed to lock media buffer for: " + filePath, kLogLevelFlagError);
+            assert(SUCCEEDED(hr));
+        }
+
+        mediaData.resize(mediaData.size() + cbCurrentLength);
+        std::memcpy(mediaData.data() + mediaData.size() - cbCurrentLength, pBuffer, cbCurrentLength);
+
+        hr = pMediaBuffer->Unlock();
+        if (FAILED(hr)) {
+            Log("Failed to unlock media buffer for: " + filePath, kLogLevelFlagError);
+            assert(SUCCEEDED(hr));
+        }
+
+        pMediaBuffer->Release();
+        pSample->Release();
+    }
+
+    //==================================================
+    // 音声データのバッファを作成
+    //==================================================
+
+    SoundData data;
+    data.wfex = *pFormat;
+    data.bufferSize = sizeof(BYTE) * static_cast<unsigned int>(mediaData.size());
+    data.pBuffer = new BYTE[mediaData.size()];
+    std::memcpy(data.pBuffer, mediaData.data(), mediaData.size());
+    sSoundData.push_back(data);
 
     // 読み込んだ音声ファイルのログ
-    Log(std::format("Load Sound: {} ({} bytes)", filePath, data.size), kLogLevelFlagInfo);
+    Log(std::format("Load Sound: {} ({} bytes)", filePath, data.bufferSize), kLogLevelFlagInfo);
     // 音声データのインデックスを返す
     return static_cast<int>(sSoundData.size() - 1);
 }
@@ -197,7 +245,7 @@ void Sound::Unload(int index) {
     delete[] sSoundData[index].pBuffer;
     sSoundData[index].pBuffer = nullptr;
     sSoundData[index].bufferSize = 0;
-    sSoundData[index].wfex = { 0 };
+    sSoundData[index].wfex = {};
 }
 
 void Sound::Play(int index, float volume, float pitch, bool loop) {
@@ -210,8 +258,7 @@ void Sound::Play(int index, float volume, float pitch, bool loop) {
     // 波形フォーマットを元にSourceVoiceの作成
     hr = sXaudio2->CreateSourceVoice(
         &sSoundData[index].pSourceVoice,
-        &sSoundData[index].wfex
-    );
+        &sSoundData[index].wfex);
     if (FAILED(hr)) {
         Log("Failed to create source voice: " + std::to_string(index), kLogLevelFlagError);
         assert(SUCCEEDED(hr));
@@ -219,8 +266,8 @@ void Sound::Play(int index, float volume, float pitch, bool loop) {
 
     // 再生する音声データの設定
     XAUDIO2_BUFFER buffer = { 0 };
-    buffer.pAudioData = sSoundData[index].pBuffer;
     buffer.AudioBytes = sSoundData[index].bufferSize;
+    buffer.pAudioData = sSoundData[index].pBuffer;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 
@@ -232,6 +279,10 @@ void Sound::Play(int index, float volume, float pitch, bool loop) {
     }
     // 音声データの再生開始
     hr = sSoundData[index].pSourceVoice->Start();
+    if (FAILED(hr)) {
+        Log("Failed to start source voice: " + std::to_string(index), kLogLevelFlagError);
+        assert(SUCCEEDED(hr));
+    }
     // 音声データのボリューム設定
     sSoundData[index].pSourceVoice->SetVolume(volume);
     // 音声データのピッチ設定

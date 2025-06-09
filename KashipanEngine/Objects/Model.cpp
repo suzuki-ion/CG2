@@ -7,14 +7,11 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Common/Logs.h"
-#include "Base/TextureManager.h"
+#include "Base/Texture.h"
 
 namespace KashipanEngine {
 
 namespace {
-
-/// @brief TextureManagerへのポインタ
-TextureManager *sTextureManager = nullptr;
 
 /// @brief 指定のマテリアル情報を取得
 /// @param directoryPath ディレクトリのパス
@@ -92,19 +89,18 @@ void ModelData::CreateData(std::vector<VertexData> &vertexData, std::vector<uint
         // テクスチャが指定されていない場合は0を指定
         useTextureIndex_ = 0;
     } else {
-        useTextureIndex_ = sTextureManager->Load(materialData_.textureFilePath);
+        useTextureIndex_ = Texture::Load(materialData_.textureFilePath);
     }
 }
 
 void ModelData::Draw() {
-    worldMatrix_ = parentWorldMatrix_;
-
-    // 共通の描画処理を呼び出す
+    isUseCamera_ = true;
     DrawCommon();
 }
 
-void Model::SetTextureManager(TextureManager *textureManager) {
-    sTextureManager = textureManager;
+void ModelData::Draw(WorldTransform &worldTransform) {
+    isUseCamera_ = true;
+    DrawCommon(worldTransform);
 }
 
 Model::Model(std::string directoryPath, std::string fileName) {
@@ -143,7 +139,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         // かつ今は面情報じゃない行を読み込んでいたらモデルデータに書き込み
         if (preIdentifier == "f" && identifier != "f") {
             MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-            models.back().CreateData(vertices, index, materialData);
+            models_.back().CreateData(vertices, index, materialData);
 
             // 読み込んだデータを一部リセット
             vertices.clear();
@@ -167,7 +163,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         } else if (identifier == "v") {
             //--------- 頂点読み込み ---------//
 
-            Vector4 position;
+            Vector4 position{};
             s >> position.x >> position.y >> position.z;
             position.w = 1.0f;
             // モデルは右手系なので左手系に変換
@@ -177,7 +173,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         } else if (identifier == "vt") {
             //--------- テクスチャ座標読み込み ---------//
 
-            Vector2 texCoord;
+            Vector2 texCoord{};
             s >> texCoord.x >> texCoord.y;
             // テクスチャ座標はY軸反転
             texCoord.y = 1.0f - texCoord.y;
@@ -186,7 +182,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         } else if (identifier == "vn") {
             //--------- 法線ベクトル読み込み ---------//
 
-            Vector3 normal;
+            Vector3 normal{};
             s >> normal.x >> normal.y >> normal.z;
             // モデルは右手系なので左手系に変換
             normal.x *= -1.0f;
@@ -197,7 +193,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
 
             // 前までのIDがfでなければ新しくモデルデータを追加
             if (preIdentifier != "f") {
-                models.push_back(ModelData());
+                models_.emplace_back();
             }
 
             std::vector<VertexData> faceVertices;
@@ -261,32 +257,34 @@ Model::Model(std::string directoryPath, std::string fileName) {
     }
 
     // モデルデータの最後の要素のmeshがemptyなら書き込み
-    if (!models.back().isMeshExist()) {
+    if (!models_.back().isMeshExist()) {
         MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-        models.back().CreateData(vertices, index, materialData);
+        models_.back().CreateData(vertices, index, materialData);
     }
 }
 
 void Model::Draw() {
     // ワールド行列の計算
-    worldMatrix.SetSRT(
-        transform.scale,
-        transform.rotate,
-        transform.translate
+    worldMatrix_.SetSRT(
+        transform_.scale,
+        transform_.rotate,
+        transform_.translate
     );
 
-    // 親のワールド行列を設定
-    for (auto &model : models) {
-        model.SetParentWorldMatrix(worldMatrix.GetWorldMatrix());
-    }
     // 各モデルデータの描画
-    for (auto &model : models) {
+    for (auto &model : models_) {
         model.Draw();
     }
 }
 
+void Model::Draw(WorldTransform &worldTransform) {
+    for (auto &model : models_) {
+        model.Draw(worldTransform);
+    }
+}
+
 void Model::SetRenderer(Renderer *renderer) {
-    for (auto &model : models) {
+    for (auto &model : models_) {
         model.SetRenderer(renderer);
     }
 }

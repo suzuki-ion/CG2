@@ -14,7 +14,7 @@ namespace KashipanEngine {
 class WinApp;
 class DirectXCommon;
 class Renderer;
-class TextureManager;
+class Texture;
 
 } // namespace KashipanEngine
 
@@ -29,8 +29,9 @@ public:
     void BeginFrame();
 
     /// @brief ゲームループ開始処理
+    /// @param frameRate フレームレート。最低24まで。無効な値(例: 24以下やモニターのFPS以上)の場合は垂直同期
     /// @return ゲームループを開始するかどうか
-    bool BeginGameLoop();
+    bool BeginGameLoop(int frameRate);
 
     /// @brief フレーム終了処理
     void EndFrame();
@@ -57,7 +58,7 @@ public:
 
     /// @brief テクスチャ管理クラスのポインタ取得
     /// @return テクスチャ管理クラスのポインタ
-    KashipanEngine::TextureManager *GetTextureManager() const;
+    KashipanEngine::Texture *GetTexture() const;
     
     /// @brief メッセージ処理
     /// @return メッセージ処理結果。-1の場合は終了

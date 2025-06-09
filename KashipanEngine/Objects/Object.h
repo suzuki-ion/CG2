@@ -1,4 +1,5 @@
 #pragma once
+#include "WorldTransform.h"
 #include "Math/Transform.h"
 #include "Math/Matrix4x4.h"
 #include "Common/VertexData.h"
@@ -29,7 +30,7 @@ public:
     };
 
     Object() = default;
-    Object(Object &&other);
+    Object(Object &&other) noexcept;
 
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
@@ -40,7 +41,7 @@ public:
     /// @brief オブジェクト情報へのポインタを取得
     /// @return オブジェクト情報へのポインタ
     [[nodiscard]] virtual StatePtr GetStatePtr() {
-        return { mesh_.get(), &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &fillMode_};
+        return { nullptr, &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &fillMode_};
     }
     
 protected:
@@ -55,6 +56,10 @@ protected:
 
     /// @brief オブジェクト共通の描画処理
     void DrawCommon();
+
+    /// @brief オブジェクト共通の描画処理
+    /// @param worldTransform ワールド変換データ
+    void DrawCommon(WorldTransform &worldTransform);
 
     //==================================================
     // メンバ変数
@@ -92,7 +97,7 @@ protected:
         { 0.0f, 0.0f, 0.0f }    // 平行移動
     };
     /// @brief ワールド行列
-    Matrix4x4 worldMatrix_;
+    Matrix4x4 worldMatrix_{};
     /// @brief マテリアルデータ
     Material material_;
 

@@ -146,11 +146,7 @@ constexpr const Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &matrix) const no
     );
 }
 
-inline constexpr const Matrix4x4 operator*(const float scalar, const Matrix4x4 &matrix) noexcept {
-    return matrix * scalar;
-}
-
-inline constexpr const Matrix4x4 Matrix4x4::Identity() noexcept {
+const Matrix4x4 Matrix4x4::Identity() noexcept {
     return Matrix4x4(
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
@@ -159,7 +155,7 @@ inline constexpr const Matrix4x4 Matrix4x4::Identity() noexcept {
     );
 }
 
-constexpr const Matrix4x4 Matrix4x4::Transpose() noexcept {
+const Matrix4x4 Matrix4x4::Transpose() noexcept {
     return Matrix4x4(
         m[0][0], m[1][0], m[2][0], m[3][0],
         m[0][1], m[1][1], m[2][1], m[3][1],
@@ -168,7 +164,7 @@ constexpr const Matrix4x4 Matrix4x4::Transpose() noexcept {
     );
 }
 
-constexpr const float Matrix4x4::Determinant() const noexcept {
+const float Matrix4x4::Determinant() const noexcept {
     float c00 = Matrix3x3(
         m[1][1], m[1][2], m[1][3],
         m[2][1], m[2][2], m[2][3],
@@ -351,9 +347,9 @@ void Matrix4x4::MakeScale(const Vector3 &scale) noexcept {
 }
 
 void Matrix4x4::MakeRotate(const Vector3 &rotate) noexcept {
-    Matrix4x4 mX;
-    Matrix4x4 mY;
-    Matrix4x4 mZ;
+    Matrix4x4 mX{};
+    Matrix4x4 mY{};
+    Matrix4x4 mZ{};
     mX.MakeRotateX(rotate.x);
     mY.MakeRotateY(rotate.y);
     mZ.MakeRotateZ(rotate.z);
@@ -361,9 +357,9 @@ void Matrix4x4::MakeRotate(const Vector3 &rotate) noexcept {
 }
 
 void Matrix4x4::MakeRotate(const float radianX, const float radianY, const float radianZ) noexcept {
-    Matrix4x4 mX;
-    Matrix4x4 mY;
-    Matrix4x4 mZ;
+    Matrix4x4 mX{};
+    Matrix4x4 mY{};
+    Matrix4x4 mZ{};
     mX.MakeRotateX(radianX);
     mY.MakeRotateY(radianY);
     mZ.MakeRotateZ(radianZ);
@@ -428,11 +424,11 @@ void Matrix4x4::MakeRotateZ(const float radian) noexcept {
 }
 
 void Matrix4x4::MakeAffine(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) noexcept {
-    Matrix4x4 mX;
-    Matrix4x4 mY;
-    Matrix4x4 mZ;
-    Matrix4x4 mT;
-    Matrix4x4 mS;
+    Matrix4x4 mX{};
+    Matrix4x4 mY{};
+    Matrix4x4 mZ{};
+    Matrix4x4 mT{};
+    Matrix4x4 mS{};
     mX.MakeRotateX(rotate.x);
     mY.MakeRotateY(rotate.y);
     mZ.MakeRotateZ(rotate.z);

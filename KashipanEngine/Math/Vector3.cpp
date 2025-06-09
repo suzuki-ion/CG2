@@ -1,11 +1,12 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "MathObjects/Lines.h"
 #include <cassert>
 
 namespace KashipanEngine {
 
-Vector3::Vector3(const Vector4 &vector) {
+Vector3::Vector3(const Vector4 &vector) noexcept {
     if (vector.w == 0.0f) {
         x = 0.0f;
         y = 0.0f;
@@ -61,16 +62,34 @@ Vector3 &Vector3::operator*=(const Vector3 &vector) noexcept {
 }
 
 Vector3 &Vector3::operator/=(const float scalar) {
-    x /= scalar;
-    y /= scalar;
-    z /= scalar;
+    if (scalar == 0.0f) {
+        x = 0.0f;
+        y = 0.0f;
+        z = 0.0f;
+    } else {
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
+    }
     return *this;
 }
 
 Vector3 &Vector3::operator/=(const Vector3 &vector) {
-    x /= vector.x;
-    y /= vector.y;
-    z /= vector.z;
+    if (vector.x == 0.0f) {
+        x = 0.0f;
+    } else {
+        x /= vector.x;
+    }
+    if (vector.y == 0.0f) {
+        y = 0.0f;
+    } else {
+        y /= vector.y;
+    }
+    if (vector.z == 0.0f) {
+        z = 0.0f;
+    } else {
+        z /= vector.z;
+    }
     return *this;
 }
 
@@ -114,6 +133,10 @@ Vector3 Vector3::Projection(const Vector3 &vector) const noexcept {
     return (Dot(vector) / vector.Dot(vector)) * vector;
 }
 
+Vector3 Vector3::ClosestPoint(const Math::Segment &segment) const noexcept {
+    return segment.origin + (*this - segment.origin).Projection(segment.diff);
+}
+
 Vector3 Vector3::Perpendicular() const noexcept {
     if (x != 0.0f || y != 0.0f) {
         return Vector3(-y, x, 0.0f);
@@ -121,21 +144,12 @@ Vector3 Vector3::Perpendicular() const noexcept {
     return Vector3(0.0f, -z, y);
 }
 
-inline constexpr const Vector3 Vector3::Rejection(const Vector3 &vector) const noexcept {
+Vector3 Vector3::Rejection(const Vector3 &vector) const noexcept {
     return *this - Projection(vector);
 }
 
-inline constexpr const Vector3 Vector3::Refrection(const Vector3 &normal) const noexcept {
-    return *this + (-2.0f * Dot(normal) * normal);
-}
-
-inline constexpr const Vector3 Vector3::Refrection(const Vector3 &normal, const float eta) const noexcept {
-    const float cosTheta = Dot(normal);
-    const float k = 1.0f - eta * eta * (1.0f - cosTheta * cosTheta);
-    if (k < 0.0f) {
-        return Vector3(0.0f);
-    }
-    return *this * eta + (eta * cosTheta - std::sqrt(k)) * normal;
+Vector3 Vector3::Refrection(const Vector3 &normal) const noexcept {
+    return *this - 2.0f * Dot(normal) * normal;
 }
 
 float Vector3::Distance(const Vector3 &vector) const {
@@ -143,7 +157,7 @@ float Vector3::Distance(const Vector3 &vector) const {
 }
 
 Vector3 Vector3::Transform(const Matrix4x4 &mat) const noexcept {
-    Vector3 result;
+    Vector3 result{};
     result.x = x * mat.m[0][0] + y * mat.m[1][0] + z * mat.m[2][0] + 1.0f * mat.m[3][0];
     result.y = x * mat.m[0][1] + y * mat.m[1][1] + z * mat.m[2][1] + 1.0f * mat.m[3][1];
     result.z = x * mat.m[0][2] + y * mat.m[1][2] + z * mat.m[2][2] + 1.0f * mat.m[3][2];
@@ -160,7 +174,7 @@ Vector3 Vector3::Transform(const Matrix4x4 &mat) const noexcept {
     return result;
 }
 
-const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept {
+inline constexpr const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept {
     return Vector3(
         mat.m[0][0] * vector.x + mat.m[0][1] * vector.y + mat.m[0][2] * vector.z + mat.m[0][3],
         mat.m[1][0] * vector.x + mat.m[1][1] * vector.y + mat.m[1][2] * vector.z + mat.m[1][3],
@@ -168,7 +182,7 @@ const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept {
     );
 }
 
-const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept {
+inline constexpr const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept {
     return Vector3(
         vector.x * mat.m[0][0] + vector.y * mat.m[1][0] + vector.z * mat.m[2][0] + mat.m[3][0],
         vector.x * mat.m[0][1] + vector.y * mat.m[1][1] + vector.z * mat.m[2][1] + mat.m[3][1],

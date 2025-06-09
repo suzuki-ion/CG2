@@ -7,6 +7,10 @@ namespace KashipanEngine {
 struct Vector4;
 struct Matrix4x4;
 
+namespace Math {
+struct Segment;
+} // namespace Math
+
 struct Vector3 {
     // 大量に呼び出されるであろうデフォルトコンストラクタは軽量化のため何もしないようにしておく
     Vector3() noexcept = default;
@@ -14,7 +18,7 @@ struct Vector3 {
     constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}
     explicit constexpr Vector3(float v) noexcept : x(v), y(v), z(v) {}
     Vector3(const Vector3 &vector) : x(vector.x), y(vector.y), z(vector.z) {}
-    Vector3(const Vector4 &vector);
+    Vector3(const Vector4 &vector) noexcept;
 
     float operator[](const int index) const noexcept;
     float &operator[](const int index) noexcept;
@@ -55,6 +59,11 @@ struct Vector3 {
     /// @return 射影されたベクトル
     [[nodiscard]] Vector3 Projection(const Vector3 &vector) const noexcept;
 
+    /// @brief 最近接点を求める
+    /// @param segment 最近接点を求めるセグメント
+    /// @return 最近接点
+    [[nodiscard]] Vector3 ClosestPoint(const Math::Segment &segment) const noexcept;
+
     /// @brief 垂直ベクトルを求める
     /// @return 垂直ベクトル
     [[nodiscard]] Vector3 Perpendicular() const noexcept;
@@ -62,18 +71,12 @@ struct Vector3 {
     /// @brief 垂線を求める
     /// @param vector 垂線を求めるベクトル
     /// @return 垂線
-    [[nodiscard]] inline constexpr const Vector3 Rejection(const Vector3 &vector) const noexcept;
+    [[nodiscard]] Vector3 Rejection(const Vector3 &vector) const noexcept;
 
     /// @brief ベクトルを反射する
     /// @param normal 法線ベクトル
     /// @return 反射されたベクトル
-    [[nodiscard]] inline constexpr const Vector3 Refrection(const Vector3 &normal) const noexcept;
-
-    /// @brief ベクトルを反射する
-    /// @param normal 法線ベクトル
-    /// @param eta 屈折率
-    /// @return 反射されたベクトル
-    [[nodiscard]] inline constexpr const Vector3 Refrection(const Vector3 &normal, const float eta) const noexcept;
+    [[nodiscard]] Vector3 Refrection(const Vector3 &normal) const noexcept;
 
     /// @brief ベクトル間の距離を計算する
     /// @param vector 距離を計算するベクトル
@@ -111,10 +114,6 @@ inline constexpr const Vector3 operator*(const float scalar, const Vector3 &vect
     return Vector3(vector.x * scalar, vector.y * scalar, vector.z * scalar);
 }
 
-inline constexpr const Vector3 operator*(const Vector3 &vector1, const Vector3 &vector2) noexcept {
-    return Vector3(vector1.x * vector2.x, vector1.y * vector2.y, vector1.z * vector2.z);
-}
-
 inline constexpr const Vector3 operator/(const Vector3 &vector, const float scalar) {
     return vector * (1.0f / scalar);
 }
@@ -123,7 +122,11 @@ inline constexpr const Vector3 operator/(const Vector3 &vector1, const Vector3 &
     return Vector3(vector1.x / vector2.x, vector1.y / vector2.y, vector1.z / vector2.z);
 }
 
-const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept;
-const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept;
+inline constexpr const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept;
+inline constexpr const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept;
+
+inline Vector3 Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept {
+    return t * start + (1.0f - t) * end;
+}
 
 } // namespace KashipanEngine

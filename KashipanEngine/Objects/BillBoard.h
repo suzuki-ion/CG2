@@ -14,6 +14,10 @@ public:
     /// @brief 描画処理
     void Draw();
 
+    /// @brief 描画処理
+    /// @param worldTransform ワールド変換データ
+    void Draw(WorldTransform &worldTransform);
+
 private:
     /// @brief カメラの回転角
     Vector3 *cameraRotate_ = nullptr;

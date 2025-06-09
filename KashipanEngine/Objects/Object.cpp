@@ -7,7 +7,7 @@
 
 namespace KashipanEngine {
 
-Object::Object(Object &&other) {
+Object::Object(Object &&other) noexcept {
     if (!other.mesh_) {
         return;
     }
@@ -23,6 +23,12 @@ Object::Object(Object &&other) {
 }
 
 void Object::DrawCommon() {
+    // レンダラーが設定されていない場合はログを出力して終了
+    if (renderer_ == nullptr) {
+        Log("Renderer is not set.", kLogLevelFlagError);
+        return;
+    }
+
     // マテリアルを設定
     materialMap_->color = ConvertColor(material_.color);
     materialMap_->enableLighting = material_.enableLighting;
@@ -38,6 +44,8 @@ void Object::DrawCommon() {
         transform_.rotate,
         transform_.translate
     );
+    // TransformationMatrixを転送
+    transformationMatrixMap_->world = worldMatrix_;
 
     Renderer::ObjectState objectState;
     objectState.mesh = mesh_.get();
@@ -45,6 +53,40 @@ void Object::DrawCommon() {
     objectState.transformationMatrixResource = transformationMatrixResource_.Get();
     objectState.transformationMatrixMap = transformationMatrixMap_;
     objectState.worldMatrix = &worldMatrix_;
+    objectState.vertexCount = vertexCount_;
+    objectState.indexCount = indexCount_;
+    objectState.useTextureIndex = useTextureIndex_;
+    objectState.fillMode = fillMode_;
+    objectState.isUseCamera = isUseCamera_;
+    bool isSemitransparent = (material_.color.w < 255.0f);
+    renderer_->DrawSet(objectState, isUseCamera_, isSemitransparent);
+}
+
+void Object::DrawCommon(WorldTransform &worldTransform) {
+    // レンダラーが設定されていない場合はログを出力して終了
+    if (renderer_ == nullptr) {
+        Log("Renderer is not set.", kLogLevelFlagError);
+        return;
+    }
+
+    // マテリアルを設定
+    materialMap_->color = ConvertColor(material_.color);
+    materialMap_->enableLighting = material_.enableLighting;
+    materialMap_->uvTransform.MakeAffine(
+        uvTransform_.scale,
+        uvTransform_.rotate,
+        uvTransform_.translate
+    );
+
+    // ワールド行列を転送
+    worldTransform.TransferMatrix();
+
+    Renderer::ObjectState objectState;
+    objectState.mesh = mesh_.get();
+    objectState.materialResource = materialResource_.Get();
+    objectState.transformationMatrixResource = worldTransform.GetTransformationMatrixResource();
+    objectState.transformationMatrixMap = worldTransform.GetTransformationMatrixMap();
+    objectState.worldMatrix = &worldTransform.worldMatrix_;
     objectState.vertexCount = vertexCount_;
     objectState.indexCount = indexCount_;
     objectState.useTextureIndex = useTextureIndex_;

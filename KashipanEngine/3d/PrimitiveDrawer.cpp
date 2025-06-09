@@ -38,7 +38,7 @@ IDxcBlob *CompileShader(const std::wstring &filePath, const wchar_t *profile,
     if (FAILED(hr)) assert(SUCCEEDED(hr));
 
     // 読み込んだファイルの内容を設定する
-    DxcBuffer shaderSourceBuffer;
+    DxcBuffer shaderSourceBuffer{};
     shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
     shaderSourceBuffer.Size = shaderSource->GetBufferSize();
     // UTF8の文字コードであることを通知
@@ -377,7 +377,7 @@ PipeLineSet PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYP
             break;
         default:
             break;
-    }
+    } 
 
     //==================================================
     // Shaderをコンパイルする

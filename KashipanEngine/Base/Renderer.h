@@ -14,7 +14,6 @@ namespace KashipanEngine {
 class WinApp;
 class DirectXCommon;
 class ImGuiManager;
-class TextureManager;
 class Camera;
 
 struct DirectionalLight;
@@ -57,7 +56,7 @@ public:
     /// @param dxCommon DirectXCommonインスタンス
     /// @param primitiveRenderer PrimitiveDrawerインスタンス
     /// @param imguiManager ImGuiManagerインスタンス
-    Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, TextureManager *textureManager);
+    Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager);
 
     /// @brief デストラクタ
     ~Renderer();
@@ -97,7 +96,7 @@ public:
     /// @param object 描画するオブジェクト情報へのポインタ
     /// @brief isUseCamera カメラを使用しているかどうか
     /// @param isSemitransparent 半透明オブジェクトかどうか
-    void DrawSet(ObjectState objectState, bool isUseCamera, bool isSemitransparent);
+    void DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent);
 
 private:
     /// @brief 平行光源の設定
@@ -116,8 +115,6 @@ private:
     DirectXCommon *dxCommon_ = nullptr;
     /// @brief ImGuiManagerインスタンス
     ImGuiManager *imguiManager_ = nullptr;
-    /// @brief TextureManagerインスタンス
-    TextureManager *textureManager_ = nullptr;
 
     /// @brief ブレンドモード
     BlendMode blendMode_ = kBlendModeNormal;
@@ -136,11 +133,11 @@ private:
     std::vector<ObjectState> draw2DObjects_;
 
     /// @brief 2D描画用のビュー行列
-    Matrix4x4 viewMatrix2D_;
+    Matrix4x4 viewMatrix2D_ = {};
     /// @brief 2D描画用のプロジェクション行列
-    Matrix4x4 projectionMatrix2D_;
+    Matrix4x4 projectionMatrix2D_ = {};
     /// @brief 2D描画用のWVP行列
-    Matrix4x4 wvpMatrix2D_;
+    Matrix4x4 wvpMatrix2D_ = {};
 
     /// @brief ビューポートの設定
     D3D12_VIEWPORT viewport_ = {};

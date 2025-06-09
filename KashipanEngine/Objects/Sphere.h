@@ -14,6 +14,16 @@ public:
     /// @brief 描画処理
     void Draw();
 
+    /// @brief 描画処理
+    /// @param worldTransform ワールド変換データ
+    void Draw(WorldTransform &worldTransform);
+
+    /// @brief 球体の半径を取得
+    /// @return 半径
+    [[nodiscard]] float GetRadius() const {
+        return radius_;
+    }
+
     /// @brief 球体の半径を設定
     /// @param radius 半径
     void SetRadius(float radius) {

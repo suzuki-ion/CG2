@@ -65,15 +65,15 @@ struct Matrix4x4 {
 
     /// @brief 単位行列を取得する
     /// @return 単位行列
-    [[nodiscard]] inline static constexpr const Matrix4x4 Identity() noexcept;
+    [[nodiscard]] static const Matrix4x4 Identity() noexcept;
 
     /// @brief 転置行列を取得する
     /// @return 転置行列
-    [[nodiscard]] constexpr const Matrix4x4 Transpose() noexcept;
+    [[nodiscard]] const Matrix4x4 Transpose() noexcept;
 
     /// @brief 行列式を計算する
     /// @return 行列式
-    [[nodiscard]] constexpr const float Determinant() const noexcept;
+    [[nodiscard]] const float Determinant() const noexcept;
 
     /// @brief 逆行列を計算する
     /// @return 逆行列

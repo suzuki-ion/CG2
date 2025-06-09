@@ -8,9 +8,10 @@ class WinApp;
 
 class Camera {
 public:
-    Camera() = delete;
-    Camera(WinApp *winApp) noexcept;
-    Camera(WinApp *winApp, const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept;
+    static void Initialize(WinApp *winApp) noexcept;
+
+    Camera();
+    Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept;
 
     /// @brief カメラの行列を設定する
     /// @param cameraTranslate 平行移動
@@ -110,7 +111,6 @@ public:
     }
 
 private:
-    WinApp *winApp_;
     Vector3 cameraScale_;
     Vector3 cameraRotate_;
     Vector3 cameraTranslate_;
