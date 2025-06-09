@@ -154,6 +154,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
 
         ImGuiManager::Begin("KashipanEngine");
+        // FPSの表示
+        ImGui::Text("FPS: %d", myGameEngine->GetFPS());
+        // デルタタイムの表示
+        ImGui::Text("DeltaTime: %f", myGameEngine->GetDeltaTime());
         ImGui::InputInt("フレームレート", &frameRate);
         ImGui::Combo("ブレンドモード", reinterpret_cast<int *>(&blendMode), "ブレンド無し\0通常\0加算\0減算\0乗算\0反転\0");
         ImGui::End();
@@ -161,11 +165,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         renderer->SetBlendMode(blendMode);
 
         ImGuiManager::Begin("オブジェクト");
-
-        // FPSの表示
-        ImGui::Text("FPS: %d", myGameEngine->GetFPS());
-        // デルタタイムの表示
-        ImGui::Text("DeltaTime: %.2f", myGameEngine->GetDeltaTime());
 
         // カメラ位置の表示
         ImGui::Text("カメラ位置: (%.2f, %.2f, %.2f)", camera->GetTranslate().x, camera->GetTranslate().y, camera->GetTranslate().z);
