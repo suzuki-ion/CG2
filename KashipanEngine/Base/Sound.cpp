@@ -145,14 +145,16 @@ int Sound::Load(const std::string &filePath) {
         Log("Failed to set subtype for: " + filePath, kLogLevelFlagError);
         assert(SUCCEEDED(hr));
     }
-    hr = pReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, pType.Get());
+    hr = pReader->SetCurrentMediaType(
+        static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, pType.Get());
     if (FAILED(hr)) {
         Log("Failed to set current media type for: " + filePath, kLogLevelFlagError);
         assert(SUCCEEDED(hr));
     }
 
     pType.Reset();
-    pReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &pType);
+    pReader->GetCurrentMediaType(
+        static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &pType);
 
     //==================================================
     // オーディオデータ形式の作成
@@ -174,7 +176,7 @@ int Sound::Load(const std::string &filePath) {
         IMFSample *pSample = nullptr;
         DWORD dwStreamFlags = 0;
         hr = pReader->ReadSample(
-            MF_SOURCE_READER_FIRST_AUDIO_STREAM,
+            static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM),
             0,
             nullptr,
             &dwStreamFlags,

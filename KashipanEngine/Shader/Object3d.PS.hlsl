@@ -6,7 +6,6 @@ struct Material {
 	float4x4 uvTransform;
 	float4 diffuseColor;
 	float4 specularColor;
-	float4 ambientColor;
 	float4 emissiveColor;
 };
 
@@ -106,15 +105,34 @@ float4 ColorSaturation(float4 color, float saturation) {
 	return HSVAtoRGBA(hsva);
 }
 
+float4 LambertColor(float3 normal, float3 lightDirection) {
+	float NdotL = dot(normal, lightDirection);
+	float lambert = max(NdotL, 0.0f);
+	return gMaterial.diffuseColor + lambert;
+}
+
+float4 PhongColor(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
+	float NdotL = dot(normal, lightDirection);
+	float3 reflection = normalize(-lightDirection + 2.0f * normal * NdotL);
+	float RdotV = dot(reflection, viewDirection);
+	return gMaterial.specularColor + pow(max(RdotV, 0.0f), shininess);
+}
+
+float4 SchlickColor(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
+	float VdotN = dot(viewDirection, normal);
+	return (shininess + (1.0f - shininess) * pow(1.0f - VdotN, 5.0f)) * gMaterial.specularColor;
+}
+
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 	
 	if (gMaterial.enableLighting != 0) {
-		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-		float cos = pow(NdotL * 0.5 + 0.5, gDirectionalLight.color.a * 2.0f);
-		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+		float NdotL = dot(input.normal, gDirectionalLight.direction);
+		float4 phongColor = PhongColor(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
+		float4 schlickColor = SchlickColor(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
+		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NdotL + phongColor.rgb + schlickColor.rgb;
 		output.color.a = gMaterial.color.a * textureColor.a;
 
 	} else {

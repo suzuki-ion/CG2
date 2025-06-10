@@ -77,6 +77,9 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
         uvTransform_.rotate,
         uvTransform_.translate
     );
+    materialMap_->diffuseColor = ConvertColor(material_.diffuseColor);
+    materialMap_->specularColor = ConvertColor(material_.specularColor);
+    materialMap_->emissiveColor = ConvertColor(material_.emissiveColor);
 
     // ワールド行列を転送
     worldTransform.TransferMatrix();

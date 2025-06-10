@@ -17,8 +17,6 @@ struct Material {
     Vector4 diffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     /// @brief 反射光の色
     Vector4 specularColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-    /// @brief 環境光の色
-    Vector4 ambientColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     /// @brief 放射光の色
     Vector4 emissiveColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };

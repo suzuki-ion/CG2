@@ -76,8 +76,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     DirectionalLight directionalLight = {
         { 255.0f, 255.0f, 255.0f, 255.0f },
-        { 0.5f, -0.75f, 0.5f },
-        1.0f
+        { -0.5f, 0.75f, -0.5f },
+        16.0f
     };
 
     //==================================================
@@ -87,7 +87,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Sphere sphere(16);
     Object::StatePtr sphereState = sphere.GetStatePtr();
     sphereState.transform->translate.y = 4.0f;
-    *sphereState.normalType = kNormalTypeFace;
+    *sphereState.normalType = kNormalTypeVertex;
+    sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
     sphere.SetRenderer(renderer);
 
     //==================================================
@@ -131,7 +132,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int soundIndex = Sound::Load("C:\\Windows\\Media\\chord.wav");
     float volume = 1.0f;
     float pitch = 0.0f;
-    bool isPlay = false;
     bool isLoop = false;
 
     // ウィンドウのxボタンが押されるまでループ
