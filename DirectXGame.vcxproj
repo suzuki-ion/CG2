@@ -166,6 +166,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />
     <ClInclude Include="KashipanEngine\2d\ImGuiManager.h" />
+    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\InputLayout.h" />
+    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\RootSignature.h" />
     <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h" />
     <ClInclude Include="KashipanEngine\Base\Texture.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertColor.h" />

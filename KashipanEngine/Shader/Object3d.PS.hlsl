@@ -105,22 +105,21 @@ float4 ColorSaturation(float4 color, float saturation) {
 	return HSVAtoRGBA(hsva);
 }
 
-float4 LambertColor(float3 normal, float3 lightDirection) {
+float HalfLambert(float3 normal, float3 lightDirection) {
 	float NdotL = dot(normal, lightDirection);
-	float lambert = max(NdotL, 0.0f);
-	return gMaterial.diffuseColor + lambert;
+	return pow(max(NdotL, 0.0f) * 0.5f + 0.5f, 2.0f);
 }
 
-float4 PhongColor(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
+float Phong(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
 	float NdotL = dot(normal, lightDirection);
 	float3 reflection = normalize(-lightDirection + 2.0f * normal * NdotL);
 	float RdotV = dot(reflection, viewDirection);
-	return gMaterial.specularColor + pow(max(RdotV, 0.0f), shininess);
+	return pow(max(RdotV, 0.0f), shininess);
 }
 
-float4 SchlickColor(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
+float Schlick(float3 normal, float3 viewDirection, float reflectance) {
 	float VdotN = dot(viewDirection, normal);
-	return (shininess + (1.0f - shininess) * pow(1.0f - VdotN, 5.0f)) * gMaterial.specularColor;
+	return reflectance + (1.0f - reflectance) * pow(1.0f - VdotN, 5.0f);
 }
 
 PixelShaderOutput main(VertexShaderOutput input) {
@@ -130,9 +129,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	
 	if (gMaterial.enableLighting != 0) {
 		float NdotL = dot(input.normal, gDirectionalLight.direction);
-		float4 phongColor = PhongColor(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
-		float4 schlickColor = SchlickColor(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
-		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NdotL + phongColor.rgb + schlickColor.rgb;
+		float phong = Phong(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
+		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NdotL + (phong) * gDirectionalLight.color.a;
 		output.color.a = gMaterial.color.a * textureColor.a;
 
 	} else {

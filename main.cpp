@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 球体
     //==================================================
 
-    Sphere sphere(16);
+    Sphere sphere(64);
     Object::StatePtr sphereState = sphere.GetStatePtr();
     sphereState.transform->translate.y = 4.0f;
     *sphereState.normalType = kNormalTypeVertex;
@@ -216,6 +216,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 ImGui::DragFloat2("Plane uvTransform Scale", &floorState.uvTransform->scale.x, 0.01f);
                 ImGui::TreePop();
             }
+            ImGui::TreePop();
+        }
+
+        // 球体
+        if (ImGui::TreeNode("球体")) {
+            ImGui::DragFloat3("Sphere Translate", &sphereState.transform->translate.x, 0.01f);
+            ImGui::DragFloat3("Sphere Rotate", &sphereState.transform->rotate.x, 0.01f);
+            ImGui::DragFloat3("Sphere Scale", &sphereState.transform->scale.x, 0.01f);
+            ImGui::DragFloat4("Sphere MaterialColor", &sphereState.material->color.x, 1.0f, 0.0f, 255.0f);
+            ImGui::InputInt("Sphere TextureIndex", sphereState.useTextureIndex);
             ImGui::TreePop();
         }
 
