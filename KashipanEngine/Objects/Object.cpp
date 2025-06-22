@@ -44,8 +44,6 @@ void Object::DrawCommon() {
         transform_.rotate,
         transform_.translate
     );
-    // TransformationMatrixを転送
-    transformationMatrixMap_->world = worldMatrix_;
 
     Renderer::ObjectState objectState;
     objectState.mesh = mesh_.get();
@@ -77,9 +75,6 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
         uvTransform_.rotate,
         uvTransform_.translate
     );
-    materialMap_->diffuseColor = ConvertColor(material_.diffuseColor);
-    materialMap_->specularColor = ConvertColor(material_.specularColor);
-    materialMap_->emissiveColor = ConvertColor(material_.emissiveColor);
 
     // ワールド行列を転送
     worldTransform.TransferMatrix();

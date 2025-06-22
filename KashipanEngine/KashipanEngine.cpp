@@ -59,6 +59,7 @@ LARGE_INTEGER sNowTime;
 unsigned int sCountFps = 0;
 float sElapsedSeconds = 0.0f;
 float sDeltaTime = 0.0f;
+const float kMaxDeltaTime = 0.1f;
 
 } // namespace
 
@@ -151,23 +152,18 @@ void Engine::BeginFrame() {
     // 時間計算
     sElapsedTime = sNowTime.QuadPart - sLastTime;
     sElapsedSeconds = static_cast<float>(sElapsedTime) / sFrequency;
-    sDeltaTime = sElapsedSeconds;
+    sDeltaTime = std::min(sElapsedSeconds, kMaxDeltaTime);
 }
 
 bool Engine::BeginGameLoop(int frameRate) {
-    // 指定のフレームレートが1以下なら1固定
-    if (frameRate < 1) {
-        frameRate = 1;
-    } else {
-        // モニターのフレームレートを取得
-        HDC hdc = GetDC(sWinApp->GetWindowHandle());
-        int monitorFrameRate = GetDeviceCaps(hdc, VREFRESH);
-        ReleaseDC(sWinApp->GetWindowHandle(), hdc);
+    // モニターのフレームレートを取得
+    HDC hdc = GetDC(sWinApp->GetWindowHandle());
+    int monitorFrameRate = GetDeviceCaps(hdc, VREFRESH);
+    ReleaseDC(sWinApp->GetWindowHandle(), hdc);
 
-        // 指定のフレームレートがモニターのFPS以上なら垂直同期
-        if (frameRate > monitorFrameRate) {
-            frameRate = monitorFrameRate;
-        }
+    // フレームレートが24以下やモニターのFPS以上なら垂直同期
+    if (frameRate < 24 || frameRate > monitorFrameRate) {
+        frameRate = monitorFrameRate;
     }
 
     if (sDeltaTime > 1.0f / static_cast<float>(frameRate)) {

@@ -6,6 +6,7 @@ struct Material {
 	float4x4 uvTransform;
 	float4 diffuseColor;
 	float4 specularColor;
+	float4 ambientColor;
 	float4 emissiveColor;
 };
 
@@ -105,32 +106,15 @@ float4 ColorSaturation(float4 color, float saturation) {
 	return HSVAtoRGBA(hsva);
 }
 
-float HalfLambert(float3 normal, float3 lightDirection) {
-	float NdotL = dot(normal, lightDirection);
-	return pow(max(NdotL, 0.0f) * 0.5f + 0.5f, 2.0f);
-}
-
-float Phong(float3 normal, float3 lightDirection, float3 viewDirection, float shininess) {
-	float NdotL = dot(normal, lightDirection);
-	float3 reflection = normalize(-lightDirection + 2.0f * normal * NdotL);
-	float RdotV = dot(reflection, viewDirection);
-	return pow(max(RdotV, 0.0f), shininess);
-}
-
-float Schlick(float3 normal, float3 viewDirection, float reflectance) {
-	float VdotN = dot(viewDirection, normal);
-	return reflectance + (1.0f - reflectance) * pow(1.0f - VdotN, 5.0f);
-}
-
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 	
 	if (gMaterial.enableLighting != 0) {
-		float NdotL = dot(input.normal, gDirectionalLight.direction);
-		float phong = Phong(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
-		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NdotL + (phong) * gDirectionalLight.color.a;
+		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+		float cos = pow(NdotL * 0.5 + 0.5, gDirectionalLight.color.a * 2.0f);
+		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
 		output.color.a = gMaterial.color.a * textureColor.a;
 
 	} else {

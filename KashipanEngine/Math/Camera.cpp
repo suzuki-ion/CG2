@@ -10,41 +10,8 @@
 namespace KashipanEngine {
 
 namespace {
-
 // WinAppのポインタ
 WinApp *sWinApp_ = nullptr;
-
-Vector3 CalcCameraForward(const Vector3 &rotation) {
-    float yaw = rotation.y;
-    float pitch = rotation.x;
-
-    return {
-        cosf(pitch) * sinf(yaw),
-        sinf(pitch),
-        cosf(pitch) * cosf(yaw)
-    };
-}
-
-Vector3 CalcCameraRight(const Vector3 &rotation) {
-    float yaw = rotation.y;
-
-    return {
-        sinf(yaw - 3.14f / 2.0f),
-        0.0f,
-        cosf(yaw - 3.14f / 2.0f)
-    };
-}
-
-Vector3 CalcCameraUp(const Vector3 &rotation) {
-    float yaw = rotation.y;
-    float pitch = rotation.x;
-    return {
-        -sinf(pitch) * sinf(yaw),
-        cosf(pitch),
-        -sinf(pitch) * cosf(yaw)
-    };
-}
-
 } // namespace
 
 void Camera::Initialize(WinApp *winApp) noexcept {
@@ -100,10 +67,8 @@ void Camera::SetWorldMatrix(const Matrix4x4 &worldMatrix) noexcept {
 }
 
 void Camera::CalculateMatrix() noexcept {
-    cameraMatrix_.SetTranslate(cameraTranslate_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetScale(cameraScale_);
-    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
+    cameraMatrix_.SetSRT(cameraScale_, cameraRotate_, cameraTranslate_);
+    viewMatrix_ = cameraMatrix_.InverseScale() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseTranslate();
     projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 100.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
@@ -115,41 +80,27 @@ void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, co
         return;
     }
 
-    static Vector2 mousePos;
-    static Vector2 lastMousePos = {
+    Vector2 mousePos = {
         static_cast<float>(Input::GetMouseX()),
         static_cast<float>(Input::GetMouseY())
     };
 
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
-    };
-
-    // 1フレーム前との差分を取る
-    Vector2 delta;
-    delta.x = mousePos.x - lastMousePos.x;
-    delta.y = mousePos.y - lastMousePos.y;
-    lastMousePos = mousePos;
-
+    // 左クリックで平行移動
     if (Input::IsMouseButtonDown(0)) {
-        // カメラの向きをもとに上・右方向ベクトルを生成
-        Vector3 up = CalcCameraUp(cameraRotate_);
-        Vector3 right = CalcCameraRight(cameraRotate_);
-
-        cameraTranslate_ += up * (mousePos.y * translateSpeed);
-        cameraTranslate_ += right * (mousePos.x * translateSpeed);
+        cameraTranslate_.x -= mousePos.x * translateSpeed;
+        cameraTranslate_.y += mousePos.y * translateSpeed;
     }
     // 右クリックで回転
     if (Input::IsMouseButtonDown(1)) {
         cameraRotate_.x += mousePos.y * rotateSpeed;
         cameraRotate_.y += mousePos.x * rotateSpeed;
     }
-    // ホイールで前後移動
+    // ホイールで拡大縮小
     if (Input::GetMouseWheel() != 0) {
         float mouseWheel = static_cast<float>(Input::GetMouseWheel());
-        Vector3 forward = CalcCameraForward(cameraRotate_);
-        cameraTranslate_ += forward * (mouseWheel * scaleSpeed);
+        cameraScale_.x -= mouseWheel * scaleSpeed;
+        cameraScale_.y -= mouseWheel * scaleSpeed;
+        cameraScale_.z -= mouseWheel * scaleSpeed;
     }
 }
 

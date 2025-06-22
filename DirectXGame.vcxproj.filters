@@ -438,5 +438,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="KashipanEngine\Shader\Object3d.hlsli" />
+    <None Include=".editorconfig" />
   </ItemGroup>
 </Project>
