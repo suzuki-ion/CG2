@@ -56,7 +56,7 @@ void Camera::Initialize(WinApp *winApp) noexcept {
 }
 
 Camera::Camera() {
-    cameraType_ = CameraType::Decart;
+    coordinateSystem_ = CoordinateSystem::kDecart;
     cameraScale_ = { 1.0f, 1.0f, 1.0f };
     cameraRotate_ = { 0.0f, 0.0f, 0.0f };
     cameraTranslate_ = { 0.0f, 0.0f, 0.0f };
@@ -67,7 +67,7 @@ Camera::Camera() {
 }
 
 Camera::Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept {
-    cameraType_ = CameraType::Decart;
+    coordinateSystem_ = CoordinateSystem::kDecart;
     cameraScale_ = cameraScale;
     cameraRotate_ = cameraRotate;
     cameraTranslate_ = cameraTranslate;
@@ -78,17 +78,17 @@ Camera::Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, cons
 }
 
 void Camera::CalculateMatrix() noexcept {
-    if (cameraType_ == CameraType::Decart) {
+    if (coordinateSystem_ == CoordinateSystem::kDecart) {
         CalculateMatrixForDecart();
-    } else if (cameraType_ == CameraType::Spherical) {
+    } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
         CalculateMatrixForSpherical();
     }
 }
 
-void Camera::SetCameraType(CameraType cameraType) noexcept {
-    cameraType_ = cameraType;
+void Camera::SetCoordinateSystem(CoordinateSystem cameraType) noexcept {
+    coordinateSystem_ = cameraType;
     
-    if (cameraType_ == CameraType::Spherical) {
+    if (coordinateSystem_ == CoordinateSystem::kSpherical) {
         sphericalCoordinateSystem_.ToSpherical(cameraTranslate_);
     }
 }
@@ -125,58 +125,10 @@ void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, co
         return;
     }
 
-    static Vector2 mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
-    };
-
-    if (Input::IsMouseButtonDown(0)) {
-        // カメラの向きをもとに上・右方向ベクトルを生成
-        Vector3 up = CalcCameraUp(cameraRotate_);
-        Vector3 right = CalcCameraRight(cameraRotate_);
-
-        cameraTranslate_ += up * (-mousePos.y * translateSpeed);
-        cameraTranslate_ += right * (mousePos.x * translateSpeed);
-    }
-    // 右クリックで回転
-    if (Input::IsMouseButtonDown(1)) {
-        cameraRotate_.x += mousePos.y * rotateSpeed;
-        cameraRotate_.y += mousePos.x * rotateSpeed;
-    }
-    // ホイールで前後移動
-    if (Input::GetMouseWheel() != 0) {
-        float mouseWheel = static_cast<float>(Input::GetMouseWheel());
-        Vector3 forward = CalcCameraForward(cameraRotate_);
-        cameraTranslate_ += forward * (mouseWheel * scaleSpeed);
-    }
-}
-
-void Camera::MoveToMouse(const float rotateSpeed, const float scaleSpeed) noexcept {
-    // ImGuiウィンドウを触ってるときは操作しない
-    if (ImGui::IsAnyItemActive()) {
-        return;
-    }
-
-    static Vector2 mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
-    };
-    
-    if (Input::IsMouseButtonDown(0)) {
-        sphericalCoordinateSystem_.theta += -mousePos.x * rotateSpeed;
-        sphericalCoordinateSystem_.phi += -mousePos.y * rotateSpeed;
-        // phiの範囲を制限
-        sphericalCoordinateSystem_.phi =
-            std::clamp(sphericalCoordinateSystem_.phi, 0.1f, std::numbers::pi_v<float> - 0.1f);
-    }
-    // マウスホイールで半径を変更
-    if (Input::GetMouseWheel() != 0) {
-        float mouseWheel = static_cast<float>(Input::GetMouseWheel());
-        sphericalCoordinateSystem_.radius += -mouseWheel * scaleSpeed;
-        // 半径の範囲を制限
-        sphericalCoordinateSystem_.radius = std::max(sphericalCoordinateSystem_.radius, 0.1f);
+    if (coordinateSystem_ == CoordinateSystem::kDecart) {
+        MoveToMouseForDecart(translateSpeed, rotateSpeed, scaleSpeed);
+    } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
+        MoveToMouseForSpherical(translateSpeed, rotateSpeed, scaleSpeed);
     }
 }
 
@@ -210,6 +162,71 @@ void Camera::CalculateMatrixForSpherical() noexcept {
     projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 100.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
+}
+
+void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
+    static Vector2 mousePos;
+    mousePos = {
+        static_cast<float>(Input::GetMouseX()),
+        static_cast<float>(Input::GetMouseY())
+    };
+
+    if (Input::IsMouseButtonDown(0)) {
+        // カメラの向きをもとに上・右方向ベクトルを生成
+        Vector3 up = CalcCameraUp(cameraRotate_);
+        Vector3 right = CalcCameraRight(cameraRotate_);
+
+        cameraTranslate_ += up * (-mousePos.y * translateSpeed);
+        cameraTranslate_ += right * (mousePos.x * translateSpeed);
+    }
+    // 右クリックで回転
+    if (Input::IsMouseButtonDown(1)) {
+        cameraRotate_.x += mousePos.y * rotateSpeed;
+        cameraRotate_.y += mousePos.x * rotateSpeed;
+    }
+    // ホイールで前後移動
+    if (Input::GetMouseWheel() != 0) {
+        float mouseWheel = static_cast<float>(Input::GetMouseWheel());
+        Vector3 forward = CalcCameraForward(cameraRotate_);
+        cameraTranslate_ += forward * (mouseWheel * scaleSpeed);
+    }
+}
+
+void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
+    static Vector2 mousePos;
+    mousePos = {
+        static_cast<float>(Input::GetMouseX()),
+        static_cast<float>(Input::GetMouseY())
+    };
+
+    // Shiftキーを押しているときは移動
+    if (Input::IsKeyDown(DIK_LSHIFT) || Input::IsKeyDown(DIK_RSHIFT)) {
+        if (Input::IsMouseButtonDown(2)) {
+            // 半径によって移動速度を調整
+            float adjustedTranslateSpeed = translateSpeed * sphericalCoordinateSystem_.radius * 0.01f;
+            // カメラの向きをもとに上・右方向ベクトルを生成
+            Vector3 up = CalcCameraUp(cameraRotate_);
+            Vector3 right = CalcCameraRight(cameraRotate_);
+            sphericalCoordinateSystem_.origin += up * (-mousePos.y * adjustedTranslateSpeed);
+            sphericalCoordinateSystem_.origin += right * (mousePos.x * adjustedTranslateSpeed);
+        }
+
+    } else if (Input::IsMouseButtonDown(2)) {
+        sphericalCoordinateSystem_.theta += -mousePos.x * rotateSpeed;
+        sphericalCoordinateSystem_.phi += -mousePos.y * rotateSpeed;
+        cameraRotate_ = sphericalCoordinateSystem_.ToRotatedVector3();
+    }
+
+    // マウスホイールで半径を変更
+    if (Input::GetMouseWheel() != 0) {
+        float mouseWheel = static_cast<float>(Input::GetMouseWheel());
+        // 半径が小さくなっていく度に縮小率を調整
+        float adjustedScaleSpeed = scaleSpeed * sphericalCoordinateSystem_.radius * 0.01f;
+        sphericalCoordinateSystem_.radius += -mouseWheel * adjustedScaleSpeed;
+
+        // 半径の範囲を制限
+        sphericalCoordinateSystem_.radius = std::max(sphericalCoordinateSystem_.radius, 0.1f);
+    }
 }
 
 } // namespace KashipanEngine

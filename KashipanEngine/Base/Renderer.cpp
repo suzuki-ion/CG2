@@ -77,6 +77,8 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Vector3(0.0f, 0.0f, 0.0f),
         Vector3(1.0f, 1.0f, 1.0f)
     );
+    // 球面座標系に設定
+    sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
 
     //==================================================
     // パイプラインセットの初期化
@@ -171,7 +173,7 @@ void Renderer::PreDraw() {
 
     // デバッグカメラが有効ならデバッグカメラの処理
     if (isUseDebugCamera_) {
-        sDebugCamera->MoveToMouse(0.01f, 0.01f, 0.001f);
+        sDebugCamera->MoveToMouse(0.1f, 0.01f, 0.1f);
     }
 }
 

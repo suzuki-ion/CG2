@@ -9,9 +9,9 @@ class WinApp;
 
 class Camera {
 public:
-    enum class CameraType {
-        Decart,
-        Spherical,
+    enum class CoordinateSystem {
+        kDecart,
+        kSpherical,
     };
 
     static void Initialize(WinApp *winApp) noexcept;
@@ -23,8 +23,8 @@ public:
     void CalculateMatrix() noexcept;
 
     /// @brief カメラの座標系を設定する
-    /// @param cameraType カメラの座標系
-    void SetCameraType(CameraType cameraType) noexcept;
+    /// @param coordinateSystem 座標系
+    void SetCoordinateSystem(CoordinateSystem coordinateSystem) noexcept;
 
     /// @brief カメラの行列を設定する
     /// @param cameraTranslate 平行移動
@@ -52,16 +52,11 @@ public:
     /// @param sphericalCoordinateSystem 球面座標系
     void SetSphericalCoordinateSystem(const SphericalCoordinateSystem &sphericalCoordinateSystem) noexcept;
 
-    /// @brief マウスでのカメラ操作(デカルト座標系)
+    /// @brief マウスでのカメラ操作
     /// @param translateSpeed 平行移動速度
     /// @param rotateSpeed 回転速度
     /// @param scaleSpeed 拡大縮小速度
     void MoveToMouse(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept;
-
-    /// @brief マウスでのカメラ操作(球面座標系)
-    /// @param rotateSpeed 回転速度
-    /// @param scaleSpeed 拡大縮小速度
-    void MoveToMouse(const float rotateSpeed, const float scaleSpeed) noexcept;
 
     /// @brief ターゲット位置の設定
     /// @param targetPos ターゲット位置へのポインタ
@@ -139,7 +134,19 @@ private:
     /// @brief カメラの行列を計算する(球面座標系)
     void CalculateMatrixForSpherical() noexcept;
 
-    CameraType cameraType_;
+    /// @brief マウスでのカメラ操作(デカルト座標系)
+    /// @param translateSpeed 平行移動速度
+    /// @param rotateSpeed 回転速度
+    /// @param scaleSpeed 拡大縮小速度
+    void MoveToMouseForDecart(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept;
+
+    /// @brief マウスでのカメラ操作(球面座標系)
+    /// @param translateSpeed 平行移動速度
+    /// @param rotateSpeed 回転速度
+    /// @param scaleSpeed 拡大縮小速度
+    void MoveToMouseForSpherical(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept;
+
+    CoordinateSystem coordinateSystem_;
     Vector3 *targetPos_;
     
     Vector3 cameraScale_;
