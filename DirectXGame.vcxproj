@@ -198,6 +198,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Math\Physics\ConicalPendulum.h" />
     <ClInclude Include="KashipanEngine\Math\Physics\Pendulum.h" />
     <ClInclude Include="KashipanEngine\Math\Physics\Spring.h" />
+    <ClInclude Include="KashipanEngine\Math\SphericalCoordinateSystem.h" />
     <ClInclude Include="KashipanEngine\Objects.h" />
     <ClInclude Include="KashipanEngine\Objects\BillBoard.h" />
     <ClInclude Include="KashipanEngine\Objects\Model.h" />

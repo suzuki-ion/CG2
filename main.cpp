@@ -58,6 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Vector3( 0.0f, 0.0f, 0.0f ),
         Vector3( 1.0f, 1.0f, 1.0f )
     );
+    // カメラを球面座標で設定
+    camera->SetCameraType(Camera::CameraType::Spherical);
     // デバッグカメラの有効化フラグ
     bool isUseDebugCamera = false;
     // レンダラーにカメラを設定
@@ -151,6 +153,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (Input::IsKeyTrigger(DIK_F3)) {
             isUseDebugCamera = !isUseDebugCamera;
             renderer->ToggleDebugCamera();
+        }
+
+        // デバッグカメラが有効でない場合は通常のカメラの移動処理
+        if (!isUseDebugCamera) {
+            camera->MoveToMouse(0.02f, 0.02f);
         }
 
         ImGuiManager::Begin("KashipanEngine");

@@ -3,7 +3,7 @@
 namespace KashipanEngine {
 
 Matrix4x4 MakeViewMatrix(const Vector3 &eyePos, const Vector3 &targetPos, const Vector3 &upVector) noexcept {
-    Vector3 zAxis = (eyePos - targetPos).Normalize();
+    Vector3 zAxis = (targetPos - eyePos).Normalize();
     Vector3 xAxis = upVector.Cross(zAxis).Normalize();
     Vector3 yAxis = zAxis.Cross(xAxis).Normalize();
     return Matrix4x4(

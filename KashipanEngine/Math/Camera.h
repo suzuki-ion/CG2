@@ -1,5 +1,6 @@
 #pragma once
 #include "AffineMatrix.h"
+#include "SphericalCoordinateSystem.h"
 
 namespace KashipanEngine {
 
@@ -8,10 +9,22 @@ class WinApp;
 
 class Camera {
 public:
+    enum class CameraType {
+        Decart,
+        Spherical,
+    };
+
     static void Initialize(WinApp *winApp) noexcept;
 
     Camera();
     Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept;
+
+    /// @brief 各行列を計算する
+    void CalculateMatrix() noexcept;
+
+    /// @brief カメラの座標系を設定する
+    /// @param cameraType カメラの座標系
+    void SetCameraType(CameraType cameraType) noexcept;
 
     /// @brief カメラの行列を設定する
     /// @param cameraTranslate 平行移動
@@ -35,14 +48,24 @@ public:
     /// @param worldMatrix ワールド行列
     void SetWorldMatrix(const Matrix4x4 &worldMatrix) noexcept;
 
-    /// @brief 各行列を計算する
-    void CalculateMatrix() noexcept;
+    /// @brief 球面座標系を設定する
+    /// @param sphericalCoordinateSystem 球面座標系
+    void SetSphericalCoordinateSystem(const SphericalCoordinateSystem &sphericalCoordinateSystem) noexcept;
 
-    /// @brief マウスでのカメラ操作
+    /// @brief マウスでのカメラ操作(デカルト座標系)
     /// @param translateSpeed 平行移動速度
     /// @param rotateSpeed 回転速度
     /// @param scaleSpeed 拡大縮小速度
     void MoveToMouse(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept;
+
+    /// @brief マウスでのカメラ操作(球面座標系)
+    /// @param rotateSpeed 回転速度
+    /// @param scaleSpeed 拡大縮小速度
+    void MoveToMouse(const float rotateSpeed, const float scaleSpeed) noexcept;
+
+    /// @brief ターゲット位置の設定
+    /// @param targetPos ターゲット位置へのポインタ
+    void Target(Vector3 *targetPos) noexcept;
 
     /// @brief カメラの拡大縮小ベクトルを取得する
     /// @return カメラの拡大縮小ベクトル
@@ -111,15 +134,26 @@ public:
     }
 
 private:
+    /// @brief カメラの行列を計算する(デカルト座標系)
+    void CalculateMatrixForDecart() noexcept;
+    /// @brief カメラの行列を計算する(球面座標系)
+    void CalculateMatrixForSpherical() noexcept;
+
+    CameraType cameraType_;
+    Vector3 *targetPos_;
+    
     Vector3 cameraScale_;
     Vector3 cameraRotate_;
     Vector3 cameraTranslate_;
+    
     AffineMatrix cameraMatrix_;
     Matrix4x4 worldMatrix_;
     Matrix4x4 viewMatrix_;
     Matrix4x4 projectionMatrix_;
     Matrix4x4 wvpMatrix_;
     Matrix4x4 viewportMatrix_;
+
+    SphericalCoordinateSystem sphericalCoordinateSystem_;
 };
 
 } // namespace KashipanEngine
