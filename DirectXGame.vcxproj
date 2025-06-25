@@ -111,6 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="KashipanEngine\2d\UISystem.cpp" />
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
@@ -162,6 +163,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KashipanEngine\2d\UISystem.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h" />
     <ClInclude Include="KashipanEngine\3d\DiffuseLight.h" />
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />

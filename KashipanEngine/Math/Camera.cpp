@@ -20,7 +20,7 @@ Vector3 CalcCameraForward(const Vector3 &rotation) {
 
     return {
         cosf(pitch) * sinf(yaw),
-        sinf(pitch),
+        -sinf(pitch),
         cosf(pitch) * cosf(yaw)
     };
 }
