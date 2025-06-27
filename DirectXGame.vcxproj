@@ -111,7 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KashipanEngine\2d\UISystem.cpp" />
+    <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
@@ -136,10 +136,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Math\MathObjects\Plane.cpp" />
     <ClCompile Include="KashipanEngine\Math\MathObjects\Sphere.cpp" />
     <ClCompile Include="KashipanEngine\Math\MathObjects\Triangle.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Matrix3x3.cpp" />
     <ClCompile Include="KashipanEngine\Math\Matrix4x4.cpp" />
     <ClCompile Include="KashipanEngine\Math\Physics\ConicalPendulum.cpp" />
     <ClCompile Include="KashipanEngine\Math\Physics\Pendulum.cpp" />
     <ClCompile Include="KashipanEngine\Math\RenderingPipeline.cpp" />
+    <ClCompile Include="KashipanEngine\Math\Vector2.cpp" />
     <ClCompile Include="KashipanEngine\Math\Vector3.cpp" />
     <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Model.cpp" />
@@ -163,7 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="KashipanEngine\2d\UISystem.h" />
+    <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h" />
@@ -199,6 +201,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Math\MathObjects\Plane.h" />
     <ClInclude Include="KashipanEngine\Math\MathObjects\Sphere.h" />
     <ClInclude Include="KashipanEngine\Math\MathObjects\Triangle.h" />
+    <ClInclude Include="KashipanEngine\Math\Matrix3x3.h" />
     <ClInclude Include="KashipanEngine\Math\Physics\Ball.h" />
     <ClInclude Include="KashipanEngine\Math\Physics\ConicalPendulum.h" />
     <ClInclude Include="KashipanEngine\Math\Physics\Pendulum.h" />

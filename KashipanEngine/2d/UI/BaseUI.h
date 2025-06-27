@@ -1,32 +1,20 @@
 #pragma once
 #include <string>
-#include <vector>
+#include <unordered_map>
 #include "Math/Vector2.h"
 #include "Math/Vector4.h"
+#include "Math/Matrix3x3.h"
 
 namespace KashipanEngine {
 
 class BaseUI {
 public:
-    struct UIData {
-        Vector2 pos;
-        Vector2 size;
-        Vector2 anchor;
-        Vector2 pivot;
-        Vector2 offset;
-        Vector4 color;
-        float degree;
-        bool visible;
-    };
-
-    BaseUI(const std::string &name) : name(name) {
+    BaseUI(const std::string &name) : name_(name) {
     }
     virtual ~BaseUI() = default;
 
     virtual void Update(float deltaTime) = 0;
     virtual void Draw() const = 0;
-
-    std::string_view GetName() const { return name; }
     
 private:
     const std::string name_;
@@ -39,7 +27,7 @@ private:
     float degree_ = 0.0f;
     bool visible_ = true;
 
-    std::vector<BaseUI *> children_;
+    std::unordered_map<std::string, BaseUI *> children_;
 };
 
 } // namespace KashipanEngine

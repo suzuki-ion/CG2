@@ -18,14 +18,6 @@ Vector3::Vector3(const Vector4 &vector) noexcept {
     }
 }
 
-float Vector3::operator[](const int index) const noexcept {
-    return (&x)[index];
-}
-
-float &Vector3::operator[](const int index) noexcept {
-    return (&x)[index];
-}
-
 Vector3 &Vector3::operator=(const Vector3 &vector) noexcept {
     x = vector.x;
     y = vector.y;

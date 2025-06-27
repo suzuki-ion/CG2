@@ -3,12 +3,13 @@
 
 namespace KashipanEngine {
 
-class UISystem {
+class Renderer;
+
+class UIManager {
 public:
-    /// @brief 初期化用関数
-    static void Initialize();
-    /// @brief 終了用関数
-    static void Finalize();
+    /// @brief レンダラー設定関数
+    /// @param renderer 設定するレンダラーへのポインタ
+    static void SetRenderer(Renderer *renderer);
 
     /// @brief 更新用関数
     static void Update();
@@ -18,10 +19,14 @@ public:
     /// @brief UI追加関数
     /// @param ui 追加するUIへのポインタ
     static void AddUI(BaseUI *ui);
-
     /// @brief UI削除関数
     /// @param name 削除するUIの名前
     static void RemoveUI(std::string name);
+
+    /// @brief UI作関数
+    /// @param name UIの名前
+    /// @return 作成されたUIへのポインタ
+    static BaseUI *CreateUI(std::string name);
 
     /// @brief UI取得関数
     /// @param name 取得するUIの名前

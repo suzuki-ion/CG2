@@ -1,5 +1,5 @@
 #include <unordered_map>
-#include "UISystem.h"
+#include "UIManager.h"
 
 namespace KashipanEngine {
 
@@ -8,11 +8,11 @@ namespace {
 std::unordered_map<std::string, BaseUI *> uiMap;
 } // namespace
 
-void UISystem::AddUI(BaseUI *ui) {
+void UIManager::AddUI(BaseUI *ui) {
     if (ui == nullptr) {
         return; // nullptrチェック
     }
-    std::string name = ui->
+    std::string name = ui->GetName();
     if (uiMap.find(name) != uiMap.end()) {
         // 既に同じ名前のUIが存在する場合は上書き
         delete uiMap[name]; // 古いUIを削除
@@ -20,7 +20,7 @@ void UISystem::AddUI(BaseUI *ui) {
     uiMap[name] = ui; // 新しいUIを追加
 }
 
-void UISystem::RemoveUI(std::string name) {
+void UIManager::RemoveUI(std::string name) {
 
 }
 
