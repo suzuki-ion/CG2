@@ -392,6 +392,9 @@
     <ClInclude Include="KashipanEngine\2d\UI\Component\IsClick.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\UIComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl" />

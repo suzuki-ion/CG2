@@ -171,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\2d\UI\Component\IsClick.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\UIComponent.h" />
     <ClInclude Include="KashipanEngine\3d\DiffuseLight.h" />
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />

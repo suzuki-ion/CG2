@@ -115,7 +115,10 @@ void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, co
         return;
     }
 
-    static Vector2 mousePos = { Input::GetMouseX(), Input::GetMouseY() };
+    static Vector2 mousePos = {
+        static_cast<float>(Input::GetMouseX()),
+        static_cast<float>(Input::GetMouseY())
+    };
     // 1フレーム前との差分を取る
     static Vector2 lastMousePos = mousePos;
     mousePos = {

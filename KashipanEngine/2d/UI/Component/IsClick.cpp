@@ -2,8 +2,8 @@
 
 namespace KashipanEngine {
 
-IsClick::IsClick(BaseUI *parentUI) {
-
-}
+//IsClick::IsClick(BaseUI *parentUI) {
+//
+//}
 
 }
