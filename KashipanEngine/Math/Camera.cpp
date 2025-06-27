@@ -173,20 +173,24 @@ void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotate
     mousePos = {
         static_cast<float>(Input::GetMouseX()),
         static_cast<float>(Input::GetMouseY())
+    static Vector2 lastMousePos = mousePos;
+    mousePos = {
+        static_cast<float>(Input::GetMouseX()),
+        static_cast<float>(Input::GetMouseY())
     };
 
     if (Input::IsMouseButtonDown(0)) {
-        // カメラの向きをもとに上・右方向ベクトルを生成
-        Vector3 up = CalcCameraUp(cameraRotate_);
+        cameraTranslate_ += up * (-mousePos.y * translateSpeed);
+        cameraTranslate_ += right * (mousePos.x * translateSpeed);
         Vector3 right = CalcCameraRight(cameraRotate_);
 
-        cameraTranslate_ += up * (-mousePos.y * translateSpeed);
+        cameraTranslate_ += up * (mousePos.y * translateSpeed);
         cameraTranslate_ += right * (mousePos.x * translateSpeed);
     }
     // 右クリックで回転
     if (Input::IsMouseButtonDown(1)) {
-        cameraRotate_.x += mousePos.y * rotateSpeed;
-        cameraRotate_.y += mousePos.x * rotateSpeed;
+        cameraRotate_.x += mousePosDelta.y * rotateSpeed;
+        cameraRotate_.y += mousePosDelta.x * rotateSpeed;
     }
     // ホイールで前後移動
     if (Input::GetMouseWheel() != 0) {

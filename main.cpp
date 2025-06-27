@@ -200,6 +200,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::Text("カメラの回転: (%.2f, %.2f, %.2f)", camera->GetRotate().x, camera->GetRotate().y, camera->GetRotate().z);
         // ブレンドモードの表示
         ImGui::Text("ブレンドモード: %d", static_cast<int>(blendMode));
+        // マウスの座標
+        ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
 
         // デバッグカメラの有効化
         if (ImGui::Checkbox("デバッグカメラ有効化", &isUseDebugCamera)) {
