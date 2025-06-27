@@ -158,7 +158,11 @@ void Camera::CalculateMatrixForDecart() noexcept {
 
 void Camera::CalculateMatrixForSpherical() noexcept {
     cameraTranslate_ = sphericalCoordinateSystem_.ToVector3();
-    viewMatrix_ = MakeViewMatrix(cameraTranslate_, sphericalCoordinateSystem_.origin, Vector3(0.0f, 1.0f, 0.0f));
+    //viewMatrix_ = MakeViewMatrix(cameraTranslate_, sphericalCoordinateSystem_.origin, Vector3(0.0f, 1.0f, 0.0f));
+    cameraMatrix_.SetTranslate(cameraTranslate_);
+    cameraMatrix_.SetRotate(cameraRotate_);
+    cameraMatrix_.SetScale(cameraScale_);
+    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
     projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 100.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
@@ -214,7 +218,8 @@ void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rot
     } else if (Input::IsMouseButtonDown(2)) {
         sphericalCoordinateSystem_.theta += -mousePos.x * rotateSpeed;
         sphericalCoordinateSystem_.phi += -mousePos.y * rotateSpeed;
-        cameraRotate_ = sphericalCoordinateSystem_.ToRotatedVector3();
+        cameraRotate_.x += mousePos.y * rotateSpeed;
+        cameraRotate_.y += mousePos.x * rotateSpeed;
     }
 
     // マウスホイールで半径を変更

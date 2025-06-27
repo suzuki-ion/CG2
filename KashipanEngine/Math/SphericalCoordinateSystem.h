@@ -41,7 +41,7 @@ public:
     Vector3 ToRotatedVector3() const {
         Vector3 forward = (origin - ToVector3()).Normalize();
         float yaw = atan2(forward.x, forward.z);
-        float pitch = asinf(std::clamp(-forward.y, -1.0f, 1.0f));
+        float pitch = asinf(-forward.y /*std::clamp(-forward.y, -1.0f, 1.0f)*/);
         float roll = 0.0f;
         return Vector3(
             pitch,
