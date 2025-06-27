@@ -12,6 +12,8 @@ struct Segment;
 } // namespace Math
 
 struct Vector3 {
+    static Vector3 Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept;
+
     Vector3() noexcept = default;
     constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}
     explicit constexpr Vector3(float v) noexcept : x(v), y(v), z(v) {}
@@ -77,9 +79,5 @@ inline constexpr const Vector3 operator/(const Vector3 &vector1, const Vector3 &
 
 inline constexpr const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept;
 inline constexpr const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept;
-
-inline Vector3 Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept {
-    return t * start + (1.0f - t) * end;
-}
 
 } // namespace KashipanEngine

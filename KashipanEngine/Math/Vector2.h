@@ -12,6 +12,8 @@ struct Segment;
 } // namespace Math
 
 struct Vector2 {
+    static Vector2 Lerp(const Vector2 &start, const Vector2 &end, float t) noexcept;
+
     Vector2() noexcept = default;
     constexpr Vector2(float x, float y) noexcept : x(x), y(y) {}
     explicit constexpr Vector2(float v) noexcept : x(v), y(v) {}
@@ -74,9 +76,5 @@ inline constexpr Vector2 operator/(const Vector2 &a, const Vector2 &b) {
 
 inline constexpr Vector2 operator*(const Matrix3x3 &matrix, const Vector2 &vector) noexcept;
 inline constexpr Vector2 operator*(const Vector2 &vector, const Matrix3x3 &matrix) noexcept;
-
-Vector2 Lerp(const Vector2 &start, const Vector2 &end, float t) noexcept {
-    return t * start + (1.0f - t) * end;
-}
 
 } // namespace KashipanEngine

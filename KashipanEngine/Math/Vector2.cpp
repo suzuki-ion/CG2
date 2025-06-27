@@ -6,6 +6,10 @@
 
 namespace KashipanEngine {
 
+Vector2 Vector2::Lerp(const Vector2 &start, const Vector2 &end, float t) noexcept {
+    return t * start + (1.0f - t) * end;
+}
+
 Vector2::Vector2(const Vector3 &vector) {
     x = vector.x;
     y = vector.y;
