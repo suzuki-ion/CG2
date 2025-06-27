@@ -392,7 +392,10 @@
     <ClInclude Include="KashipanEngine\2d\UI\Component\IsClick.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\2d\UI\UIComponent.h">
+    <ClInclude Include="KashipanEngine\2d\UI\Component\UIComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStd\OnlyPointer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

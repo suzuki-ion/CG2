@@ -115,34 +115,24 @@ void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, co
         return;
     }
 
-    static Vector2 mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
+    static Vector2 mousePosDelta;
+    mousePosDelta = {
+        static_cast<float>(Input::GetMouseDeltaX()),
+        static_cast<float>(Input::GetMouseDeltaY())
     };
-    // 1フレーム前との差分を取る
-    static Vector2 lastMousePos = mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
-    };
-
-    Vector2 delta;
-    delta.x = mousePos.x - lastMousePos.x;
-    delta.y = mousePos.y - lastMousePos.y;
-    lastMousePos = mousePos;
 
     if (Input::IsMouseButtonDown(0)) {
         // カメラの向きをもとに上・右方向ベクトルを生成
         Vector3 up = CalcCameraUp(cameraRotate_);
         Vector3 right = CalcCameraRight(cameraRotate_);
 
-        cameraTranslate_ += up * (mousePos.y * translateSpeed);
-        cameraTranslate_ += right * (mousePos.x * translateSpeed);
+        cameraTranslate_ += up * (mousePosDelta.y * translateSpeed);
+        cameraTranslate_ += right * (mousePosDelta.x * translateSpeed);
     }
     // 右クリックで回転
     if (Input::IsMouseButtonDown(1)) {
-        cameraRotate_.x += mousePos.y * rotateSpeed;
-        cameraRotate_.y += mousePos.x * rotateSpeed;
+        cameraRotate_.x += mousePosDelta.y * rotateSpeed;
+        cameraRotate_.y += mousePosDelta.x * rotateSpeed;
     }
     // ホイールで前後移動
     if (Input::GetMouseWheel() != 0) {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Component/IsClick.h"
+#include "IsClick.h"
 
 namespace KashipanEngine {
 

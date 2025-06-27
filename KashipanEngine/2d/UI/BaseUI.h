@@ -9,6 +9,7 @@ namespace KashipanEngine {
 
 class BaseUI {
 public:
+    BaseUI() = delete;
     BaseUI(const std::string &name) : name_(name) {
     }
     virtual ~BaseUI() = default;
