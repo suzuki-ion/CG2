@@ -61,7 +61,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Vector3( 1.0f, 1.0f, 1.0f )
     );
     // デバッグカメラの有効化フラグ
-    bool isUseDebugCamera = false;
+    bool isUseDebugCamera = true;
+    renderer->ToggleDebugCamera();
     // レンダラーにカメラを設定
     renderer->SetCamera(camera.get());
 

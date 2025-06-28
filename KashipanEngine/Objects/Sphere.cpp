@@ -85,58 +85,14 @@ Sphere::Sphere(const int subdivision) :
             };
         }
     }
+    CalcNormal();
 }
 
 void Sphere::Draw() {
-    Vector3 position[3] = {};
-    // 緯度の方向に分割
-    for (uint32_t latIndex = 0; latIndex < kSubdivision_; latIndex++) {
-        // 経度の方向に分割
-        for (uint32_t lonIndex = 0; lonIndex < kSubdivision_; lonIndex++) {
-            // 頂点位置を計算
-            const uint32_t vertexIndex = (latIndex * kSubdivision_ + lonIndex) * 4;
-
-            //--------- 法線を設定 ---------//
-
-            if (material_.enableLighting == false) {
-                for (int i = 0; i < 4; i++) {
-                    mesh_->vertexBufferMap[vertexIndex + i].normal = { 0.0f, 0.0f, -1.0f };
-                }
-                continue;
-            }
-            if (normalType_ == kNormalTypeVertex) {
-                mesh_->vertexBufferMap[vertexIndex + 0].normal =
-                    Vector3(mesh_->vertexBufferMap[vertexIndex + 0].position);
-                mesh_->vertexBufferMap[vertexIndex + 1].normal =
-                    Vector3(mesh_->vertexBufferMap[vertexIndex + 1].position);
-                mesh_->vertexBufferMap[vertexIndex + 2].normal =
-                    Vector3(mesh_->vertexBufferMap[vertexIndex + 2].position);
-                mesh_->vertexBufferMap[vertexIndex + 3].normal =
-                    Vector3(mesh_->vertexBufferMap[vertexIndex + 3].position);
-
-            } else if (normalType_ == kNormalTypeFace) {
-                position[0] = Vector3(mesh_->vertexBufferMap[vertexIndex + 0].position);
-                position[1] = Vector3(mesh_->vertexBufferMap[vertexIndex + 1].position);
-                position[2] = Vector3(mesh_->vertexBufferMap[vertexIndex + 2].position);
-                for (int i = 0; i < 4; i++) {
-                    mesh_->vertexBufferMap[vertexIndex + i].normal =
-                        (position[1] - position[0]).Cross(position[2] - position[1]).Normalize();
-                }
-            }
-        }
-    }
-    // 面法線の場合、真下の面の法線だけ別で計算する
-    if (normalType_ == kNormalTypeFace) {
-        for (uint32_t i = 0; i < kSubdivision_; i++) {
-            const uint32_t vertexIndex = i * 4;
-            position[0] = Vector3(mesh_->vertexBufferMap[vertexIndex + 1].position);
-            position[1] = Vector3(mesh_->vertexBufferMap[vertexIndex + 3].position);
-            position[2] = Vector3(mesh_->vertexBufferMap[vertexIndex + 2].position);
-            for (int j = 0; j < 4; j++) {
-                mesh_->vertexBufferMap[vertexIndex + j].normal =
-                    (position[1] - position[0]).Cross(position[2] - position[1]).Normalize();
-            }
-        }
+    // 前までの法線タイプが異なる場合は再計算
+    if (preNormalType_ != normalType_) {
+        CalcNormal();
+        preNormalType_ = normalType_;
     }
 
     // 描画共通処理を呼び出す
@@ -144,6 +100,17 @@ void Sphere::Draw() {
 }
 
 void Sphere::Draw(WorldTransform &worldTransform) {
+    // 前までの法線タイプが異なる場合は再計算
+    if (preNormalType_ != normalType_) {
+        CalcNormal();
+        preNormalType_ = normalType_;
+    }
+
+    // 描画共通処理を呼び出す
+    DrawCommon(worldTransform);
+}
+
+void Sphere::CalcNormal() {
     Vector3 position[3] = {};
     // 緯度の方向に分割
     for (uint32_t latIndex = 0; latIndex < kSubdivision_; latIndex++) {
@@ -194,9 +161,6 @@ void Sphere::Draw(WorldTransform &worldTransform) {
             }
         }
     }
-
-    // 描画共通処理を呼び出す
-    DrawCommon(worldTransform);
 }
 
 } // namespace KashipanEngine

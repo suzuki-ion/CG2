@@ -31,6 +31,9 @@ public:
     }
 
 private:
+    /// @brief 法線ベクトル計算用関数
+    void CalcNormal();
+
     /// @brief 半径
     float radius_ = 1.0f;
 
@@ -40,6 +43,9 @@ private:
     const uint32_t kVertexCount_;
     /// @brief インデックス数
     const uint32_t kIndexCount_;
+
+    /// @brief 前までの法線タイプ保存用変数
+    NormalType preNormalType_ = normalType_;
 };
 
 } // namespace KashipanEngine
