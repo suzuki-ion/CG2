@@ -119,6 +119,61 @@ void WinApp::SetSizeChangeMode(SizeChangeMode mode) {
     ShowWindow(hwnd_, SW_NORMAL);
 }
 
+void WinApp::SetWindowMode(WindowMode mode) {
+    static LONG saveWindowStyle;
+    static LONG saveWindowExStyle;
+    static RECT saveWindowRect;
+    
+    if (windowMode_ == mode) {
+        return;
+    }
+
+    if (mode == kFullScreen) {
+        DEVMODE devMode = {};
+        devMode.dmSize = sizeof(DEVMODE);
+        devMode.dmPelsWidth = 
+        windowMode_ = kFullScreen;
+
+    } else if (mode == kFullScreenBorderLess) {
+        GetWindowRect(hwnd_, &saveWindowRect);
+        LONG windowStyle = GetWindowLong(hwnd_, GWL_STYLE);
+        LONG windowExStyle = GetWindowLong(hwnd_, GWL_EXSTYLE);
+        saveWindowStyle = windowStyle;
+        saveWindowExStyle = windowExStyle;
+
+        SetWindowLong(hwnd_, GWL_STYLE, windowStyle & ~(WS_OVERLAPPEDWINDOW));
+        SetWindowLong(hwnd_, GWL_EXSTYLE, windowExStyle & ~(WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+
+        HMONITOR hMon = MonitorFromWindow(hwnd_, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO mi = { sizeof(mi) };
+        GetMonitorInfo(hMon, &mi);
+
+        SetWindowPos(
+            hwnd_, HWND_TOP,
+            mi.rcMonitor.left,
+            mi.rcMonitor.top,
+            mi.rcMonitor.right - mi.rcMonitor.left,
+            mi.rcMonitor.bottom - mi.rcMonitor.top,
+            SWP_NOZORDER | SWP_FRAMECHANGED
+        );
+        windowMode_ = kFullScreenBorderLess;
+
+    } else if (mode == kWindow) {
+        SetWindowLong(hwnd_, GWL_STYLE, saveWindowStyle);
+        SetWindowLong(hwnd_, GWL_EXSTYLE, saveWindowExStyle);
+
+        SetWindowPos(
+            hwnd_, NULL,
+            saveWindowRect.left,
+            saveWindowRect.top,
+            saveWindowRect.right - saveWindowRect.left,
+            saveWindowRect.bottom - saveWindowRect.top,
+            SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW
+        );
+        windowMode_ = kWindow;
+    }
+}
+
 int WinApp::ProccessMessage() {
     isSizing_ = false;
     if (msg_.message == WM_QUIT) {

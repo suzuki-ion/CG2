@@ -43,6 +43,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     textures[0] = Texture::Load("Resources/uvChecker.png");
     textures[1] = Texture::Load("Resources/monsterBall.png");
 
+    // ウィンドウモード
+    WindowMode windowMode = kWindow;
     // ブレンドモード
     BlendMode blendMode = kBlendModeNormal;
 
@@ -86,10 +88,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     Sphere sphere(64);
     Object::StatePtr sphereState = sphere.GetStatePtr();
-    sphereState.transform->translate.y = 4.0f;
+    sphereState.transform->translate.y = 6.0f;
     *sphereState.normalType = kNormalTypeVertex;
+    *sphereState.fillMode = kFillModeWireframe;
     sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
     sphere.SetRenderer(renderer);
+
+    //==================================================
+    // ICO球
+    //==================================================
+
+    Model icoSphere("Resources/ICOSphere", "icoSphere.obj");
+    icoSphere.SetRenderer(renderer);
+    for (auto &model : icoSphere.GetModels()) {
+        model.GetStatePtr().transform->translate.y = 3.0f;
+        *model.GetStatePtr().fillMode = kFillModeWireframe;
+    }
 
     //==================================================
     // モデル
@@ -97,6 +111,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     Model model("Resources/nahida", "nahida.obj");
     model.SetRenderer(renderer);
+    for (auto &modelElement : model.GetModels()) {
+        *modelElement.GetStatePtr().fillMode = kFillModeWireframe;
+    }
 
     //==================================================
     // 床用の板
@@ -151,6 +168,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (Input::IsKeyTrigger(DIK_F3)) {
             isUseDebugCamera = !isUseDebugCamera;
             renderer->ToggleDebugCamera();
+        }
+
+        // F11キーでウィンドウとフルスクリーン切り替え
+        if (Input::IsKeyTrigger(DIK_F11)) {
+            if (windowMode == kWindow) {
+                windowMode = kFullScreenBorderLess;
+            } else if (windowMode == kFullScreenBorderLess) {
+                windowMode = kWindow;
+            }
+            winApp->SetWindowMode(windowMode);
         }
 
         ImGuiManager::Begin("KashipanEngine");
@@ -231,6 +258,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 
+        for (auto &model : icoSphere.GetModels()) {
+            model.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
+            model.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
+            model.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
+        }
+
         //==================================================
         // 描画処理
         //==================================================
@@ -242,6 +275,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // 球体の描画
         sphere.Draw();
+        // ICO球の描画
+        icoSphere.Draw();
         // モデルの描画
         model.Draw();
         // 板の描画

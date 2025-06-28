@@ -33,12 +33,6 @@ DirectionalLight sDefaultDirectionalLight = {
     1.0f
 };
 
-//bool ZSort(Object *a, Object *b) {
-//    // カメラからの距離でソート
-//    return a->transform.translate.Distance(a->camera->GetTranslate()) <
-//        b->transform.translate.Distance(b->camera->GetTranslate());
-//}
-
 } // namespace
 
 Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager) {
@@ -266,11 +260,11 @@ void Renderer::DrawCommon(ObjectState *objectState) {
     }
 
     // SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-    if (objectState->useTextureIndex != -1) {
-        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
-    } else {
-        // テクスチャを使用しない場合は0を設定
+    if ((objectState->fillMode == kFillModeWireframe) ||
+        objectState->useTextureIndex <= 0) {
         dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(0).srvHandleGPU);
+    } else {
+        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
     }
 
     dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

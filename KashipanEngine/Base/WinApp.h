@@ -11,6 +11,12 @@ enum SizeChangeMode {
     kFixedAspect,   //!< アスペクト比固定
 };
 
+enum WindowMode {
+    kWindow,                //!< ウィンドウ
+    kFullScreenBorderLess,  //!< ボーダーレスフルスクリーン
+    kFullScreen,            //!< フルスクリーン
+};
+
 /// @brief Windowsアプリクラス
 class WinApp final {
 public:
@@ -45,6 +51,10 @@ public:
     /// @param mode サイズ変更モード
     void SetSizeChangeMode(SizeChangeMode mode);
 
+    /// @brief ウィンドウモードの設定
+    /// @param mode ウィンドウモード
+    void SetWindowMode(WindowMode mode);
+
     /// @brief メッセージ処理
     /// @return メッセージ処理結果
     int ProccessMessage();
@@ -66,6 +76,8 @@ private:
     UINT windowStyle_;
     /// @brief サイズ変更モード
     SizeChangeMode sizeChangeMode_ = SizeChangeMode::kNone;
+    /// @brief ウィンドウモード
+    WindowMode windowMode_ = WindowMode::kWindow;
     /// @brief アスペクト比
     float aspectRatio_;
     /// @brief サイズ変更フラグ
