@@ -1,98 +1,103 @@
 #pragma once
-#include <string>
-#include <unordered_map>
-#include "Math/Vector2.h"
-#include "Math/Vector4.h"
-#include "Math/Matrix3x3.h"
+#include <Objects/Sprite.h>
+#include <bitset>
+#include <functional>
+#include "UIElements.h"
 
 namespace KashipanEngine {
+
+struct UIEventFrags {
+    enum class EventType {
+        kClick,     // クリックされたとき
+        kClicking,  // クリックしている間
+        kClicked,   // クリックが終了したとき
+        kSelect,    // 選択されたとき
+        kHover,     // カーソルがUIの上にあるとき
+        kFocus,     // 入力欄がアクティブになったとき
+        kGrab,      // 要素を掴んでいるとき
+        kDrag,      // 要素を掴んで動かしているとき
+        kResize,    // UIのサイズが変更されたとき
+        kActive,    // UIがアクティブな状態のとき
+
+        // イベントの総数
+        kCount
+    };
+    std::bitset<static_cast<size_t>(EventType::kCount)> flags;
+};
 
 class BaseUI {
 public:
     BaseUI() = delete;
-    BaseUI(const std::string &name) : name_(name) {
-    }
+    BaseUI(const std::string &name, Renderer *renderer);
     virtual ~BaseUI() = default;
 
-    virtual void Update(float deltaTime) = 0;
+    virtual void Update() = 0;
     virtual void Draw() const = 0;
+
+    /// @brief イベント通知関数
+    /// @param eventType イベントの種類
+    void OnEvent(UIEventFrags::EventType eventType) {
+        eventFrags_.flags.set(static_cast<size_t>(eventType), true);
+    }
+
+    /// @brief イベントが発生しているかどうかの確認用関数
+    /// @param eventType イベントの種類
+    /// @return true: イベントが発生している, false: 発生していない
+    bool IsEvented(UIEventFrags::EventType eventType) const {
+        return eventFrags_.flags.test(static_cast<size_t>(eventType));
+    }
+
+    void AddChild(BaseUI *child);
+    void RemoveChild(const std::string &name);
+    BaseUI *GetChild(const std::string &name) const;
 
     const std::string &GetName() const {
         return name_;
     }
-    const Vector2 &GetPosition() const {
-        return pos_;
+    template <typename T>
+    const T &GetUIElement(const std::string &name) {
+        return uiElements_.Get<T>(name);
     }
-    const Vector2 &GetSize() const {
-        return size_;
+    const UIEventFrags &GetEventFrags() const {
+        return eventFrags_;
     }
-    const Vector2 &GetAnchor() const {
-        return anchor_;
-    }
-    const Vector2 &GetPivot() const {
-        return pivot_;
-    }
-    const Vector2 &GetOffset() const {
-        return offset_;
-    }
-    const Vector4 &GetColor() const {
-        return color_;
-    }
-    float GetDegree() const {
-        return degree_;
-    }
-    bool IsVisible() const {
-        return visible_;
-    }
-    const Matrix3x3 &GetLocalMatrix() const {
-        return localMatrix_;
-    }
-    const Matrix3x3 &GetWorldMatrix() const {
-        return worldMatrix_;
+    const WorldTransform &GetWorldTransform() {
+        return *worldTransform_;
     }
 
-    void SetPosition(const Vector2 &pos) {
-        pos_ = pos;
+    template <typename T>
+    void SetUIElement(const std::string &name, const T &val) {
+        if constexpr (std::is_convertible_v<T, uint32_t>) {
+            if (name == "textureIndex") {
+                sprite_->SetTexture(static_cast<uint32_t>(val));
+            }
+        }
+        uiElements_.Set(name, val);
     }
-    void SetSize(const Vector2 &size) {
-        size_ = size;
-    }
-    void SetAnchor(const Vector2 &anchor) {
-        anchor_ = anchor;
-    }
-    void SetPivot(const Vector2 &pivot) {
-        pivot_ = pivot;
-    }
-    void SetOffset(const Vector2 &offset) {
-        offset_ = offset;
-    }
-    void SetColor(const Vector4 &color) {
-        color_ = color;
-    }
-    void SetDegree(float degree) {
-        degree_ = degree;
-    }
-    void SetVisible(bool visible) {
-        visible_ = visible;
-    }
-    void SetParentMatrix(const Matrix3x3 &parentMatrix) {
-        parentMatrix_ = parentMatrix;
+
+    void SetParentWorldMatrix(const WorldTransform *parentWorldTransform) {
+        worldTransform_->parentTransform_ = parentWorldTransform;
     }
     
-private:
-    const std::string name_;
-    Vector2 pos_ = { 0.0f, 0.0f };
-    Vector2 size_ = { 0.0f, 0.0f };
-    Vector2 anchor_ = { 0.0f, 0.0f };
-    Vector2 pivot_ = { 0.5f, 0.5f };
-    Vector2 offset_ = { 0.0f, 0.0f };
-    Vector4 color_ = { 255.0f, 255.0f, 255.0f, 255.0f };
-    Matrix3x3 localMatrix_ = Matrix3x3::Identity();
-    Matrix3x3 worldMatrix_ = Matrix3x3::Identity();
-    Matrix3x3 parentMatrix_ = Matrix3x3::Identity();
-    float degree_ = 0.0f;
-    bool visible_ = true;
+protected:
+    void UpdateCommon();
+    void UpdateEvent();
 
+    /// @brief イベントリセット用関数
+    void ResetEventFrags() {
+        eventFrags_.flags.reset();
+    }
+
+    /// @brief UIの名前(識別用)
+    const std::string name_;
+
+    std::unique_ptr<Sprite> sprite_ = nullptr;
+    std::unique_ptr<WorldTransform> worldTransform_ = nullptr;
+    UIElements uiElements_;
+    UIEventFrags eventFrags_ = {};
+
+    std::unordered_map<UIEventFrags::EventType, std::function<bool(BaseUI *)>> eventChecks_;
+    std::unordered_map<UIEventFrags::EventType, std::function<void()>> eventFunctions_;
     std::unordered_map<std::string, BaseUI *> children_;
 };
 

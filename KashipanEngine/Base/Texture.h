@@ -32,6 +32,11 @@ public:
     /// @param index テクスチャのインデックス
     /// @return テクスチャデータ
     static [[nodiscard]] const TextureData &GetTexture(uint32_t index);
+
+    /// @brief テクスチャデータの取得
+    /// @param filePath テクスチャのファイルパス
+    /// @return テクスチャデータ
+    static [[nodiscard]] const TextureData &GetTexture(const std::string &filePath);
 };
 
 } // namespace KashipanEngine

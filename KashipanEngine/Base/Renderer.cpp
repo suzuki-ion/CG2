@@ -142,6 +142,16 @@ void Renderer::PreDraw() {
     drawAlphaObjects_.clear();
     draw2DObjects_.clear();
 
+    // 2D用のプロジェクション行列を設定
+    projectionMatrix2D_ = MakeOrthographicMatrix(
+        0.0f,
+        0.0f,
+        static_cast<float>(winApp_->GetClientWidth()),
+        static_cast<float>(winApp_->GetClientHeight()),
+        0.0f,
+        100.0f
+    );
+
     // ビューポートの設定
     viewport_.Width = static_cast<FLOAT>(winApp_->GetClientWidth());
     viewport_.Height = static_cast<FLOAT>(winApp_->GetClientHeight());

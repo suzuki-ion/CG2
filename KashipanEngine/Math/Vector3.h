@@ -4,6 +4,7 @@
 
 namespace KashipanEngine {
 
+struct Vector2;
 struct Vector4;
 struct Matrix4x4;
 
@@ -18,6 +19,7 @@ struct Vector3 {
     constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}
     explicit constexpr Vector3(float v) noexcept : x(v), y(v), z(v) {}
     Vector3(const Vector3 &vector) : x(vector.x), y(vector.y), z(vector.z) {}
+    Vector3(const Vector2 &vector) noexcept;
     Vector3(const Vector4 &vector) noexcept;
 
     Vector3 &operator=(const Vector3 &vector) noexcept;
