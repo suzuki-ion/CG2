@@ -8,6 +8,8 @@ namespace KashipanEngine {
 struct TextureData {
     /// @brief テクスチャの名前
     std::string name;
+    /// @brief テクスチャが読み込まれたインデックス
+    uint32_t index = -1;
     /// @brief テクスチャリソース
     Microsoft::WRL::ComPtr<ID3D12Resource> resource;
     /// @brief 中間リソース

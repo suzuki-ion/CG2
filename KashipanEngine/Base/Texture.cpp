@@ -5,6 +5,7 @@
 #include "Common/Logs.h"
 #include "Common/ConvertString.h"
 #include "Common/Descriptors/SRV.h"
+#include <unordered_map>
 
 namespace KashipanEngine {
 
@@ -13,7 +14,9 @@ namespace {
 /// @brief DirectXCommonインスタンス
 DirectXCommon *sDxCommon = nullptr;
 /// @brief テクスチャのデータ
-std::vector<TextureData> sTextures;
+std::unordered_map<std::string, TextureData> sTextureMap;
+/// @brief テクスチャのファイルパス
+std::vector<std::string> sTextureFilePaths;
 
 /// @brief テクスチャファイルを読み込んで扱えるようにする
 /// @param filePath テクスチャファイルのパス
@@ -75,13 +78,14 @@ void CreateTextureResource(const DirectX::TexMetadata &metadata) {
     // Resourceを生成する
     //==================================================
 
+    auto textureResource = &sTextureMap[sTextureFilePaths.back()].resource;
     HRESULT hr = sDxCommon->GetDevice()->CreateCommittedResource(
-        &heapProperties,                            // Heapの設定
-        D3D12_HEAP_FLAG_NONE,                       // Heapの特殊な設定
-        &resourceDesc,                              // Resourceの設定
-        D3D12_RESOURCE_STATE_COPY_DEST,             // データ転送される設定
-        nullptr,                                    // Clear最適値。使わないのでnullptr
-        IID_PPV_ARGS(&sTextures.back().resource)    // 作成するResourceポインタへのポインタ
+        &heapProperties,                // Heapの設定
+        D3D12_HEAP_FLAG_NONE,           // Heapの特殊な設定
+        &resourceDesc,                  // Resourceの設定
+        D3D12_RESOURCE_STATE_COPY_DEST, // データ転送される設定
+        nullptr,                        // Clear最適値。使わないのでnullptr
+        IID_PPV_ARGS(textureResource)   // 作成するResourceポインタへのポインタ
     );
     if (FAILED(hr)) assert(SUCCEEDED(hr));
 }
@@ -147,7 +151,8 @@ void Texture::Initialize(DirectXCommon *dxCommon) {
 
 void Texture::Finalize() {
     // テクスチャのリソースを解放
-    for (auto &texture : sTextures) {
+    for (auto &textureFilePath : sTextureFilePaths) {
+        auto &texture = sTextureMap[textureFilePath];
         if (texture.resource) {
             texture.resource.Reset();
         }
@@ -155,18 +160,17 @@ void Texture::Finalize() {
             texture.intermediateResource.Reset();
         }
     }
-    sTextures.clear();
+    sTextureMap.clear();
+    sTextureFilePaths.clear();
     // 終了完了のログを出力
     Log("Texture Finalized.");
 }
 
 uint32_t Texture::Load(const std::string &filePath) {
     // 読み込む前に同じ名前のテクスチャがあるか確認
-    for (const auto &texture : sTextures) {
-        if (texture.name == filePath) {
-            // すでに読み込まれている場合はそのインデックスを返す
-            return static_cast<uint32_t>(&texture - &sTextures[0]);
-        }
+    if (sTextureMap.find(filePath) != sTextureMap.end()) {
+        Log(std::format("Texture already loaded: {}", filePath), kLogLevelFlagWarning);
+        return sTextureMap[filePath].index;
     }
 
     // テクスチャファイルを読み込んで扱えるようにする
@@ -177,6 +181,7 @@ uint32_t Texture::Load(const std::string &filePath) {
     // テクスチャデータを作成
     TextureData texture = {
         filePath,
+        static_cast<uint32_t>(sTextureMap.size()),
         nullptr,
         nullptr,
         // SRVを作成するDescriptorHeapの場所を決める
@@ -186,14 +191,15 @@ uint32_t Texture::Load(const std::string &filePath) {
         static_cast<uint32_t>(metadata.width),
         static_cast<uint32_t>(metadata.height)
     };
-    sTextures.push_back(texture);
+    sTextureMap[filePath] = texture;
+    sTextureFilePaths.push_back(filePath);
 
     // テクスチャリソースを作成
     CreateTextureResource(metadata);
 
     // テクスチャリソースをアップロード
-    sTextures.back().intermediateResource = UploadTextureData(
-        sTextures.back().resource.Get(),
+    sTextureMap[filePath].intermediateResource = UploadTextureData(
+        sTextureMap[filePath].resource.Get(),
         mipImages
     );
 
@@ -209,16 +215,16 @@ uint32_t Texture::Load(const std::string &filePath) {
 
     // SRVの生成
     sDxCommon->GetDevice()->CreateShaderResourceView(
-        sTextures.back().resource.Get(),
+        sTextureMap[filePath].resource.Get(),
         &srvDesc,
-        sTextures.back().srvHandleCPU
+        sTextureMap[filePath].srvHandleCPU
     );
 
     // Barrierを元に戻す
     D3D12_RESOURCE_BARRIER barrier{};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = sTextures.back().resource.Get();
+    barrier.Transition.pResource = sTextureMap[filePath].resource.Get();
     barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -227,23 +233,33 @@ uint32_t Texture::Load(const std::string &filePath) {
     // 読み込んだテクスチャとそのインデックスをログに出力
     Log(std::format("Load Texture: {} ({}x{}) index: {}",
         filePath,
-        sTextures.back().width,
-        sTextures.back().height,
-        static_cast<uint32_t>(sTextures.size() - 1)
+        sTextureMap[filePath].width,
+        sTextureMap[filePath].height,
+        static_cast<uint32_t>(sTextureMap[filePath].index)
     ), kLogLevelFlagInfo);
 
     // テクスチャのインデックスを返す
-    return static_cast<uint32_t>(sTextures.size() - 1);
+    return static_cast<uint32_t>(sTextureMap[filePath].index);
 }
 
 const TextureData &Texture::GetTexture(uint32_t index) {
-    // インデックスが範囲外の場合は0を返す
-    if (index >= sTextures.size()) {
+    // インデックスが範囲外の場合はデフォルトのテクスチャを返す
+    if (index >= sTextureFilePaths.size()) {
         Log("TextureData index out of range.", kLogLevelFlagWarning);
-        return sTextures[0];
+        return sTextureMap[sTextureFilePaths[0]];
     }
     // テクスチャデータを返す
-    return sTextures[index];
+    return sTextureMap[sTextureFilePaths[index]];
+}
+
+const TextureData &Texture::GetTexture(const std::string &filePath) {
+    // ファイルパスが存在しない場合はデフォルトのテクスチャを返す
+    if (sTextureMap.find(filePath) == sTextureMap.end()) {
+        Log(std::format("TextureData not found: {}", filePath), kLogLevelFlagWarning);
+        return sTextureMap[sTextureFilePaths[0]];
+    }
+    // テクスチャデータを返す
+    return sTextureMap[filePath];
 }
 
 } // namespace KashipanEngine

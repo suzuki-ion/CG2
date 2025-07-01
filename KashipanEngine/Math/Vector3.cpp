@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include "Vector2.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
 #include "MathObjects/Lines.h"
@@ -8,6 +9,12 @@ namespace KashipanEngine {
 
 Vector3 Vector3::Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept {
     return t * start + (1.0f - t) * end;
+}
+
+Vector3::Vector3(const Vector2 &vector) noexcept {
+    x = vector.x;
+    y = vector.y;
+    z = 0.0f;
 }
 
 Vector3::Vector3(const Vector4 &vector) noexcept {

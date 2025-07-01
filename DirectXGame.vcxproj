@@ -61,7 +61,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
@@ -90,7 +90,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
@@ -112,7 +112,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
-    <ClCompile Include="KashipanEngine\2d\UI\Component\IsClick.cpp" />
+    <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp" />
+    <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
+    <ClCompile Include="KashipanEngine\2d\UI\GUI\Button.cpp" />
+    <ClCompile Include="KashipanEngine\2d\UI\UIGroup.cpp" />
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
@@ -168,10 +171,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
-    <ClInclude Include="KashipanEngine\2d\UI\Component\IsClick.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\Component\Animation.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h" />
-    <ClInclude Include="KashipanEngine\2d\UI\Component\UIComponent.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\UIElements.h" />
+    <ClInclude Include="KashipanEngine\2d\UI\UIGroup.h" />
     <ClInclude Include="KashipanEngine\3d\DiffuseLight.h" />
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />

@@ -19,6 +19,9 @@
 #include "Objects/Model.h"
 #include "Objects/Plane.h"
 
+#include "2d/UI/GUI/Button.h"
+#include "2d/UI/UIGroup.h"
+
 using namespace KashipanEngine;
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -152,6 +155,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     float pitch = 0.0f;
     bool isLoop = false;
 
+    //==================================================
+    // ボタン
+    //==================================================
+
+    // ボタン1
+    Button button1("TestButton1", renderer);
+    button1.SetUIElement<int>(
+        "textureIndex",
+        Texture::Load("Resources/tmpButton.png")
+    );
+    button1.SetUIElement("pos", Vector2(32.0f, 64.0f));
+    
+    // ボタン2
+    Button button2("TestButton2", renderer);
+    button2.SetUIElement<int>(
+        "textureIndex",
+        Texture::Load("Resources/tmpButton.png")
+    );
+    button2.SetUIElement("pos", Vector2(352.0f, 64.0f));
+
+    //==================================================
+    // UIグループ
+    //==================================================
+
+    UIGroup uiGroup("TestUIGroup", renderer);
+    uiGroup.SetUIElement<int>(
+        "textureIndex",
+        Texture::Load("Resources/tmpUIGroup.png")
+    );
+    uiGroup.AddChild(&button1);
+    uiGroup.AddChild(&button2);
+
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
         myGameEngine->BeginFrame();
@@ -259,6 +294,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             ImGui::TreePop();
         }
 
+        // UIグループ
+        if (ImGui::TreeNode("UIグループ")) {
+            Vector2 pos = uiGroup.GetUIElement<Vector2>("pos");
+            Vector2 scale = uiGroup.GetUIElement<Vector2>("scale");
+            float degree = uiGroup.GetUIElement<float>("degree");
+            Vector4 color = uiGroup.GetUIElement<Vector4>("color");
+            ImGui::DragFloat2("UIGroup Translate", &pos.x, 1.0f);
+            ImGui::DragFloat2("UIGroup Scale", &scale.x, 0.01f, 0.0f, 100.0f);
+            ImGui::DragFloat("UIGroup Degree", &degree, 0.1f);
+            ImGui::DragFloat4("UIGroup Color", &color.x, 1.0f, 0.0f, 255.0f);
+            ImGui::TreePop();
+            uiGroup.SetUIElement("pos", pos);
+            uiGroup.SetUIElement("scale", scale);
+            uiGroup.SetUIElement("degree", degree);
+            uiGroup.SetUIElement("color", color);
+        }
+
         ImGui::End();
 
         for (auto &icoShpereModel : icoSphere.GetModels()) {
@@ -266,6 +318,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             icoShpereModel.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
             icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
         }
+
+        button1.Update();
+        button2.Update();
+        //uiGroup.Update();
 
         //==================================================
         // 描画処理
@@ -281,9 +337,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // ICO球の描画
         icoSphere.Draw();
         // モデルの描画
-        model.Draw();
+        //model.Draw();
         // 板の描画
         floor.Draw();
+        // ボタンの描画
+        button1.Draw();
+        button2.Draw();
+        //uiGroup.Draw();
         
         renderer->PostDraw();
         myGameEngine->EndFrame();
