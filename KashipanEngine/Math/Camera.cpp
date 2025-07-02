@@ -176,12 +176,12 @@ void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotate
     };
 
     if (Input::IsMouseButtonDown(0)) {
-        cameraTranslate_ += up * (-mousePos.y * translateSpeed);
-        cameraTranslate_ += right * (mousePos.x * translateSpeed);
+        // カメラの向きをもとに上・右方向ベクトルを生成
+        Vector3 up = CalcCameraUp(cameraRotate_);
         Vector3 right = CalcCameraRight(cameraRotate_);
 
-        cameraTranslate_ += up * (mousePos.y * translateSpeed);
-        cameraTranslate_ += right * (mousePos.x * translateSpeed);
+        cameraTranslate_ += up * (mousePosDelta.y * translateSpeed);
+        cameraTranslate_ += right * (mousePosDelta.x * translateSpeed);
     }
     // 右クリックで回転
     if (Input::IsMouseButtonDown(1)) {

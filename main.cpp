@@ -319,9 +319,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
         }
 
-        button1.Update();
-        button2.Update();
-        //uiGroup.Update();
+        uiGroup.Update();
 
         //==================================================
         // 描画処理
