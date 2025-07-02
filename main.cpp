@@ -337,7 +337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // ICO球の描画
         icoSphere.Draw();
         // モデルの描画
-        //model.Draw();
+        model.Draw();
         // 板の描画
         floor.Draw();
         // ボタンの描画

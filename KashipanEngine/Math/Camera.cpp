@@ -169,14 +169,10 @@ void Camera::CalculateMatrixForSpherical() noexcept {
 }
 
 void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
-    static Vector2 mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
-    static Vector2 lastMousePos = mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
+    static Vector2 mousePosDelta;
+    mousePosDelta = {
+        static_cast<float>(Input::GetMouseDeltaX()),
+        static_cast<float>(Input::GetMouseDeltaY())
     };
 
     if (Input::IsMouseButtonDown(0)) {
@@ -201,10 +197,10 @@ void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotate
 }
 
 void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
-    static Vector2 mousePos;
-    mousePos = {
-        static_cast<float>(Input::GetMouseX()),
-        static_cast<float>(Input::GetMouseY())
+    static Vector2 mousePosDelta;
+    mousePosDelta = {
+        static_cast<float>(Input::GetMouseDeltaX()),
+        static_cast<float>(Input::GetMouseDeltaY())
     };
 
     // Shiftキーを押しているときは移動
@@ -215,15 +211,15 @@ void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rot
             // カメラの向きをもとに上・右方向ベクトルを生成
             Vector3 up = CalcCameraUp(cameraRotate_);
             Vector3 right = CalcCameraRight(cameraRotate_);
-            sphericalCoordinateSystem_.origin += up * (-mousePos.y * adjustedTranslateSpeed);
-            sphericalCoordinateSystem_.origin += right * (mousePos.x * adjustedTranslateSpeed);
+            sphericalCoordinateSystem_.origin += up * (-mousePosDelta.y * adjustedTranslateSpeed);
+            sphericalCoordinateSystem_.origin += right * (mousePosDelta.x * adjustedTranslateSpeed);
         }
 
     } else if (Input::IsMouseButtonDown(2)) {
-        sphericalCoordinateSystem_.theta += -mousePos.x * rotateSpeed;
-        sphericalCoordinateSystem_.phi += -mousePos.y * rotateSpeed;
-        cameraRotate_.x += mousePos.y * rotateSpeed;
-        cameraRotate_.y += mousePos.x * rotateSpeed;
+        sphericalCoordinateSystem_.theta += -mousePosDelta.x * rotateSpeed;
+        sphericalCoordinateSystem_.phi += -mousePosDelta.y * rotateSpeed;
+        cameraRotate_.x += mousePosDelta.y * rotateSpeed;
+        cameraRotate_.y += mousePosDelta.x * rotateSpeed;
     }
 
     // マウスホイールで半径を変更
