@@ -285,9 +285,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 
-        button1.Update();
-        button2.Update();
-        //uiGroup.Update();
+        uiGroup.Update();
 
         //==================================================
         // 描画処理
@@ -305,9 +303,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 板の描画
         floor.Draw();
         // ボタンの描画
-        button1.Draw();
-        button2.Draw();
-        //uiGroup.Draw();
+        uiGroup.Draw();
         
         renderer->PostDraw();
         myGameEngine->EndFrame();
