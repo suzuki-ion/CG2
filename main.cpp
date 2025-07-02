@@ -259,10 +259,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 
-        for (auto &model : icoSphere.GetModels()) {
-            model.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
-            model.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
-            model.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
+        for (auto &icoShpereModel : icoSphere.GetModels()) {
+            icoShpereModel.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
+            icoShpereModel.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
+            icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
         }
 
         //==================================================
