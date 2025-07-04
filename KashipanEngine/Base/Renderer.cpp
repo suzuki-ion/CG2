@@ -72,7 +72,7 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Vector3(1.0f, 1.0f, 1.0f)
     );
     // 球面座標系に設定
-    sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
+    sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kDecart);
 
     //==================================================
     // パイプラインセットの初期化

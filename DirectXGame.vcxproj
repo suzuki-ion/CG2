@@ -127,6 +127,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\Descriptors\DSV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\RTV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp" />
+    <ClCompile Include="KashipanEngine\Common\Easings.cpp" />
+    <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
     <ClCompile Include="KashipanEngine\Common\TimeGet.cpp" />
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
@@ -171,7 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
-    <ClInclude Include="KashipanEngine\2d\UI\Component\Animation.h" />
+    <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h" />
     <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h" />
@@ -192,6 +194,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Descriptors\DSV.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\RTV.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\SRV.h" />
+    <ClInclude Include="KashipanEngine\Common\Easings.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
     <ClInclude Include="MyStd\OnlyPointer.h" />
     <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h" />

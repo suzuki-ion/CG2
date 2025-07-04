@@ -56,10 +56,6 @@ public:
     /// @return レンダラーへのポインタ
     KashipanEngine::Renderer *GetRenderer() const;
 
-    /// @brief テクスチャ管理クラスのポインタ取得
-    /// @return テクスチャ管理クラスのポインタ
-    KashipanEngine::Texture *GetTexture() const;
-    
     /// @brief メッセージ処理
     /// @return メッセージ処理結果。-1の場合は終了
     int ProccessMessage();

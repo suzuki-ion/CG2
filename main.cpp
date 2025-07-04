@@ -13,6 +13,7 @@
 
 #include "Math/Camera.h"
 #include "Common/ConvertColor.h"
+#include "Common/KeyFrameAnimation.h"
 
 #include "3d/DirectionalLight.h"
 #include "Objects/Sphere.h"
@@ -187,6 +188,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     uiGroup.AddChild(&button1);
     uiGroup.AddChild(&button2);
 
+    //==================================================
+    // アニメーション用変数
+    //==================================================
+
+    KeyFrameAnimation keyFrameAnimation;
+    KeyFrameElementData keyFrameElementData;
+
+    keyFrameElementData.keyFrames.push_back({ 0.0f, -2.0f, Ease::InOutSine });
+    keyFrameElementData.keyFrames.push_back({ 1.0f, +2.0f, Ease::InOutSine });
+    keyFrameElementData.keyFrames.push_back({ 2.0f, -2.0f, Ease::InOutSine });
+    keyFrameAnimation.SetKeyFrameElementData(KeyFrameElementType::kPositionX, keyFrameElementData);
+    keyFrameElementData.keyFrames.clear();
+    keyFrameElementData.keyFrames.push_back({ 0.0f, +0.0f, Ease::OutSine });
+    keyFrameElementData.keyFrames.push_back({ 0.5f, +2.0f, Ease::InOutSine });
+    keyFrameElementData.keyFrames.push_back({ 1.5f, -2.0f, Ease::InSine });
+    keyFrameElementData.keyFrames.push_back({ 2.0f, +0.0f, Ease::OutSine });
+    keyFrameAnimation.SetKeyFrameElementData(KeyFrameElementType::kPositionZ, keyFrameElementData);
+
+    keyFrameAnimation.SetLoop(true);
+    keyFrameAnimation.Play();
+
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
         myGameEngine->BeginFrame();
@@ -313,10 +335,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 
+        keyFrameAnimation.Update();
         for (auto &icoShpereModel : icoSphere.GetModels()) {
             icoShpereModel.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
             icoShpereModel.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
             icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
+            icoShpereModel.GetStatePtr().transform->translate.x =
+                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionX);
+            icoShpereModel.GetStatePtr().transform->translate.z =
+                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionZ);
         }
 
         uiGroup.Update();

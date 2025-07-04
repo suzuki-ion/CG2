@@ -183,6 +183,12 @@
     <ClCompile Include="KashipanEngine\2d\UI\UIGroup.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Easings.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\Common\ConvertString.h">
@@ -404,9 +410,6 @@
     <ClInclude Include="KashipanEngine\2d\UI\UIGroup.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\2d\UI\Component\Animation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -414,6 +417,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\Math\SphericalCoordinateSystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Easings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
