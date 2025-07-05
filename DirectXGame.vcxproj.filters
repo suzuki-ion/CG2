@@ -427,13 +427,18 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl" />
-    <FxCompile Include="KashipanEngine\Shader\Object3d.PS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Object3D\Object3D.VS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Object3D\Object3D.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="KashipanEngine\Shader\Object3d.hlsli" />
+    <None Include="KashipanEngine\Shader\Object3D\Object3D.hlsli" />
+    <None Include="KashipanEngine\Shader\Particle\Particle.hlsli" />
+    <None Include="KashipanEngine\Shader\Particle\Particle.PS.hlsl" />
+    <None Include="KashipanEngine\Shader\Particle\Particle.VS.hlsl" />
+    <None Include="KashipanEngine\Shader\ToColor.hlsli" />
+    <None Include="KashipanEngine\Shader\Lighting.hlsli" />
   </ItemGroup>
 </Project>

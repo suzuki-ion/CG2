@@ -43,6 +43,8 @@ public:
         UINT vertexCount = 0;
         /// @brief インデックス数
         UINT indexCount = 0;
+        /// @brief 描画数
+        UINT instanceCount = 1;
         /// @brief テクスチャのインデックス
         int useTextureIndex = -1;
         /// @brief 塗りつぶしモード

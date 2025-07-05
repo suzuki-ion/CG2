@@ -72,7 +72,7 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Vector3(1.0f, 1.0f, 1.0f)
     );
     // 球面座標系に設定
-    sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kDecart);
+    sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
 
     //==================================================
     // パイプラインセットの初期化
@@ -292,9 +292,9 @@ void Renderer::DrawCommon(ObjectState *objectState) {
 
     // 描画コマンドを発行
     if (objectState->indexCount > 0) {
-        dxCommon_->GetCommandList()->DrawIndexedInstanced(objectState->indexCount, 1, 0, 0, 0);
+        dxCommon_->GetCommandList()->DrawIndexedInstanced(objectState->indexCount, objectState->instanceCount, 0, 0, 0);
     } else {
-        dxCommon_->GetCommandList()->DrawInstanced(objectState->vertexCount, 1, 0, 0);
+        dxCommon_->GetCommandList()->DrawInstanced(objectState->vertexCount, objectState->instanceCount, 0, 0);
     }
 }
 

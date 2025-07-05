@@ -19,6 +19,7 @@
 #include "Objects/Sphere.h"
 #include "Objects/Model.h"
 #include "Objects/Plane.h"
+#include "Objects/BillBoard.h"
 
 #include "2d/UI/GUI/Button.h"
 #include "2d/UI/UIGroup.h"
@@ -146,6 +147,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 塗りつぶしモードを設定
     *floorState.fillMode = kFillModeSolid;
     floor.SetRenderer(renderer);
+
+    //==================================================
+    // ビルボード
+    //==================================================
+
+    BillBoard billBoard(camera->GetRotatePtr());
+    billBoard.SetRenderer(renderer);
 
     //==================================================
     // 音声
