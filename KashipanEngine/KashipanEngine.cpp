@@ -52,6 +52,7 @@ std::unique_ptr<ImGuiManager> sImGuiManager;
 std::unique_ptr<Renderer> sRenderer;
 
 // フレーム時間計算用変数
+int sFrameRate = 60;
 LONGLONG sFrequency = 0;
 LONGLONG sElapsedTime = 0;
 LONGLONG sLastTime = 0;
@@ -67,11 +68,6 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // ログの初期化
     InitializeLog("Logs", projectDir.string());
     LogInsertPartition("\n================ Engine Initialize ===============\n");
-
-    // フレーム時間の初期化
-    LARGE_INTEGER freq;
-    QueryPerformanceFrequency(&freq);
-    sFrequency = freq.QuadPart;
 
     // COMの初期化
     HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -118,6 +114,11 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // 描画用クラス初期化
     sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get());
 
+    // フレーム時間の初期化
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+    sFrequency = freq.QuadPart;
+
     // 初期化完了のログを出力
     Log("Engine Initialized.");
     LogInsertPartition("\n============ Engine Initialize Finish ============\n");
@@ -146,18 +147,25 @@ void Engine::BeginFrame() {
     if (sWinApp->IsSizing()) {
         sDxCommon->Resize();
     }
+
     // 時間取得
     QueryPerformanceCounter(&sNowTime);
+    // sLastTimeが0の場合は代入だけして終わる
+    if (sLastTime == 0) {
+        sLastTime = sNowTime.QuadPart;
+        return;
+    }
+
     // 時間計算
     sElapsedTime = sNowTime.QuadPart - sLastTime;
     sElapsedSeconds = static_cast<float>(sElapsedTime) / sFrequency;
     sDeltaTime = sElapsedSeconds;
 }
 
-bool Engine::BeginGameLoop(int frameRate) {
+bool Engine::BeginGameLoop() {
     // 指定のフレームレートが1以下なら1固定
-    if (frameRate < 1) {
-        frameRate = 1;
+    if (sFrameRate < 1) {
+        sFrameRate = 1;
     } else {
         // モニターのフレームレートを取得
         HDC hdc = GetDC(sWinApp->GetWindowHandle());
@@ -165,12 +173,12 @@ bool Engine::BeginGameLoop(int frameRate) {
         ReleaseDC(sWinApp->GetWindowHandle(), hdc);
 
         // 指定のフレームレートがモニターのFPS以上なら垂直同期
-        if (frameRate > monitorFrameRate) {
-            frameRate = monitorFrameRate;
+        if (sFrameRate > monitorFrameRate) {
+            sFrameRate = monitorFrameRate;
         }
     }
 
-    if (sDeltaTime > 1.0f / static_cast<float>(frameRate)) {
+    if (sDeltaTime > 1.0f / static_cast<float>(sFrameRate)) {
         sLastTime = sNowTime.QuadPart;
         sCountFps = static_cast<unsigned int>(1.0f / sDeltaTime);
         return true;
@@ -179,6 +187,10 @@ bool Engine::BeginGameLoop(int frameRate) {
 }
 
 void Engine::EndFrame() {
+}
+
+void Engine::SetFrameRate(int frameRate) {
+    sFrameRate = frameRate;
 }
 
 float Engine::GetDeltaTime() {

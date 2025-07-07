@@ -14,7 +14,6 @@ namespace KashipanEngine {
 class WinApp;
 class DirectXCommon;
 class Renderer;
-class Texture;
 
 } // namespace KashipanEngine
 
@@ -29,12 +28,15 @@ public:
     void BeginFrame();
 
     /// @brief ゲームループ開始処理
-    /// @param frameRate フレームレート。最低24まで。無効な値(例: 24以下やモニターのFPS以上)の場合は垂直同期
     /// @return ゲームループを開始するかどうか
-    bool BeginGameLoop(int frameRate);
+    bool BeginGameLoop();
 
     /// @brief フレーム終了処理
     void EndFrame();
+
+    /// @brief フレームレート設定
+    /// @param frameRate フレームレート。最低24まで。無効な値(例: 24以下やモニターのFPS以上)の場合は垂直同期
+    void SetFrameRate(int frameRate);
 
     /// @brief デルタタイム取得
     /// @return デルタタイム

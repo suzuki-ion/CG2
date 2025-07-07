@@ -54,6 +54,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // フレームレート
     int frameRate = 60;
+    myGameEngine->SetFrameRate(frameRate);
 
     //==================================================
     // カメラ
@@ -212,7 +213,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
         myGameEngine->BeginFrame();
-        if (myGameEngine->BeginGameLoop(frameRate) == false) {
+        if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
         renderer->PreDraw();
@@ -244,6 +245,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // デルタタイムの表示
         ImGui::Text("DeltaTime: %f", myGameEngine->GetDeltaTime());
         ImGui::InputInt("フレームレート", &frameRate);
+        if (ImGui::Button("フレームレートを設定")) {
+            myGameEngine->SetFrameRate(frameRate);
+        }
         ImGui::Combo("ブレンドモード", reinterpret_cast<int *>(&blendMode), "ブレンド無し\0通常\0加算\0減算\0乗算\0反転\0");
         ImGui::End();
         // ブレンドモードの設定
