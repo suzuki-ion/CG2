@@ -21,7 +21,7 @@ void UIManager::AddUI(BaseUI *ui) {
 }
 
 void UIManager::RemoveUI(std::string name) {
-
+    static_cast<void>(name); // 未使用の引数を警告回避のためにキャスト
 }
 
 

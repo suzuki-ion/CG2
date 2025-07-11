@@ -253,7 +253,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // ブレンドモードの設定
         renderer->SetBlendMode(blendMode);
 
-        ImGuiManager::Begin("オブジェクト");
+        ImGui::Begin("入力テスト");
+        ImGui::Text("コントローラー トリガー：Left %d, Right %d", Input::GetXBoxLeftTrigger(), Input::GetXBoxRightTrigger());
+        ImGui::Text("コントローラー スティック：Left (%d, %d), Right (%d, %d)",
+            Input::GetXBoxLeftStickX(), Input::GetXBoxLeftStickY(),
+            Input::GetXBoxRightStickX(), Input::GetXBoxRightStickY()
+        );
+        ImGui::End();
+
+        ImGui::Begin("オブジェクト");
 
         // カメラ位置の表示
         ImGui::Text("カメラ位置: (%.2f, %.2f, %.2f)", camera->GetTranslate().x, camera->GetTranslate().y, camera->GetTranslate().z);

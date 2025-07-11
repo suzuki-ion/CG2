@@ -41,10 +41,15 @@ ImGuiManager::ImGuiManager(WinApp *winApp, DirectXCommon *dxCommon) {
         SRV::GetGPUDescriptorHandle()
     );
 
-    // 日本語フォントを設定
     ImGuiIO &io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\meiryo.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 
+    auto dpi = GetDpiForSystem();
+    // DPIに基づいてサイズを設定
+    float size = static_cast<float>(dpi) / 96.0f;
+    io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\meiryo.ttc", 18.0f * size, NULL, io.Fonts->GetGlyphRangesJapanese());
+    
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    
     // 初期化完了のログを出力
     Log("ImGuiManager Initialized.");
     LogNewLine();
@@ -62,9 +67,6 @@ ImGuiManager::~ImGuiManager() {
 
 void ImGuiManager::Begin(const char *name) {
     ImGui::Begin(name);
-    // ImGui上でのフォントサイズを設定
-    auto dpi = GetDpiForSystem();
-    ImGui::SetWindowFontScale(static_cast<float>(dpi) / 96.0f);
 }
 
 void ImGuiManager::BeginFrame() {
@@ -72,6 +74,30 @@ void ImGuiManager::BeginFrame() {
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("ファイル")) {
+            ImGui::MenuItem("新規作成", "Ctrl+N");
+            ImGui::MenuItem("開く", "Ctrl+O");
+            ImGui::MenuItem("保存", "Ctrl+S");
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("編集")) {
+            ImGui::MenuItem("元に戻す", "Ctrl+Z");
+            ImGui::MenuItem("やり直す", "Ctrl+Y");
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("オプション")) {
+            ImGui::MenuItem("設定", nullptr);
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 }
 
 void ImGuiManager::EndFrame() {
