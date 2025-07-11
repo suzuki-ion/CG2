@@ -49,6 +49,9 @@ XINPUT_STATE sPreControllerState[4] = {};
 /// @brief コントローラーのスティックのデッドゾーン
 SHORT sControllerStickDeadZone = 4096;
 
+/// @brief コントローラーの振動状態
+XINPUT_VIBRATION vibration = { 0 };
+
 /// @brief キーの押下取得関数マップ
 std::unordered_map<Input::CurrentOption, std::unordered_map<Input::DownStateOption, std::function<bool(int)>>> sGetKeyFunctions = {
     { Input::CurrentOption::Current, {
@@ -745,7 +748,7 @@ bool Input::IsXBoxButton(CurrentOption currentOption, DownStateOption downStateO
 }
 
 bool Input::IsXBoxButtonDown(XBoxButtonCode button, int index) {
-    return false;
+    return sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button) ? true : false;
 }
 
 bool Input::IsPreXBoxButtonDown(XBoxButtonCode button, int index) {
@@ -766,6 +769,36 @@ bool Input::IsXBoxConnected(int index) {
 
 bool Input::IsPreXBoxConnected(int index) {
     return false;
+}
+
+void Input::SetXBoxVibration(int index, int leftMotor, int rightMotor) {
+    // 値が-1でなければ振動を設定
+    if (leftMotor > -1) {
+        vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotor);
+    }
+    if (rightMotor > -1) {
+        vibration.wRightMotorSpeed = static_cast<WORD>(rightMotor);
+    }
+    // コントローラーの振動を設定
+    XInputSetState(index, &vibration);
+}
+
+void Input::StopXBoxVibration(int index) {
+    vibration.wLeftMotorSpeed = 0;
+    vibration.wRightMotorSpeed = 0;
+    XInputSetState(index, &vibration);
+}
+
+int Input::GetXBoxVibration(int index, LeftRightOption leftRightOption) {
+    switch (leftRightOption) {
+        case Input::LeftRightOption::Left:
+            return vibration.wLeftMotorSpeed;
+            break;
+        case Input::LeftRightOption::Right:
+            return vibration.wRightMotorSpeed;
+            break;
+    }
+    return 0;
 }
 
 } // namespace KashipanEngine

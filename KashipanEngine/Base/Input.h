@@ -526,6 +526,10 @@ public:
 
     //--------- 接続状態 ---------//
 
+    /// @brief 接続されているXBoxコントローラーの数を取得
+    /// @return 接続されているXBoxコントローラーの数 (0～4)
+    static int GetXBoxConnectedCount();
+
     /// @brief XBoxコントローラーの接続状態を取得
     /// @param index コントローラーのインデックス (0～3)
     /// @return 接続状態 (true: 接続されている, false: 接続されていない)
@@ -535,6 +539,24 @@ public:
     /// @param index コントローラーのインデックス (0～3)
     /// @return 接続状態 (true: 接続されている, false: 接続されていない)
     static bool IsPreXBoxConnected(int index = 0);
+
+    //--------- バイブレーション ---------//
+
+    /// @brief XBoxコントローラーのバイブレーションを設定
+    /// @param index コントローラーのインデックス (0～3)
+    /// @param leftMotor 左モーターの強さ (0～65535) (-1で現在の値を維持)
+    /// @param rightMotor 右モーターの強さ (0～65535) (-1で現在の値を維持)
+    static void SetXBoxVibration(int index, int leftMotor, int rightMotor);
+
+    /// @brief XBoxコントローラーのバイブレーションを停止
+    /// @param index コントローラーのインデックス (0～3)
+    static void StopXBoxVibration(int index);
+
+    /// @brief XBoxコントローラーのバイブレーション値を取得
+    /// @param index コントローラーのインデックス (0～3)
+    /// @param leftRightOption 左側か右側かのオプション
+    /// @return XBoxコントローラーのバイブレーション値
+    static int GetXBoxVibration(int index, LeftRightOption leftRightOption);
 
 private:
 };

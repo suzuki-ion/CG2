@@ -254,11 +254,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         renderer->SetBlendMode(blendMode);
 
         ImGui::Begin("入力テスト");
-        ImGui::Text("コントローラー トリガー：Left %d, Right %d", Input::GetXBoxLeftTrigger(), Input::GetXBoxRightTrigger());
-        ImGui::Text("コントローラー スティック：Left (%d, %d), Right (%d, %d)",
+        ImGui::Text("コントローラー トリガー：\n\tLeft %d, Right %d",
+            Input::GetXBoxLeftTrigger(), Input::GetXBoxRightTrigger());
+        ImGui::Text("コントローラー スティック：\n\tLeft (%d, %d), Right (%d, %d)",
             Input::GetXBoxLeftStickX(), Input::GetXBoxLeftStickY(),
-            Input::GetXBoxRightStickX(), Input::GetXBoxRightStickY()
-        );
+            Input::GetXBoxRightStickX(), Input::GetXBoxRightStickY());
+        ImGui::Text("コントローラー ボタン：\n\tA %d, B %d, X %d, Y %d, START %d, BACK %d,\n\tLEFT_THUMB %d, RIGHT_THUMB %d\n\tLEFT_SHOULDER %d, RIGHT_SHOULDER %d\n\tUP %d, DOWN %d, LEFT %d, RIGHT %d",
+            Input::IsXBoxButtonDown(XBoxButtonCode::A) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::B) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::X) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::Y) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::START) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::BACK) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT_THUMB) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT_THUMB) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT_SHOULDER) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT_SHOULDER) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::UP) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::DOWN) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT) ? 1 : 0,
+            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT) ? 1 : 0);
+        int xboxLeftMotor = Input::GetXBoxVibration(0, Input::LeftRightOption::Left);
+        int xboxRightMotor = Input::GetXBoxVibration(0, Input::LeftRightOption::Right);
+        ImGui::InputInt("XBox Left Motor", &xboxLeftMotor);
+        ImGui::InputInt("XBox Right Motor", &xboxRightMotor);
+        Input::SetXBoxVibration(0, xboxLeftMotor, xboxRightMotor);
         ImGui::End();
 
         ImGui::Begin("オブジェクト");
