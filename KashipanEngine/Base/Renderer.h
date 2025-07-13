@@ -5,6 +5,7 @@
 
 #include "Common/PipeLineSet.h"
 #include "Common/TransformationMatrix.h"
+#include "Common/VertexDataLine.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Matrix4x4.h"
 
@@ -29,7 +30,7 @@ public:
     /// @brief オブジェクト情報
     struct ObjectState {
         /// @brief メッシュへのポインタ
-        Mesh *mesh = nullptr;
+        Mesh<VertexData> *mesh = nullptr;
         /// @brief マテリアル用のリソースへのポインタ
         ID3D12Resource *materialResource = nullptr;
         /// @brief transformationMatrix用のリソースへのポインタ
@@ -47,6 +48,23 @@ public:
         int useTextureIndex = -1;
         /// @brief 塗りつぶしモード
         FillMode fillMode = kFillModeSolid;
+        /// @brief カメラを使用するかどうか
+        bool isUseCamera = false;
+    };
+
+    /// @brief ライン情報
+    struct LineState {
+        /// @brief メッシュへのポインタ
+        Mesh<VertexDataLine> *mesh = nullptr;
+        /// @brief transformationMatrix用のリソースへのポインタ
+        ID3D12Resource *transformationMatrixResource = nullptr;
+        /// @brief transformationMatrixマップ
+        TransformationMatrix *transformationMatrixMap = nullptr;
+
+        /// @brief 頂点数
+        UINT vertexCount = 0;
+        /// @brief インデックス数
+        UINT indexCount = 0;
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };
@@ -92,9 +110,13 @@ public:
         directionalLight_ = light;
     }
 
+    /// @brief 描画する線情報の設定
+    /// @param lineState 描画する線情報へのポインタ
+    void DrawSetLine(LineState &lineState);
+
     /// @brief 描画するオブジェクト情報の設定
     /// @param object 描画するオブジェクト情報へのポインタ
-    /// @brief isUseCamera カメラを使用しているかどうか
+    /// @param isUseCamera カメラを使用しているかどうか
     /// @param isSemitransparent 半透明オブジェクトかどうか
     void DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent);
 
@@ -109,6 +131,9 @@ private:
     /// @brief 共通の描画処理
     void DrawCommon(ObjectState *objectState);
 
+    /// @brief グリッド線の描画処理
+    void DrawLine(LineState *lineState);
+
     /// @brief WinAppインスタンス
     WinApp *winApp_ = nullptr;
     /// @brief DirectXCommonインスタンス
@@ -120,11 +145,15 @@ private:
     BlendMode blendMode_ = kBlendModeNormal;
     /// @brief パイプラインセット
     std::array<std::array<PipeLineSet, kBlendModeMax>, 2> pipelineSet_;
+    /// @brief ライン用のパイプラインセット
+    PipeLineSet linePipelineSet_;
 
     /// @brief デバッグカメラ使用フラグ
     bool isUseDebugCamera_ = false;
     /// @brief 平行光源へのポインタ
     DirectionalLight *directionalLight_ = nullptr;
+    /// @brief 描画する線
+    std::vector<LineState> drawLines_;
     /// @brief 描画するオブジェクト
     std::vector<ObjectState> drawObjects_;
     /// @brief 描画する半透明オブジェクト

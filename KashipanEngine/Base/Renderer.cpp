@@ -108,6 +108,8 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     pipelineSet_[kFillModeWireframe][kBlendModeExclusion] =
         PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeExclusion);
 
+    linePipelineSet_ = PrimitiveDrawer::CreateLinePipeline();
+
     // 初期化完了のログを出力
     Log("Renderer Initialized.");
     LogNewLine();
@@ -137,6 +139,8 @@ void Renderer::PreDraw() {
     drawObjects_.clear();
     drawAlphaObjects_.clear();
     draw2DObjects_.clear();
+    // グリッドラインのクリア
+    drawLines_.clear();
 
     // 2D用のプロジェクション行列を設定
     projectionMatrix2D_ = MakeOrthographicMatrix(
@@ -189,13 +193,16 @@ void Renderer::PostDraw() {
 
     // 平行光源の設定
     SetLightBuffer(directionalLight_);
-
     // 通常のオブジェクトの描画
     DrawCommon(drawObjects_);
     // 半透明オブジェクトの描画
     DrawCommon(drawAlphaObjects_);
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
+    // 線の描画
+    for (auto &line : drawLines_) {
+        DrawLine(&line);
+    }
 
     imguiManager_->EndFrame();
     dxCommon_->PostDraw();
@@ -208,6 +215,11 @@ void Renderer::ToggleDebugCamera() {
 
 void Renderer::SetCamera(Camera *camera) {
     sCameraPtr = camera;
+}
+
+void Renderer::DrawSetLine(LineState &lineState) {
+    // ラインを追加
+    drawLines_.push_back(lineState);
 }
 
 void Renderer::DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent) {
@@ -253,6 +265,11 @@ void Renderer::DrawCommon(std::vector<ObjectState> &objects) {
 }
 
 void Renderer::DrawCommon(ObjectState *objectState) {
+    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // ルートシグネチャを設定
+    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[objectState->fillMode][blendMode_].rootSignature.Get());
+    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[objectState->fillMode][blendMode_].pipelineState.Get());
+
     // Cameraがnullptrの場合は2D描画
     if (objectState->isUseCamera == false) {
         wvpMatrix2D_ = *objectState->worldMatrix * (viewMatrix2D_ * projectionMatrix2D_);
@@ -277,10 +294,6 @@ void Renderer::DrawCommon(ObjectState *objectState) {
         dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
     }
 
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // ルートシグネチャを設定
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[objectState->fillMode][blendMode_].rootSignature.Get());
-    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[objectState->fillMode][blendMode_].pipelineState.Get());
     // VBVを設定
     dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &objectState->mesh->vertexBufferView);
     // IBVを設定
@@ -295,6 +308,43 @@ void Renderer::DrawCommon(ObjectState *objectState) {
         dxCommon_->GetCommandList()->DrawIndexedInstanced(objectState->indexCount, 1, 0, 0, 0);
     } else {
         dxCommon_->GetCommandList()->DrawInstanced(objectState->vertexCount, 1, 0, 0);
+    }
+}
+
+void Renderer::DrawLine(LineState *lineState) {
+    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+    dxCommon_->GetCommandList()->SetGraphicsRootSignature(linePipelineSet_.rootSignature.Get());
+    dxCommon_->GetCommandList()->SetPipelineState(linePipelineSet_.pipelineState.Get());
+
+    // Cameraがnullptrの場合は2D描画
+    if (lineState->isUseCamera == false) {
+        wvpMatrix2D_ = (viewMatrix2D_ * projectionMatrix2D_);
+        lineState->transformationMatrixMap->wvp = wvpMatrix2D_;
+
+    } else {
+        if (isUseDebugCamera_) {
+            sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
+            sDebugCamera->CalculateMatrix();
+            lineState->transformationMatrixMap->wvp = sDebugCamera->GetWVPMatrix();
+        } else {
+            sCameraPtr->SetWorldMatrix(Matrix4x4::Identity());
+            sCameraPtr->CalculateMatrix();
+            lineState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
+        }
+    }
+
+    // TransformationMatrix用のCBufferの場所を指定
+    dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, lineState->transformationMatrixResource->GetGPUVirtualAddress());
+    // VBVを設定
+    dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &lineState->mesh->vertexBufferView);
+    // IBVを設定
+    dxCommon_->GetCommandList()->IASetIndexBuffer(&lineState->mesh->indexBufferView);
+
+    // 描画コマンドを発行
+    if (lineState->indexCount > 0) {
+        dxCommon_->GetCommandList()->DrawIndexedInstanced(lineState->indexCount, 1, 0, 0, 0);
+    } else {
+        dxCommon_->GetCommandList()->DrawInstanced(lineState->vertexCount, 1, 0, 0);
     }
 }
 

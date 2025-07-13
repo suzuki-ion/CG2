@@ -1,0 +1,247 @@
+#include "3d/PrimitiveDrawer.h"
+#include "Base/Renderer.h"
+#include "GridLine.h"
+
+namespace KashipanEngine {
+
+GridLine::GridLine(GridLineType type, float gridSize, UINT axisLineSideCount) {
+    type_ = type;
+    gridSize_ = gridSize;
+    axisLineSideCount_ = axisLineSideCount;
+    axisLineCount_ = axisLineSideCount * 2 + 1;
+    gridLineCount_ = axisLineCount_ * 2;
+    vertexCount_ = gridLineCount_ * 2;
+    indexCount_ = gridLineCount_ * 2;
+
+    pipeLineSet_ = PrimitiveDrawer::CreateLinePipeline();
+    mesh_ = PrimitiveDrawer::CreateMesh<VertexDataLine>(vertexCount_, indexCount_, sizeof(VertexDataLine));
+
+    switch (type_) {
+        case KashipanEngine::GridLineType::XZ:
+            GenerateGridXZ();
+            break;
+        case KashipanEngine::GridLineType::XY:
+            GenerateGridXY();
+            break;
+        case KashipanEngine::GridLineType::YZ:
+            GenerateGridYZ();
+            break;
+    }
+
+    transformationMatrixResource_ = PrimitiveDrawer::CreateBufferResources(sizeof(TransformationMatrix));
+    transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixMap_));
+}
+
+void GridLine::Draw() const {
+    Renderer::LineState lineState;
+    lineState.mesh = mesh_.get();
+    lineState.transformationMatrixResource = transformationMatrixResource_.Get();
+    lineState.transformationMatrixMap = transformationMatrixMap_;
+    lineState.indexCount = indexCount_;
+    lineState.vertexCount = vertexCount_;
+    lineState.isUseCamera = true;
+    renderer_->DrawSetLine(lineState);
+}
+
+void GridLine::GenerateGridXZ() {
+    Vector3 offset = {
+        -gridSize_ * static_cast<float>(axisLineSideCount_),
+        0.0f,
+        -gridSize_ * static_cast<float>(axisLineSideCount_)
+    };
+    float lineLengthHalf = gridSize_ * static_cast<float>(axisLineSideCount_);
+    int centerLine = static_cast<int>(axisLineSideCount_);
+    
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[i * 2 + 0] = i * 2 + 0;
+        mesh_->indexBufferMap[i * 2 + 1] = i * 2 + 1;
+
+        float xOffset = offset.x + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[i * 2 + 0] = {
+            { xOffset, offset.y, -lineLengthHalf, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[i * 2 + 1] = {
+            { xOffset, offset.y, lineLengthHalf, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.3f, 0.0f, 1.0f }; // 暗めの緑色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.3f, 0.0f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 1.0f, 0.0f, 1.0f }; // 明るい緑色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 1.0f, 0.0f, 1.0f };
+        }
+    }
+
+    UINT indexOffset = axisLineCount_ * 2;
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[indexOffset + i * 2 + 0] = indexOffset + i * 2 + 0;
+        mesh_->indexBufferMap[indexOffset + i * 2 + 1] = indexOffset + i * 2 + 1;
+
+        float zOffset = offset.z + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
+            { -lineLengthHalf, offset.y, zOffset, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
+            { lineLengthHalf, offset.y, zOffset, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.3f, 0.0f, 0.0f, 1.0f }; // 暗めの赤色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.3f, 0.0f, 0.0f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 1.0f, 0.0f, 0.0f, 1.0f }; // 明るい赤色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+        }
+    }
+}
+
+void GridLine::GenerateGridXY() {
+    Vector3 offset = {
+        -gridSize_ * static_cast<float>(axisLineSideCount_),
+        -gridSize_ * static_cast<float>(axisLineSideCount_),
+        0.0f
+    };
+    float lineLengthHalf = gridSize_ * static_cast<float>(axisLineSideCount_);
+    int centerLine = static_cast<int>(axisLineSideCount_);
+
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[i * 2 + 0] = i * 2 + 0;
+        mesh_->indexBufferMap[i * 2 + 1] = i * 2 + 1;
+
+        float xOffset = offset.x + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[i * 2 + 0] = {
+            { xOffset, -lineLengthHalf, offset.z, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[i * 2 + 1] = {
+            { xOffset, lineLengthHalf, offset.z, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.0f, 0.3f, 1.0f }; // 暗めの青色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.0f, 0.3f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.0f, 1.0f, 1.0f }; // 明るい青色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
+        }
+    }
+
+    UINT indexOffset = axisLineCount_ * 2;
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[indexOffset + i * 2 + 0] = indexOffset + i * 2 + 0;
+        mesh_->indexBufferMap[indexOffset + i * 2 + 1] = indexOffset + i * 2 + 1;
+
+        float yOffset = offset.y + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
+            { -lineLengthHalf, yOffset, offset.z, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
+            { lineLengthHalf, yOffset, offset.z, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.3f, 0.0f, 0.0f, 1.0f }; // 暗めの赤色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.3f, 0.0f, 0.0f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 1.0f, 0.0f, 0.0f, 1.0f }; // 明るい赤色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+        }
+    }
+}
+
+void GridLine::GenerateGridYZ() {
+    Vector3 offset = {
+        0.0f,
+        -gridSize_ * static_cast<float>(axisLineSideCount_),
+        -gridSize_ * static_cast<float>(axisLineSideCount_)
+    };
+    float lineLengthHalf = gridSize_ * static_cast<float>(axisLineSideCount_);
+    int centerLine = static_cast<int>(axisLineSideCount_);
+
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[i * 2 + 0] = i * 2 + 0;
+        mesh_->indexBufferMap[i * 2 + 1] = i * 2 + 1;
+        
+        float yOffset = offset.y + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[i * 2 + 0] = {
+            { offset.x, yOffset, -lineLengthHalf, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[i * 2 + 1] = {
+            { offset.x, yOffset, lineLengthHalf, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.3f, 0.0f, 1.0f }; // 暗めの緑色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.3f, 0.0f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 1.0f, 0.0f, 1.0f }; // 明るい緑色
+            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 1.0f, 0.0f, 1.0f };
+        }
+    }
+
+    UINT indexOffset = axisLineCount_ * 2;
+    for (int i = 0; i < static_cast<int>(axisLineCount_); i++) {
+        mesh_->indexBufferMap[indexOffset + i * 2 + 0] = indexOffset + i * 2 + 0;
+        mesh_->indexBufferMap[indexOffset + i * 2 + 1] = indexOffset + i * 2 + 1;
+        
+        float zOffset = offset.z + gridSize_ * static_cast<float>(i);
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
+            { offset.x, -lineLengthHalf, zOffset, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+        mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
+            { offset.x, lineLengthHalf, zOffset, 1.0f },
+            { 0.0f, 0.0f, 0.0f, 1.0f },
+            1.0f, 1.0f, 1.0f
+        };
+
+        // 特定の間隔で線の色を変える
+        if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.0f, 0.0f, 0.3f, 1.0f }; // 暗めの青色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.0f, 0.0f, 0.3f, 1.0f };
+        }
+        // 中心線の場合ははっきりとした色にする
+        if (i == centerLine) {
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.0f, 0.0f, 1.0f, 1.0f }; // 明るい青色
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
+        }
+    }
+}
+
+} // namespace KashipanEngine

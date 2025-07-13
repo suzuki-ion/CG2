@@ -1,8 +1,3 @@
-struct TransformationMatrix {
-	float4x4 WVP;
-	float4x4 World;
-};
-
 struct VertexShaderOutput {
 	float4 position : SV_POSITION;
 	float4 positionShadow : POSITION_SM;

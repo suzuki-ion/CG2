@@ -101,7 +101,7 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
 
 void Object::Create(UINT vertexCount, UINT indexCount) {
     // メッシュの生成
-    mesh_ = PrimitiveDrawer::CreateMesh(vertexCount, indexCount);
+    mesh_ = PrimitiveDrawer::CreateMesh<VertexData>(vertexCount, indexCount);
     // 頂点数とインデックス数を設定
     vertexCount_ = vertexCount;
     indexCount_ = indexCount;

@@ -14,6 +14,7 @@
 #include "Math/Camera.h"
 #include "Common/ConvertColor.h"
 #include "Common/KeyFrameAnimation.h"
+#include "Common/GridLine.h"
 
 #include "3d/DirectionalLight.h"
 #include "Objects/Sphere.h"
@@ -122,33 +123,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     //==================================================
-    // 床用の板
-    //==================================================
-
-    Plane floor;
-    Object::StatePtr floorState = floor.GetStatePtr();
-    // 左前
-    floorState.mesh->vertexBufferMap[0].position = { -5.0f, 0.0f, -5.0f, 1.0f };
-    floorState.mesh->vertexBufferMap[0].texCoord = { 0.0f, 1.0f };
-    // 左奥
-    floorState.mesh->vertexBufferMap[1].position = { -5.0f, 0.0f, 5.0f, 1.0f };
-    floorState.mesh->vertexBufferMap[1].texCoord = { 0.0f, 0.0f };
-    // 右前
-    floorState.mesh->vertexBufferMap[2].position = { 5.0f, 0.0f, -5.0f, 1.0f };
-    floorState.mesh->vertexBufferMap[2].texCoord = { 1.0f, 1.0f };
-    // 右奥
-    floorState.mesh->vertexBufferMap[3].position = { 5.0f, 0.0f, 5.0f, 1.0f };
-    floorState.mesh->vertexBufferMap[3].texCoord = { 1.0f, 0.0f };
-    floorState.material->enableLighting = true;
-    // テクスチャを設定
-    *floorState.useTextureIndex = textures[0];
-    // 法線の種類
-    *floorState.normalType = kNormalTypeFace;
-    // 塗りつぶしモードを設定
-    *floorState.fillMode = kFillModeSolid;
-    floor.SetRenderer(renderer);
-
-    //==================================================
     // 音声
     //==================================================
 
@@ -209,6 +183,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     keyFrameAnimation.SetLoop(true);
     keyFrameAnimation.Play();
+
+    //==================================================
+    // グリッド線
+    //==================================================
+
+    GridLine gridLineXZ(GridLineType::XZ, 1.0f, 100);
+    GridLine gridLineXY(GridLineType::XY, 1.0f, 100);
+    GridLine gridLineYZ(GridLineType::YZ, 1.0f, 100);
+    gridLineXZ.SetRenderer(renderer);
+    gridLineXY.SetRenderer(renderer);
+    gridLineYZ.SetRenderer(renderer);
+    // XZグリッド描画フラグ
+    bool isXZGrid = true;
+    // XYグリッド描画フラグ
+    bool isXYGrid = false;
+    // YZグリッド描画フラグ
+    bool isYZGrid = false;
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -297,6 +288,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             renderer->ToggleDebugCamera();
         }
 
+        // XZグリッドの描画フラグ
+        ImGui::Checkbox("XZグリッド描画", &isXZGrid);
+        // XYグリッドの描画フラグ
+        ImGui::Checkbox("XYグリッド描画", &isXYGrid);
+        // YZグリッドの描画フラグ
+        ImGui::Checkbox("YZグリッド描画", &isYZGrid);
+
         // 背景色
         ImGui::DragFloat4("背景色", &clearColor.x, 1.0f, 0.0f, 255.0f);
 
@@ -319,22 +317,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             ImGui::DragFloat3("DirectionalLight Direction", &directionalLight.direction.x, 0.01f);
             ImGui::DragFloat4("DirectionalLight Color", &directionalLight.color.x, 1.0f, 0.0f, 255.0f);
             ImGui::DragFloat("DirectionalLight Intensity", &directionalLight.intensity, 0.01f);
-            ImGui::TreePop();
-        }
-
-        // 板
-        if (ImGui::TreeNode("板")) {
-            ImGui::DragFloat3("Plane Translate", &floorState.transform->translate.x, 0.01f);
-            ImGui::DragFloat3("Plane Rotate", &floorState.transform->rotate.x, 0.01f);
-            ImGui::DragFloat3("Plane Scale", &floorState.transform->scale.x, 0.01f);
-            ImGui::DragFloat4("Plane MaterialColor", &floorState.material->color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::InputInt("Plane TextureIndex", floorState.useTextureIndex);
-            if (ImGui::TreeNode("Plane uvTransform")) {
-                ImGui::DragFloat2("Plane uvTransform Translate", &floorState.uvTransform->translate.x, 0.01f);
-                ImGui::DragFloat3("Plane uvTransform Rotate", &floorState.uvTransform->rotate.x, 0.01f);
-                ImGui::DragFloat2("Plane uvTransform Scale", &floorState.uvTransform->scale.x, 0.01f);
-                ImGui::TreePop();
-            }
             ImGui::TreePop();
         }
 
@@ -389,14 +371,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 平行光源を設定
         renderer->SetLight(&directionalLight);
 
+        // グリッド線の描画
+        if (isXZGrid) gridLineXZ.Draw();
+        if (isXYGrid) gridLineXY.Draw();
+        if (isYZGrid) gridLineYZ.Draw();
+
         // 球体の描画
         sphere.Draw();
         // ICO球の描画
         icoSphere.Draw();
         // モデルの描画
         model.Draw();
-        // 板の描画
-        floor.Draw();
         // ボタンの描画
         uiGroup.Draw();
         

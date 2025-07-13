@@ -79,7 +79,7 @@ inline constexpr const Vector3 operator/(const Vector3 &vector1, const Vector3 &
     return Vector3(vector1.x / vector2.x, vector1.y / vector2.y, vector1.z / vector2.z);
 }
 
-inline constexpr const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept;
-inline constexpr const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept;
+const Vector3 operator*(const Matrix4x4 &mat, const Vector3 &vector) noexcept;
+const Vector3 operator*(const Vector3 &vector, const Matrix4x4 &mat) noexcept;
 
 } // namespace KashipanEngine

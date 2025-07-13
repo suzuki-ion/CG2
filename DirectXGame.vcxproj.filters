@@ -189,6 +189,12 @@
     <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\GridLine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Vector4.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\Common\ConvertString.h">
@@ -425,15 +431,26 @@
     <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\GridLine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\VertexDataLine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl" />
     <FxCompile Include="KashipanEngine\Shader\Object3d.PS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Line.GS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Line.VS.hlsl" />
+    <FxCompile Include="KashipanEngine\Shader\Line.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="KashipanEngine\Shader\Object3d.hlsli" />
+    <None Include="KashipanEngine\Shader\Line.hlsli" />
+    <None Include="KashipanEngine\Shader\TransformationMatrix.hlsli" />
   </ItemGroup>
 </Project>

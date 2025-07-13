@@ -2,10 +2,10 @@
 #include <cstdint>
 #include <d3d12.h>
 #include <wrl.h>
-#include "VertexData.h"
 
 namespace KashipanEngine {
 
+template<typename T>
 // メッシュ
 struct Mesh {
     // 頂点バッファ
@@ -17,7 +17,7 @@ struct Mesh {
     // インデックスバッファビュー
     D3D12_INDEX_BUFFER_VIEW indexBufferView{};
     // 頂点バッファマップ
-    VertexData *vertexBufferMap = nullptr;
+    T *vertexBufferMap = nullptr;
     // インデックスバッファマップ
     uint32_t *indexBufferMap = nullptr;
 };

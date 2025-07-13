@@ -20,7 +20,7 @@ enum NormalType {
 class Object {
 public:
     struct StatePtr {
-        Mesh *mesh = nullptr;
+        Mesh<VertexData> *mesh = nullptr;
         Transform *transform = nullptr;
         Transform *uvTransform = nullptr;
         Material *material = nullptr;
@@ -73,7 +73,7 @@ protected:
     /// @brief TransformationMatrix用のリソース
     Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
     /// @brief メッシュ
-    std::unique_ptr<Mesh> mesh_;
+    std::unique_ptr<Mesh<VertexData>> mesh_;
     /// @brief 頂点数
     UINT vertexCount_ = 0;
     /// @brief インデックス数

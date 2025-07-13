@@ -763,6 +763,10 @@ bool Input::IsXBoxButtonRelease(XBoxButtonCode button, int index) {
     return false;
 }
 
+int Input::GetXBoxConnectedCount() {
+    return 0;
+}
+
 bool Input::IsXBoxConnected(int index) {
     return false;
 }

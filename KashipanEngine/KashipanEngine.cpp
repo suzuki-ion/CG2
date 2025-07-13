@@ -10,6 +10,7 @@
 #include "Common/VertexData.h"
 #include "Common/ConvertColor.h"
 #include "Common/Logs.h"
+#include "Common/GridLine.h"
 #include "Common/Descriptors/RTV.h"
 #include "Common/Descriptors/SRV.h"
 #include "Common/Descriptors/DSV.h"

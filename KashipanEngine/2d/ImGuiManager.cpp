@@ -76,7 +76,7 @@ void ImGuiManager::BeginFrame() {
     ImGui::NewFrame();
 
 
-    if (ImGui::BeginMainMenuBar()) {
+    /*if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("ファイル")) {
             ImGui::MenuItem("新規作成", "Ctrl+N");
             ImGui::MenuItem("開く", "Ctrl+O");
@@ -96,7 +96,7 @@ void ImGuiManager::BeginFrame() {
         }
 
         ImGui::EndMainMenuBar();
-    }
+    }*/
     ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 }
 
