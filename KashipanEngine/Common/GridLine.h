@@ -21,6 +21,25 @@ class GridLine {
 public:
     /// @brief グリッド線の色が変化する間隔
     static const UINT kGridLineColorChangeInterval = 10;
+    
+    /// @brief 中心線のデフォルト値
+    static inline const VertexDataLine kCenterLineVertexData = {
+        { 0.0f, 0.0f, 0.0f, 0.0f },
+        { 1.0f, 1.0f, 1.0f, 0.5f },
+        0.3f, 0.3f, 0.3f
+    };
+    /// @brief 指定の間隔ごとに色が変化する線のデフォルト値
+    static inline const VertexDataLine kIntervalGridLineVertexData = {
+        { 0.0f, 0.0f, 0.0f, 0.0f },
+        { 0.5f, 0.5f, 0.5f, 0.4f },
+        0.2f, 0.2f, 0.2f
+    };
+    /// @brief 通常の線のデフォルト値
+    static inline const VertexDataLine kNormalLineVertexData = {
+        { 0.0f, 0.0f, 0.0f, 0.0f },
+        { 0.0f, 0.0f, 0.0f, 0.2f },
+        0.05f, 0.05f, 0.05f
+    };
 
     GridLine() = delete;
     /// @brief コンストラクタ
@@ -45,6 +64,8 @@ private:
 
     GridLineType type_ = GridLineType::XZ;
     float gridSize_ = 0.0f;
+
+    
     
     /// @brief 1軸上における線の片側の数
     UINT axisLineSideCount_ = 0;

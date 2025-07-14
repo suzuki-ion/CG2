@@ -4,6 +4,7 @@ struct VertexShaderOutput {
 	float width : WIDTH;
 	float height : HEIGHT;
 	float depth : DEPTH;
+	float4x4 wvp : WORLDVIEWPROJECTION;
 };
 
 struct GeometryShaderOutput {

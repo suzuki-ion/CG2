@@ -320,16 +320,28 @@ void Renderer::DrawLine(LineState *lineState) {
     if (lineState->isUseCamera == false) {
         wvpMatrix2D_ = (viewMatrix2D_ * projectionMatrix2D_);
         lineState->transformationMatrixMap->wvp = wvpMatrix2D_;
+        Matrix4x4 viewportInverse;
+        viewportInverse = MakeViewportMatrix(
+            viewport_.Width,
+            viewport_.Height,
+            viewport_.TopLeftX,
+            viewport_.TopLeftY,
+            viewport_.MinDepth,
+            viewport_.MaxDepth
+        ).Inverse();
+        lineState->transformationMatrixMap->viewportInverse = viewportInverse;
 
     } else {
         if (isUseDebugCamera_) {
             sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
             sDebugCamera->CalculateMatrix();
             lineState->transformationMatrixMap->wvp = sDebugCamera->GetWVPMatrix();
+            lineState->transformationMatrixMap->viewportInverse = sDebugCamera->GetViewportMatrix();
         } else {
             sCameraPtr->SetWorldMatrix(Matrix4x4::Identity());
             sCameraPtr->CalculateMatrix();
             lineState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
+            lineState->transformationMatrixMap->viewportInverse = sCameraPtr->GetViewportMatrix().Inverse();
         }
     }
 

@@ -13,10 +13,11 @@ struct VertexShaderInput {
 
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
-	output.pos = mul(input.pos, gTransformationMatrix.WVP);
+	output.pos = input.pos;
 	output.color = input.color;
 	output.width = input.width;
 	output.height = input.height;
 	output.depth = input.depth;
+	output.wvp = gTransformationMatrix.WVP;
 	return output;
 }

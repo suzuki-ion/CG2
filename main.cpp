@@ -188,9 +188,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // グリッド線
     //==================================================
 
-    GridLine gridLineXZ(GridLineType::XZ, 1.0f, 100);
-    GridLine gridLineXY(GridLineType::XY, 1.0f, 100);
-    GridLine gridLineYZ(GridLineType::YZ, 1.0f, 100);
+    GridLine gridLineXZ(GridLineType::XZ, 1.0f, 10000);
+    GridLine gridLineXY(GridLineType::XY, 1.0f, 10000);
+    GridLine gridLineYZ(GridLineType::YZ, 1.0f, 10000);
     gridLineXZ.SetRenderer(renderer);
     gridLineXY.SetRenderer(renderer);
     gridLineYZ.SetRenderer(renderer);

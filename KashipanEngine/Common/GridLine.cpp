@@ -59,24 +59,50 @@ void GridLine::GenerateGridXZ() {
         float xOffset = offset.x + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[i * 2 + 0] = {
             { xOffset, offset.y, -lineLengthHalf, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            kNormalLineVertexData.width, 0.0f, 0.0f
         };
         mesh_->vertexBufferMap[i * 2 + 1] = {
             { xOffset, offset.y, lineLengthHalf, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            kNormalLineVertexData.width, 0.0f, 0.0f
         };
 
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.3f, 0.0f, 1.0f }; // 暗めの緑色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.3f, 0.0f, 1.0f };
+            // 緑色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                kIntervalGridLineVertexData.color.y,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                kIntervalGridLineVertexData.color.y,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].width = kIntervalGridLineVertexData.width;
+            mesh_->vertexBufferMap[i * 2 + 1].width = kIntervalGridLineVertexData.width;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 1.0f, 0.0f, 1.0f }; // 明るい緑色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 1.0f, 0.0f, 1.0f };
+            // 緑色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                kCenterLineVertexData.color.y,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                kCenterLineVertexData.color.y,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].width = kCenterLineVertexData.width;
+            mesh_->vertexBufferMap[i * 2 + 1].width = kCenterLineVertexData.width;
         }
     }
 
@@ -88,24 +114,50 @@ void GridLine::GenerateGridXZ() {
         float zOffset = offset.z + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
             { -lineLengthHalf, offset.y, zOffset, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, 0.0f, kNormalLineVertexData.depth
         };
         mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
             { lineLengthHalf, offset.y, zOffset, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, 0.0f, kNormalLineVertexData.depth
         };
 
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.3f, 0.0f, 0.0f, 1.0f }; // 暗めの赤色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.3f, 0.0f, 0.0f, 1.0f };
+            // 赤色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                kIntervalGridLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                kIntervalGridLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].depth = kIntervalGridLineVertexData.depth;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].depth = kIntervalGridLineVertexData.depth;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 1.0f, 0.0f, 0.0f, 1.0f }; // 明るい赤色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+            // 赤色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                kCenterLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                kCenterLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].depth = kCenterLineVertexData.depth;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].depth = kCenterLineVertexData.depth;
         }
     }
 }
@@ -126,24 +178,50 @@ void GridLine::GenerateGridXY() {
         float xOffset = offset.x + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[i * 2 + 0] = {
             { xOffset, -lineLengthHalf, offset.z, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            kNormalLineVertexData.width, 0.0f, 0.0f
         };
         mesh_->vertexBufferMap[i * 2 + 1] = {
             { xOffset, lineLengthHalf, offset.z, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            kNormalLineVertexData.width, 0.0f, 0.0f
         };
         
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.0f, 0.3f, 1.0f }; // 暗めの青色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.0f, 0.3f, 1.0f };
+            // 青色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.z,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.z,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].width = kIntervalGridLineVertexData.width;
+            mesh_->vertexBufferMap[i * 2 + 1].width = kIntervalGridLineVertexData.width;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.0f, 1.0f, 1.0f }; // 明るい青色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
+            // 青色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.z,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.z,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].width = kCenterLineVertexData.width;
+            mesh_->vertexBufferMap[i * 2 + 1].width = kCenterLineVertexData.width;
         }
     }
 
@@ -155,24 +233,50 @@ void GridLine::GenerateGridXY() {
         float yOffset = offset.y + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
             { -lineLengthHalf, yOffset, offset.z, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, kNormalLineVertexData.height, 0.0f
         };
         mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
             { lineLengthHalf, yOffset, offset.z, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, kNormalLineVertexData.height, 0.0f
         };
         
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.3f, 0.0f, 0.0f, 1.0f }; // 暗めの赤色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.3f, 0.0f, 0.0f, 1.0f };
+            // 赤色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                kIntervalGridLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                kIntervalGridLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].height = kIntervalGridLineVertexData.height;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].height = kIntervalGridLineVertexData.height;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 1.0f, 0.0f, 0.0f, 1.0f }; // 明るい赤色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+            // 赤色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                kCenterLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                kCenterLineVertexData.color.x,
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.w,
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].height = kCenterLineVertexData.height;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].height = kCenterLineVertexData.height;
         }
     }
 }
@@ -193,24 +297,50 @@ void GridLine::GenerateGridYZ() {
         float yOffset = offset.y + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[i * 2 + 0] = {
             { offset.x, yOffset, -lineLengthHalf, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, kNormalLineVertexData.height, 0.0f
         };
         mesh_->vertexBufferMap[i * 2 + 1] = {
             { offset.x, yOffset, lineLengthHalf, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, kNormalLineVertexData.height, 0.0f
         };
         
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 0.3f, 0.0f, 1.0f }; // 暗めの緑色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 0.3f, 0.0f, 1.0f };
+            // 緑色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                kIntervalGridLineVertexData.color.y,
+                0.0f,
+                kIntervalGridLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                kIntervalGridLineVertexData.color.y,
+                0.0f,
+                kIntervalGridLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].height = kIntervalGridLineVertexData.height;
+            mesh_->vertexBufferMap[i * 2 + 1].height = kIntervalGridLineVertexData.height;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[i * 2 + 0].color = { 0.0f, 1.0f, 0.0f, 1.0f }; // 明るい緑色
-            mesh_->vertexBufferMap[i * 2 + 1].color = { 0.0f, 1.0f, 0.0f, 1.0f };
+            // 緑色に設定
+            mesh_->vertexBufferMap[i * 2 + 0].color = {
+                0.0f,
+                kCenterLineVertexData.color.y,
+                0.0f,
+                kCenterLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[i * 2 + 1].color = {
+                0.0f,
+                kCenterLineVertexData.color.y,
+                0.0f,
+                kCenterLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[i * 2 + 0].height = kCenterLineVertexData.height;
+            mesh_->vertexBufferMap[i * 2 + 1].height = kCenterLineVertexData.height;
         }
     }
 
@@ -222,24 +352,50 @@ void GridLine::GenerateGridYZ() {
         float zOffset = offset.z + gridSize_ * static_cast<float>(i);
         mesh_->vertexBufferMap[indexOffset + i * 2 + 0] = {
             { offset.x, -lineLengthHalf, zOffset, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, 0.0f, kNormalLineVertexData.depth
         };
         mesh_->vertexBufferMap[indexOffset + i * 2 + 1] = {
             { offset.x, lineLengthHalf, zOffset, 1.0f },
-            { 0.0f, 0.0f, 0.0f, 1.0f },
-            1.0f, 1.0f, 1.0f
+            kNormalLineVertexData.color,
+            0.0f, 0.0f, kNormalLineVertexData.depth
         };
 
         // 特定の間隔で線の色を変える
         if ((i - centerLine) % static_cast<int>(kGridLineColorChangeInterval) == 0) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.0f, 0.0f, 0.3f, 1.0f }; // 暗めの青色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.0f, 0.0f, 0.3f, 1.0f };
+            // 青色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.z,
+                kIntervalGridLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                0.0f,
+                0.0f,
+                kIntervalGridLineVertexData.color.z,
+                kIntervalGridLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].depth = kIntervalGridLineVertexData.depth;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].depth = kIntervalGridLineVertexData.depth;
         }
         // 中心線の場合ははっきりとした色にする
         if (i == centerLine) {
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = { 0.0f, 0.0f, 1.0f, 1.0f }; // 明るい青色
-            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = { 0.0f, 0.0f, 1.0f, 1.0f };
+            // 青色に設定
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].color = {
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.z,
+                kCenterLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].color = {
+                0.0f,
+                0.0f,
+                kCenterLineVertexData.color.z,
+                kCenterLineVertexData.color.w
+            };
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 0].depth = kCenterLineVertexData.depth;
+            mesh_->vertexBufferMap[indexOffset + i * 2 + 1].depth = kCenterLineVertexData.depth;
         }
     }
 }

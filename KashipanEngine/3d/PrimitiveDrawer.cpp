@@ -535,9 +535,9 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
     Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(
         L"KashipanEngine/Shader/Line.VS.hlsl", L"vs_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
-    /*Microsoft::WRL::ComPtr<IDxcBlob> GeometryShaderBlob = CompileShader(
+    Microsoft::WRL::ComPtr<IDxcBlob> GeometryShaderBlob = CompileShader(
         L"KashipanEngine/Shader/Line.GS.hlsl", L"gs_6_0",
-        dxcUtils.Get(), dxcCompiler.Get(), includeHandler);*/
+        dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
     Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(
         L"KashipanEngine/Shader/Line.PS.hlsl", L"ps_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
@@ -561,6 +561,8 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;        // InputLayout
     graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
         vertexShaderBlob->GetBufferSize() };                        // VertexShader
+    graphicsPipelineStateDesc.GS = { GeometryShaderBlob->GetBufferPointer(),
+        GeometryShaderBlob->GetBufferSize() };                      // GeometryShader
     graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
         pixelShaderBlob->GetBufferSize() };                         // PixelShader
     graphicsPipelineStateDesc.BlendState = blendDesc;               // BlendState

@@ -151,7 +151,7 @@ void Camera::CalculateMatrixForDecart() noexcept {
     cameraMatrix_.SetRotate(cameraRotate_);
     cameraMatrix_.SetScale(cameraScale_);
     viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 100.0f);
+    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 2048.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
 }
@@ -163,7 +163,7 @@ void Camera::CalculateMatrixForSpherical() noexcept {
     cameraMatrix_.SetRotate(cameraRotate_);
     cameraMatrix_.SetScale(cameraScale_);
     viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 100.0f);
+    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 2048.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
 }

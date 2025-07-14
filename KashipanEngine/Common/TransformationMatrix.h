@@ -8,6 +8,8 @@ struct TransformationMatrix {
     Matrix4x4 wvp;
     /// @brief ワールド行列
     Matrix4x4 world;
+    /// @brief 逆ビューポート行列
+    Matrix4x4 viewportInverse;
 };
 
 } // namespace KashipanEngine
