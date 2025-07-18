@@ -1,6 +1,7 @@
 #include <cassert>
 #include <unordered_map>
 #include <functional>
+#include <algorithm>
 
 #include "Input.h"
 #include "Base/WinApp.h"
@@ -24,10 +25,18 @@ IDirectInputDevice8 *sKeyboardDevice = nullptr;
 /// @brief マウスデバイス
 IDirectInputDevice8 *sMouseDevice = nullptr;
 
+//==================================================
+// キーボード
+//==================================================
+
 /// @brief キーボードの状態
 BYTE sKeyboardState[256] = {};
 /// @brief 前回のキーボードの状態
 BYTE sPreKeyboardState[256] = {};
+
+//==================================================
+// マウス
+//==================================================
 
 /// @brief マウスの状態
 DIMOUSESTATE sMouseState = {};
@@ -41,16 +50,31 @@ POINT sPreMousePos = {};
 /// @brief 前回のマウスの差分座標
 POINT sPreMouseDeltaPos = {};
 
+//==================================================
+// コントローラー
+//==================================================
+
 /// @brief コントローラーの状態
 XINPUT_STATE sControllerState[4] = {};
 /// @brief 前回のコントローラーの状態
 XINPUT_STATE sPreControllerState[4] = {};
+/// @brief コントローラーの状態の差分
+XINPUT_STATE sControllerStateDelta[4] = {};
+/// @brief 前回のコントローラーの状態の差分
+XINPUT_STATE sPreControllerStateDelta[4] = {};
+/// @brief コントローラーの接続状態
+bool sControllerConnected[4] = { false, false, false, false };
+/// @brief 前回のコントローラーの接続状態
+bool sPreControllerConnected[4] = { false, false, false, false };
 
 /// @brief コントローラーのスティックのデッドゾーン
 SHORT sControllerStickDeadZone = 4096;
-
 /// @brief コントローラーの振動状態
-XINPUT_VIBRATION vibration = { 0 };
+XINPUT_VIBRATION vibration[4] = {};
+
+//==================================================
+// 関数マップ
+//==================================================
 
 /// @brief キーの押下取得関数マップ
 std::unordered_map<Input::CurrentOption, std::unordered_map<Input::DownStateOption, std::function<bool(int)>>> sGetKeyFunctions = {
@@ -373,12 +397,17 @@ void Input::Update() {
     // コントローラーの状態を取得
     for (int i = 0; i < 4; ++i) {
         memcpy(&sPreControllerState[i], &sControllerState[i], sizeof(XINPUT_STATE));
+        memcpy(&sPreControllerStateDelta[i], &sControllerStateDelta[i], sizeof(XINPUT_STATE));
+        memcpy(&sPreControllerConnected[i], &sControllerConnected[i], sizeof(bool));
+
+        sControllerConnected[i] = true; // 初期状態では接続されていると仮定
         ZeroMemory(&sControllerState[i], sizeof(XINPUT_STATE));
         DWORD dw = XInputGetState(i, &sControllerState[i]);
         // コントローラーが接続されていない場合は状態をクリア
         if (dw == ERROR_DEVICE_NOT_CONNECTED) {
             ZeroMemory(&sControllerState[i], sizeof(XINPUT_STATE));
             continue;
+            sControllerConnected[i] = false;
         }
 
         // スティックの値がデッドゾーン以下の場合は0に設定
@@ -398,6 +427,20 @@ void Input::Update() {
             sControllerState[i].Gamepad.sThumbRY > -sControllerStickDeadZone) {
             sControllerState[i].Gamepad.sThumbRY = 0;
         }
+
+        // 差分を計算
+        sControllerStateDelta[i].Gamepad.bLeftTrigger =
+            sControllerState[i].Gamepad.bLeftTrigger - sPreControllerState[i].Gamepad.bLeftTrigger;
+        sControllerStateDelta[i].Gamepad.bRightTrigger =
+            sControllerState[i].Gamepad.bRightTrigger - sPreControllerState[i].Gamepad.bRightTrigger;
+        sControllerStateDelta[i].Gamepad.sThumbLX =
+            sControllerState[i].Gamepad.sThumbLX - sPreControllerState[i].Gamepad.sThumbLX;
+        sControllerStateDelta[i].Gamepad.sThumbLY =
+            sControllerState[i].Gamepad.sThumbLY - sPreControllerState[i].Gamepad.sThumbLY;
+        sControllerStateDelta[i].Gamepad.sThumbRX =
+            sControllerState[i].Gamepad.sThumbRX - sPreControllerState[i].Gamepad.sThumbRX;
+        sControllerStateDelta[i].Gamepad.sThumbRY =
+            sControllerState[i].Gamepad.sThumbRY - sPreControllerState[i].Gamepad.sThumbRY;
     }
     
     // マウスの座標を取得
@@ -536,82 +579,166 @@ int Input::GetPreMouseWheel() {
 }
 
 int Input::GetXBoxTrigger(CurrentOption currentOption, LeftRightOption leftRightOption, ValueOption valueOption, int index) {
+    // コントローラーのトリガーを取得する関数を呼び出す
+    auto itCurrent = sGetXBoxTriggerFunctions.find(currentOption);
+    if (itCurrent == sGetXBoxTriggerFunctions.end()) {
+        return 0;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return 0;
+    }
+    auto itValue = itLeftRight->second.find(valueOption);
+    if (itValue == itLeftRight->second.end()) {
+        return 0;
+    }
+    auto getXBoxTriggerFunction = itValue->second;
+    if (getXBoxTriggerFunction) {
+        return getXBoxTriggerFunction(index);
+    }
+    
     return 0;
 }
 
 float Input::GetXBoxTriggerRatio(CurrentOption currentOption, LeftRightOption leftRightOption, ValueOption valueOption, int index) {
+    // コントローラーのトリガー比率を取得する関数を呼び出す
+    auto itCurrent = sGetXBoxTriggerRatioFunctions.find(currentOption);
+    if (itCurrent == sGetXBoxTriggerRatioFunctions.end()) {
+        return 0.0f;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return 0.0f;
+    }
+    auto itValue = itLeftRight->second.find(valueOption);
+    if (itValue == itLeftRight->second.end()) {
+        return 0.0f;
+    }
+    auto getXBoxTriggerRatioFunction = itValue->second;
+    if (getXBoxTriggerRatioFunction) {
+        return getXBoxTriggerRatioFunction(index);
+    }
+    
     return 0.0f;
 }
 
 int Input::GetXBoxLeftTrigger(int index) {
-    return sControllerState[index].Gamepad.bLeftTrigger;
+    return static_cast<int>(sControllerState[index].Gamepad.bLeftTrigger);
 }
 
 int Input::GetXBoxRightTrigger(int index) {
-    return sControllerState[index].Gamepad.bRightTrigger;
+    return static_cast<int>(sControllerState[index].Gamepad.bRightTrigger);
 }
 
 int Input::GetXBoxLeftTriggerDelta(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.bLeftTrigger);
 }
 
 int Input::GetXBoxRightTriggerDelta(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.bRightTrigger);
 }
 
 float Input::GetXBoxLeftTriggerRatio(int index) {
-    return 0.0f;
+    // トリガーの値を0から1の範囲に変換
+    return static_cast<float>(GetXBoxLeftTrigger(index)) / 255.0f;
 }
 
 float Input::GetXBoxRightTriggerRatio(int index) {
-    return 0.0f;
+    // トリガーの値を0から1の範囲に変換
+    return static_cast<float>(GetXBoxRightTrigger(index)) / 255.0f;
 }
 
 float Input::GetXBoxLeftTriggerDeltaRatio(int index) {
-    return 0.0f;
+    // トリガーの差分値を0から1の範囲に変換
+    return static_cast<float>(GetXBoxLeftTriggerDelta(index)) / 255.0f;
 }
 
 float Input::GetXBoxRightTriggerDeltaRatio(int index) {
-    return 0.0f;
+    // トリガーの差分値を0から1の範囲に変換
+    return static_cast<float>(GetXBoxRightTriggerDelta(index)) / 255.0f;
 }
 
 int Input::GetXBoxStick(CurrentOption currentOption, LeftRightOption leftRightOption, AxisOption axisOption, ValueOption valueOption, int index) {
+    // コントローラーのスティックを取得する関数を呼び出す
+    auto itCurrent = sGetXBoxStickFunctions.find(currentOption);
+    if (itCurrent == sGetXBoxStickFunctions.end()) {
+        return 0;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return 0;
+    }
+    auto itAxis = itLeftRight->second.find(axisOption);
+    if (itAxis == itLeftRight->second.end()) {
+        return 0;
+    }
+    auto itValue = itAxis->second.find(valueOption);
+    if (itValue == itAxis->second.end()) {
+        return 0;
+    }
+    auto getXBoxStickFunction = itValue->second;
+    if (getXBoxStickFunction) {
+        return getXBoxStickFunction(index);
+    }
+    
     return 0;
 }
 
 int Input::GetPreXBoxLeftTrigger(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.bLeftTrigger);
 }
 
 int Input::GetPreXBoxRightTrigger(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.bRightTrigger);
 }
 
 int Input::GetPreXBoxLeftTriggerDelta(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.bLeftTrigger);
 }
 
 int Input::GetPreXBoxRightTriggerDelta(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.bRightTrigger);
 }
 
 float Input::GetPreXBoxLeftTriggerRatio(int index) {
-    return 0.0f;
+    return static_cast<float>(GetPreXBoxLeftTrigger(index)) / 255.0f;
 }
 
 float Input::GetPreXBoxRightTriggerRatio(int index) {
-    return 0.0f;
+    return static_cast<float>(GetPreXBoxRightTrigger(index)) / 255.0f;
 }
 
 float Input::GetPreXBoxLeftTriggerDeltaRatio(int index) {
-    return 0.0f;
+    return static_cast<float>(GetPreXBoxLeftTriggerDelta(index)) / 255.0f;
 }
 
 float Input::GetPreXBoxRightTriggerDeltaRatio(int index) {
-    return 0.0f;
+    return static_cast<float>(GetPreXBoxRightTriggerDelta(index)) / 255.0f;
 }
 
 float Input::GetXBoxStickRatio(CurrentOption currentOption, LeftRightOption leftRightOption, AxisOption axisOption, ValueOption valueOption, int index) {
+    // コントローラーのスティック比率を取得する関数を呼び出す
+    auto itCurrent = sGetXBoxStickRatioFunctions.find(currentOption);
+    if (itCurrent == sGetXBoxStickRatioFunctions.end()) {
+        return 0.0f;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return 0.0f;
+    }
+    auto itAxis = itLeftRight->second.find(axisOption);
+    if (itAxis == itLeftRight->second.end()) {
+        return 0.0f;
+    }
+    auto itValue = itAxis->second.find(valueOption);
+    if (itValue == itAxis->second.end()) {
+        return 0.0f;
+    }
+    auto getXBoxStickRatioFunction = itValue->second;
+    if (getXBoxStickRatioFunction) {
+        return getXBoxStickRatioFunction(index);
+    }
+    
     return 0.0f;
 }
 
@@ -624,27 +751,27 @@ int Input::GetXBoxLeftStickY(int index) {
 }
 
 int Input::GetXBoxLeftStickDeltaX(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.sThumbLX);
 }
 
 int Input::GetXBoxLeftStickDeltaY(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.sThumbLY);
 }
 
 float Input::GetXBoxLeftStickRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxLeftStickX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxLeftStickRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxLeftStickY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxLeftStickDeltaRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxLeftStickDeltaX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxLeftStickDeltaRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxLeftStickDeltaY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 int Input::GetXBoxRightStickX(int index) {
@@ -656,94 +783,108 @@ int Input::GetXBoxRightStickY(int index) {
 }
 
 int Input::GetXBoxRightStickDeltaX(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.sThumbRX);
 }
 
 int Input::GetXBoxRightStickDeltaY(int index) {
-    return 0;
+    return static_cast<int>(sControllerStateDelta[index].Gamepad.sThumbRY);
 }
 
 float Input::GetXBoxRightStickRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxRightStickX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxRightStickRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxRightStickY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxRightStickDeltaRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxRightStickDeltaX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetXBoxRightStickDeltaRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetXBoxRightStickDeltaY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 int Input::GetPreXBoxLeftStickX(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.sThumbLX);
 }
 
 int Input::GetPreXBoxLeftStickY(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.sThumbLY);
 }
 
 int Input::GetPreXBoxLeftStickDeltaX(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.sThumbLX);
 }
 
 int Input::GetPreXBoxLeftStickDeltaY(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.sThumbLY);
 }
 
 float Input::GetPreXBoxLeftStickRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxLeftStickX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxLeftStickRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxLeftStickY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxLeftStickDeltaRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxLeftStickDeltaX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxLeftStickDeltaRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxLeftStickDeltaY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 int Input::GetPreXBoxRightStickX(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.sThumbRX);
 }
 
 int Input::GetPreXBoxRightStickY(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerState[index].Gamepad.sThumbRY);
 }
 
 int Input::GetPreXBoxRightStickDeltaX(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.sThumbRX);
 }
 
 int Input::GetPreXBoxRightStickDeltaY(int index) {
-    return 0;
+    return static_cast<int>(sPreControllerStateDelta[index].Gamepad.sThumbRY);
 }
 
 float Input::GetPreXBoxRightStickRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxRightStickX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxRightStickRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxRightStickY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxRightStickDeltaRatioX(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxRightStickDeltaX(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 float Input::GetPreXBoxRightStickDeltaRatioY(int index) {
-    return 0.0f;
+    return std::clamp(static_cast<float>(GetPreXBoxRightStickDeltaY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
 bool Input::IsXBoxButton(CurrentOption currentOption, DownStateOption downStateOption, XBoxButtonCode button, int index) {
+    // コントローラーのボタンの押下状態を取得する関数を呼び出す
+    auto itCurrent = sGetXBoxButtonFunctions.find(currentOption);
+    if (itCurrent == sGetXBoxButtonFunctions.end()) {
+        return false;
+    }
+    auto itDownState = itCurrent->second.find(downStateOption);
+    if (itDownState == itCurrent->second.end()) {
+        return false;
+    }
+    auto getXBoxButtonFunction = itDownState->second;
+    if (getXBoxButtonFunction) {
+        return getXBoxButtonFunction(button, index);
+    }
+    
     return false;
 }
 
@@ -752,54 +893,66 @@ bool Input::IsXBoxButtonDown(XBoxButtonCode button, int index) {
 }
 
 bool Input::IsPreXBoxButtonDown(XBoxButtonCode button, int index) {
-    return false;
+    return sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button) ? true : false;
 }
 
 bool Input::IsXBoxButtonTrigger(XBoxButtonCode button, int index) {
-    return false;
+    return (sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) != 0 &&
+        (sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) == 0;
 }
 
 bool Input::IsXBoxButtonRelease(XBoxButtonCode button, int index) {
-    return false;
+    return (sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) == 0 &&
+        (sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) != 0;
 }
 
 int Input::GetXBoxConnectedCount() {
-    return 0;
+    // XInputで接続されているコントローラーの数を取得
+    DWORD dwResult = 0;
+    for (int i = 0; i < 4; ++i) {
+        XINPUT_STATE state;
+        ZeroMemory(&state, sizeof(XINPUT_STATE));
+        dwResult = XInputGetState(i, &state);
+        if (dwResult == ERROR_SUCCESS) {
+            return i + 1; // 接続されているコントローラーの数を返す
+        }
+    }
+    return 0; // 接続されていない場合は0を返す
 }
 
 bool Input::IsXBoxConnected(int index) {
-    return false;
+    return (index >= 0 && index < 4) ? sControllerConnected[index] : false;
 }
 
 bool Input::IsPreXBoxConnected(int index) {
-    return false;
+    return (index >= 0 && index < 4) ? sPreControllerConnected[index] : false;
 }
 
 void Input::SetXBoxVibration(int index, int leftMotor, int rightMotor) {
     // 値が-1でなければ振動を設定
     if (leftMotor > -1) {
-        vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotor);
+        vibration[index].wLeftMotorSpeed = static_cast<WORD>(leftMotor);
     }
     if (rightMotor > -1) {
-        vibration.wRightMotorSpeed = static_cast<WORD>(rightMotor);
+        vibration[index].wRightMotorSpeed = static_cast<WORD>(rightMotor);
     }
     // コントローラーの振動を設定
-    XInputSetState(index, &vibration);
+    XInputSetState(index, &vibration[index]);
 }
 
 void Input::StopXBoxVibration(int index) {
-    vibration.wLeftMotorSpeed = 0;
-    vibration.wRightMotorSpeed = 0;
-    XInputSetState(index, &vibration);
+    vibration[index].wLeftMotorSpeed = 0;
+    vibration[index].wRightMotorSpeed = 0;
+    XInputSetState(index, &vibration[index]);
 }
 
 int Input::GetXBoxVibration(int index, LeftRightOption leftRightOption) {
     switch (leftRightOption) {
         case Input::LeftRightOption::Left:
-            return vibration.wLeftMotorSpeed;
+            return vibration[index].wLeftMotorSpeed;
             break;
         case Input::LeftRightOption::Right:
-            return vibration.wRightMotorSpeed;
+            return vibration[index].wRightMotorSpeed;
             break;
     }
     return 0;

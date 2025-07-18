@@ -29,6 +29,7 @@ bool IsClicked(BaseUI *detectUI) {
 }
 
 bool IsSelect(BaseUI *detectUI) {
+    static_cast<void>(detectUI);
     return false;
 }
 
@@ -53,18 +54,22 @@ bool IsHover(BaseUI *detectUI) {
 }
 
 bool IsFocus(BaseUI *detectUI) {
+    static_cast<void>(detectUI);
     return false;
 }
 
 bool IsGrab(BaseUI *detectUI) {
+    static_cast<void>(detectUI);
     return false;
 }
 
 bool IsDrag(BaseUI *detectUI) {
+    static_cast<void>(detectUI);
     return false;
 }
 
 bool IsResize(BaseUI *detectUI) {
+    static_cast<void>(detectUI);
     return false;
 }
 
