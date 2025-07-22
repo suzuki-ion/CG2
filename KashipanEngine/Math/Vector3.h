@@ -1,6 +1,7 @@
 #pragma once
 #include <stdexcept>
 #include <cmath>
+#include <vector>
 
 namespace KashipanEngine {
 
@@ -14,6 +15,10 @@ struct Segment;
 
 struct Vector3 {
     static Vector3 Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept;
+    static Vector3 Slerp(const Vector3 &start, const Vector3 &end, float t) noexcept;
+    static Vector3 Bezier(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const float t) noexcept;
+    static Vector3 CatmullRomInterpolation(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Vector3 &p3, float t) noexcept;
+    static Vector3 CatmullRomPosition(const std::vector<Vector3> &points, float t);
 
     Vector3() noexcept = default;
     constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}
@@ -68,7 +73,7 @@ inline constexpr const Vector3 operator*(const Vector3 &vector, const float scal
 }
 
 inline constexpr const Vector3 operator*(const float scalar, const Vector3 &vector) noexcept {
-    return Vector3(vector.x * scalar, vector.y * scalar, vector.z * scalar);
+    return Vector3(scalar * vector.x, scalar * vector.y, scalar * vector.z);
 }
 
 inline constexpr const Vector3 operator/(const Vector3 &vector, const float scalar) {

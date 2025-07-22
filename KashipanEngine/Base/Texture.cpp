@@ -172,6 +172,7 @@ uint32_t Texture::Load(const std::string &filePath) {
         Log(std::format("Texture already loaded: {}", filePath), kLogLevelFlagWarning);
         return sTextureMap[filePath].index;
     }
+    Log(std::format("Texture loading: {}", filePath), kLogLevelFlagInfo);
 
     // テクスチャファイルを読み込んで扱えるようにする
     DirectX::ScratchImage mipImages = LoadTexture(filePath);
@@ -231,7 +232,7 @@ uint32_t Texture::Load(const std::string &filePath) {
     sDxCommon->SetBarrier(barrier);
 
     // 読み込んだテクスチャとそのインデックスをログに出力
-    Log(std::format("Load Texture: {} ({}x{}) index: {}",
+    LogSimple(std::format("Complete Load Texture: {} ({}x{}) index: {}",
         filePath,
         sTextureMap[filePath].width,
         sTextureMap[filePath].height,

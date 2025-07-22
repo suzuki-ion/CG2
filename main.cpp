@@ -1,5 +1,6 @@
 #include <KashipanEngine.h>
 #include <memory>
+#include <fstream>
 #include <imgui.h>
 
 #include "Base/WinApp.h"
@@ -20,6 +21,7 @@
 #include "Objects/Sphere.h"
 #include "Objects/Model.h"
 #include "Objects/Plane.h"
+#include "Objects/Lines.h"
 
 #include "2d/UI/GUI/Button.h"
 #include "2d/UI/UIGroup.h"
@@ -122,6 +124,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         *modelElement.GetStatePtr().fillMode = kFillModeWireframe;
     }
 
+    Model ground("Resources/Ground", "ground.obj");
+    ground.SetRenderer(renderer);
+    for (auto &modelElement : ground.GetModels()) {
+        modelElement.GetStatePtr().material->enableLighting = false;
+        modelElement.GetStatePtr().transform->translate.y = -32.0f;
+    }
+
     //==================================================
     // 音声
     //==================================================
@@ -200,6 +209,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool isXYGrid = false;
     // YZグリッド描画フラグ
     bool isYZGrid = false;
+
+    //==================================================
+    // 線
+    //==================================================
+
+    int lineCount = 100;
+    Lines lines(lineCount);
+    lines.SetRenderer(renderer);
+
+    //==================================================
+    // スプライン曲線
+    //==================================================
+
+    std::vector<Vector3> points = {
+        { 0.0f, 0.0f, 0.0f },
+        { 10.0f, 10.0f, 0.0f },
+        { 10.0f, 15.0f, 0.0f },
+        { 20.0f, 15.0f, 0.0f },
+        { 20.0f, 0.0f, 0.0f },
+        { 30.0f, 0.0f, 0.0f }
+    };
+    float elapsedT = 1.0f / static_cast<float>(lineCount);
+    // 線に適応
+    auto linesStatePtr = lines.GetStatePtr();
+    for (size_t i = 0; i <= lineCount; i++) {
+        float t = elapsedT * static_cast<float>(i);
+        Vector3 pos = Vector3::CatmullRomPosition(points, t);
+        linesStatePtr.vertexData[i].pos = Vector4(pos);
+    }
+
+    std::ofstream file("test.obj");
+    // 頂点座標 (v)
+    for (unsigned int i = 0; i <= lineCount; ++i) {
+        const Vector3 &v = Vector3(linesStatePtr.vertexData[i].pos);
+        file << "v " << v.x << " " << v.y << " " << v.z << "\n";
+    }
+    file.close();
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -376,12 +422,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (isXYGrid) gridLineXY.Draw();
         if (isYZGrid) gridLineYZ.Draw();
 
+        // 線の描画
+        lines.Draw();
+
         // 球体の描画
         sphere.Draw();
         // ICO球の描画
         icoSphere.Draw();
         // モデルの描画
         model.Draw();
+        // 地面の描画
+        ground.Draw();
         // ボタンの描画
         uiGroup.Draw();
         

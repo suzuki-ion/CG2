@@ -135,7 +135,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
     <ClCompile Include="KashipanEngine\KashipanEngine.cpp" />
     <ClCompile Include="KashipanEngine\Math\AffineMatrix.cpp" />
-    <ClCompile Include="KashipanEngine\Math\Bezier.cpp" />
     <ClCompile Include="KashipanEngine\Math\Camera.cpp" />
     <ClCompile Include="KashipanEngine\Math\Collider.cpp" />
     <ClCompile Include="KashipanEngine\Math\MathObjects\AABB.cpp" />
@@ -152,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Math\Vector3.cpp" />
     <ClCompile Include="KashipanEngine\Math\Vector4.cpp" />
     <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Lines.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Model.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Object.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Plane.cpp" />
@@ -200,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Easings.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
     <ClInclude Include="KashipanEngine\Common\VertexDataLine.h" />
+    <ClInclude Include="KashipanEngine\Objects\Lines.h" />
     <ClInclude Include="MyStd\OnlyPointer.h" />
     <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h" />
     <ClInclude Include="KashipanEngine\Common\TextureData.h" />
@@ -210,7 +211,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Mesh.h" />
     <ClInclude Include="KashipanEngine\Common\Material.h" />
     <ClInclude Include="KashipanEngine\KashipanEngine.h" />
-    <ClInclude Include="KashipanEngine\Math\Bezier.h" />
     <ClInclude Include="KashipanEngine\Math\Collider.h" />
     <ClInclude Include="KashipanEngine\Math\MathObjects\AABB.h" />
     <ClInclude Include="KashipanEngine\Math\MathObjects\Lines.h" />
@@ -286,6 +286,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Simple.MS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.7</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.7</ShaderModel>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/Tms_6_5 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/Tms_6_5 %(AdditionalOptions)</AdditionalOptions>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\res\Compiled\%(Filename).inc</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\res\Compiled\%(Filename).inc</HeaderFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

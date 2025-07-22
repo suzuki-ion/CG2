@@ -64,8 +64,6 @@ private:
 
     GridLineType type_ = GridLineType::XZ;
     float gridSize_ = 0.0f;
-
-    
     
     /// @brief 1軸上における線の片側の数
     UINT axisLineSideCount_ = 0;
