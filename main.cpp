@@ -22,6 +22,7 @@
 #include "Objects/Model.h"
 #include "Objects/Plane.h"
 #include "Objects/Lines.h"
+#include "Objects/Text.h"
 
 #include "2d/UI/GUI/Button.h"
 #include "2d/UI/UIGroup.h"
@@ -124,12 +125,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         *modelElement.GetStatePtr().fillMode = kFillModeWireframe;
     }
 
-    Model ground("Resources/Ground", "ground.obj");
+    /*Model ground("Resources/Ground", "ground.obj");
     ground.SetRenderer(renderer);
     for (auto &modelElement : ground.GetModels()) {
         modelElement.GetStatePtr().material->enableLighting = false;
         modelElement.GetStatePtr().transform->translate.y = -32.0f;
-    }
+    }*/
 
     //==================================================
     // 音声
@@ -241,11 +242,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     std::ofstream file("test.obj");
     // 頂点座標 (v)
-    for (unsigned int i = 0; i <= lineCount; ++i) {
+    for (int i = 0; i <= lineCount; ++i) {
         const Vector3 &v = Vector3(linesStatePtr.vertexData[i].pos);
         file << "v " << v.x << " " << v.y << " " << v.z << "\n";
     }
     file.close();
+
+    //==================================================
+    // テキスト
+    //==================================================
+
+    Text text(128);
+    text.SetRenderer(renderer);
+    text.SetFont("Resources/Font/test.fnt");
+    char8_t textBuffer[128] = u8"テストテキスト1";
+    text.SetText(textBuffer);
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -393,6 +404,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             uiGroup.SetUIElement("color", color);
         }
 
+        // テキスト
+        if (ImGui::TreeNode("テキスト")) {
+            ImGui::InputTextMultiline("テキスト入力", reinterpret_cast<char *>(textBuffer), IM_ARRAYSIZE(textBuffer),
+                ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16.0f));
+            if (ImGui::IsItemDeactivatedAfterEdit()) {
+                text.SetText(textBuffer);
+            }
+            ImGui::TreePop();
+            text.SetText(textBuffer);
+        }
+
         ImGui::End();
 
         keyFrameAnimation.Update();
@@ -432,9 +454,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // モデルの描画
         model.Draw();
         // 地面の描画
-        ground.Draw();
+        //ground.Draw();
         // ボタンの描画
         uiGroup.Draw();
+        // 文字の描画
+        text.Draw();
         
         renderer->PostDraw();
         myGameEngine->EndFrame();

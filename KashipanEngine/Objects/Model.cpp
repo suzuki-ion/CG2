@@ -220,10 +220,25 @@ Model::Model(std::string directoryPath, std::string fileName) {
                     elementIndices[element] = std::stoi(indexNum);
                 }
 
+                Vector4 position{};
+                Vector2 texCoord{};
+                Vector3 normal{};
                 // 要素へのindexから、実際の要素の値を取得して、頂点を構成する
-                Vector4 position = positions[elementIndices[0] - 1];
-                Vector2 texCoord = texCoords[elementIndices[1] - 1];
-                Vector3 normal = normals[elementIndices[2] - 1];
+                if (positions.size() > (elementIndices[0] - 1)) {
+                    position = positions[elementIndices[0] - 1];
+                } else {
+                    position = Vector4(0.0f);
+                }
+                if (texCoords.size() > (elementIndices[1] - 1)) {
+                    texCoord = texCoords[elementIndices[1] - 1];
+                } else {
+                    texCoord = Vector2(0.0f);
+                }
+                if (normals.size() > (elementIndices[2] - 1)) {
+                    normal = normals[elementIndices[2] - 1];
+                } else {
+                    normal = Vector3(0.0f);
+                }
                 faceVertices.push_back({ position, texCoord, normal });
             }
 

@@ -6,6 +6,7 @@
 #include "Common/ConvertString.h"
 #include "Common/Descriptors/SRV.h"
 #include <unordered_map>
+#include <filesystem>
 
 namespace KashipanEngine {
 

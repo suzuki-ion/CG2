@@ -32,4 +32,26 @@ std::string ConvertString(const std::wstring &str) {
     return result;
 }
 
+std::wstring ShiftJISToUTF16(const std::string &sjis) {
+    int utf16Size = MultiByteToWideChar(932, 0, sjis.c_str(), -1, nullptr, 0);
+    std::wstring utf16(utf16Size, L'\0');
+    MultiByteToWideChar(932, 0, sjis.c_str(), -1, &utf16[0], utf16Size);
+    return utf16;
+}
+
+std::string UTF16ToUTF8(const std::wstring &utf16) {
+    int utf8Size = WideCharToMultiByte(CP_UTF8, 0, utf16.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string utf8(utf8Size, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, utf16.c_str(), -1, &utf8[0], utf8Size, nullptr, nullptr);
+    return utf8;
+}
+
+std::string ShiftJISToUTF8(const std::string &sjis) {
+    std::wstring utf16 = ShiftJISToUTF16(sjis);
+    int utf8Size = WideCharToMultiByte(CP_UTF8, 0, utf16.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string utf8(utf8Size, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, utf16.c_str(), -1, &utf8[0], utf8Size, nullptr, nullptr);
+    return utf8;
+}
+
 } // namespace KashipanEngine
