@@ -32,6 +32,11 @@ enum FillMode {
     kFillModeWireframe,
 };
 
+enum LineType {
+    kLineNormal,
+    kLineThickness
+};
+
 // 前方宣言
 class DirectXCommon;
 
@@ -93,7 +98,7 @@ public:
 
     /// @brief 線用のパイプライン生成
     /// @return 線用のパイプラインセット
-    static PipeLineSet CreateLinePipeline(const std::source_location &location = std::source_location::current());
+    static PipeLineSet CreateLinePipeline(LineType lineType, const std::source_location &location = std::source_location::current());
 
 private:
     PrimitiveDrawer() = default;

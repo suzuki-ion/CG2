@@ -45,55 +45,43 @@ Vector3 Vector3::CatmullRomInterpolation(const Vector3 &p0, const Vector3 &p1, c
     float t2 = t * t;
     float t3 = t2 * t;
 
-    Vector3 e3 = (-p0 + (3.0f * p1) - (3.0f * p2) + p3) * t3;
-    Vector3 e2 = ((2.0f * p0) - (5.0f * p1) + (4.0f * p2) - p3) * t2;
-    Vector3 e1 = (-p0 + p2) * t;
-    Vector3 e0 = 2.0f * p1;
+    auto e3 = (-p0 + (3.0f * p1) - (3.0f * p2) + p3) * t3;
+    auto e2 = ((2.0f * p0) - (5.0f * p1) + (4.0f * p2) - p3) * t2;
+    auto e1 = (-p0 + p2) * t;
+    auto e0 = 2.0f * p1;
 
     return s * (e3 + e2 + e1 + e0);
 }
 
-Vector3 Vector3::CatmullRomPosition(const std::vector<Vector3> &points, float t) {
+Vector3 Vector3::CatmullRomPosition(const std::vector<Vector3> &points, float t, bool isLoop) {
     assert(points.size() >= 4);
 
-    // 区間数は制御点の数-1
-    size_t division = points.size() - 1;
-    // 1区間の長さ (全体を1.0とした割合)
+    size_t division = isLoop ? points.size() : points.size() - 1;
     float areaWidth = 1.0f / static_cast<float>(division);
+    size_t index    = static_cast<size_t>(t / areaWidth);
+    index           = std::min(index, division - 1);
+    float t2        = (t - areaWidth * static_cast<float>(index)) / areaWidth;
+    t2              = std::clamp(t2, 0.0f, 1.0f);
+     
+    // インデックス取得関数（ループ対応）
+    auto GetIndex = [&](int i) -> size_t {
+        if (isLoop) {
+            return (i + points.size()) % points.size();
+        } else {
+            return std::clamp(i, 0, static_cast<int>(points.size()) - 1);
+        }
+    };
 
-    // 区間内の始点を0.0f、終点を1.0fとしたときの現在位置
-    float t2 = std::fmod(t, areaWidth) * static_cast<float>(division);
-    // 下限(0.0f)と上限(1.0f)の範囲に収める
-    t2 = std::clamp(t2, 0.0f, 1.0f);
+    size_t index0 = GetIndex(static_cast<int>(index) - 1);
+    size_t index1 = GetIndex(static_cast<int>(index));
+    size_t index2 = GetIndex(static_cast<int>(index) + 1);
+    size_t index3 = GetIndex(static_cast<int>(index) + 2);
 
-    // 区間番号
-    size_t index = static_cast<size_t>(t / areaWidth);
-    // 区間番号が上限を超えないための計算
-    index = std::min(index, division - 1);
+    const auto &p0 = points[index0];
+    const auto &p1 = points[index1];
+    const auto &p2 = points[index2];
+    const auto &p3 = points[index3];
 
-    // 4点分のインデックス
-    size_t index0 = index - 1;
-    size_t index1 = index;
-    size_t index2 = index + 1;
-    size_t index3 = index + 2;
-
-    // 最初の区間のp0はp1を重複使用する
-    if (index == 0) {
-        index0 = index1;
-    }
-
-    // 最後の区間のp3はp2を重複使用する
-    if (index3 >= points.size()) {
-        index3 = index2;
-    }
-
-    // 4点の座標
-    const Vector3 &p0 = points[index0];
-    const Vector3 &p1 = points[index1];
-    const Vector3 &p2 = points[index2];
-    const Vector3 &p3 = points[index3];
-
-    // 4点を指定してCatmull-Rom補間
     return CatmullRomInterpolation(p0, p1, p2, p3, t2);
 }
 

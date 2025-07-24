@@ -3,6 +3,7 @@
 #include <memory>
 #include "PipeLineSet.h"
 #include "VertexDataLine.h"
+#include "LineOption.h"
 #include "Mesh.h"
 #include "TransformationMatrix.h"
 
@@ -77,7 +78,9 @@ private:
     
     std::unique_ptr<Mesh<VertexDataLine>> mesh_;
     Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> lineOptionResource_;
     TransformationMatrix *transformationMatrixMap_ = nullptr;
+    LineOption *lineOptionMap_ = nullptr;
 };
 
 } // namespace KashipanEngine

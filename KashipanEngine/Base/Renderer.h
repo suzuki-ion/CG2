@@ -6,6 +6,7 @@
 #include "Common/PipeLineSet.h"
 #include "Common/TransformationMatrix.h"
 #include "Common/VertexDataLine.h"
+#include "Common/LineOption.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Matrix4x4.h"
 
@@ -60,11 +61,17 @@ public:
         ID3D12Resource *transformationMatrixResource = nullptr;
         /// @brief transformationMatrixマップ
         TransformationMatrix *transformationMatrixMap = nullptr;
+        /// @brief lineOption用のリソースへのポインタ
+        ID3D12Resource *lineOptionResource = nullptr;
+        /// @brief lineOptionマップ
+        LineOption *lineOptionMap = nullptr;
 
         /// @brief 頂点数
         UINT vertexCount = 0;
         /// @brief インデックス数
         UINT indexCount = 0;
+        /// @brief 線の種類
+        LineType lineType = kLineNormal;
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };
@@ -146,7 +153,7 @@ private:
     /// @brief パイプラインセット
     std::array<std::array<PipeLineSet, kBlendModeMax>, 2> pipelineSet_;
     /// @brief ライン用のパイプラインセット
-    PipeLineSet linePipelineSet_;
+    std::array<PipeLineSet, 2> linePipelineSet_;
 
     /// @brief デバッグカメラ使用フラグ
     bool isUseDebugCamera_ = false;

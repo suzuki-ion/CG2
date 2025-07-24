@@ -13,7 +13,6 @@ GridLine::GridLine(GridLineType type, float gridSize, UINT axisLineSideCount) {
     vertexCount_ = gridLineCount_ * 2;
     indexCount_ = gridLineCount_ * 2;
 
-    pipeLineSet_ = PrimitiveDrawer::CreateLinePipeline();
     mesh_ = PrimitiveDrawer::CreateMesh<VertexDataLine>(vertexCount_, indexCount_, sizeof(VertexDataLine));
 
     switch (type_) {
@@ -30,6 +29,9 @@ GridLine::GridLine(GridLineType type, float gridSize, UINT axisLineSideCount) {
 
     transformationMatrixResource_ = PrimitiveDrawer::CreateBufferResources(sizeof(TransformationMatrix));
     transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void **>(&transformationMatrixMap_));
+    lineOptionResource_ = PrimitiveDrawer::CreateBufferResources(sizeof(LineOption));
+    lineOptionResource_->Map(0, nullptr, reinterpret_cast<void **>(&lineOptionMap_));
+    lineOptionMap_->type = kLineThickness;
 }
 
 void GridLine::Draw() const {
@@ -37,8 +39,11 @@ void GridLine::Draw() const {
     lineState.mesh = mesh_.get();
     lineState.transformationMatrixResource = transformationMatrixResource_.Get();
     lineState.transformationMatrixMap = transformationMatrixMap_;
+    lineState.lineOptionResource = lineOptionResource_.Get();
+    lineState.lineOptionMap = lineOptionMap_;
     lineState.indexCount = indexCount_;
     lineState.vertexCount = vertexCount_;
+    lineState.lineType = kLineThickness;
     lineState.isUseCamera = true;
     renderer_->DrawSetLine(lineState);
 }

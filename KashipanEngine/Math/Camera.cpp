@@ -94,20 +94,26 @@ void Camera::SetCoordinateSystem(CoordinateSystem cameraType) noexcept {
 }
 
 void Camera::SetCamera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept {
+    cameraTranslate_ = cameraTranslate;
+    cameraRotate_ = cameraRotate;
+    cameraScale_ = cameraScale;
     cameraMatrix_.SetTranslate(cameraTranslate);
     cameraMatrix_.SetRotate(cameraRotate);
     cameraMatrix_.SetScale(cameraScale);
 }
 
 void Camera::SetTranslate(const Vector3 &cameraTranslate) noexcept {
+    cameraTranslate_ = cameraTranslate;
     cameraMatrix_.SetTranslate(cameraTranslate);
 }
 
 void Camera::SetRotate(const Vector3 &cameraRotate) noexcept {
+    cameraRotate_ = cameraRotate;
     cameraMatrix_.SetRotate(cameraRotate);
 }
 
 void Camera::SetScale(const Vector3 &cameraScale) noexcept {
+    cameraScale_ = cameraScale;
     cameraMatrix_.SetScale(cameraScale);
 }
 
@@ -143,15 +149,17 @@ void Camera::CalculateMatrixForDecart() noexcept {
     // ターゲットが設定されている場合はカメラの向きをターゲットに向ける
     if (targetPos_) {
         Vector3 target = *targetPos_;
-        Vector3 direction = target - cameraTranslate_;
-        cameraRotate_.x = atan2f(direction.y, sqrtf(direction.x * direction.x + direction.z * direction.z));
-        cameraRotate_.y = atan2f(direction.x, direction.z);
+        Vector3 direction = (cameraTranslate_ - target).Normalize();
+        float yaw = atan2f(direction.x, -direction.z);
+        float pitch = atan2f(direction.y, sqrtf(direction.x * direction.x + direction.z * direction.z));
+        cameraRotate_.x = pitch;
+        cameraRotate_.y = -yaw;
     }
     cameraMatrix_.SetTranslate(cameraTranslate_);
     cameraMatrix_.SetRotate(cameraRotate_);
     cameraMatrix_.SetScale(cameraScale_);
     viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 65536.0f);
+    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 2048.0f);
     wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
     viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
 }

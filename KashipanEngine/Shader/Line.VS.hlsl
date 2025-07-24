@@ -1,7 +1,12 @@
 #include "Line.hlsli"
 #include "TransformationMatrix.hlsli"
 
+struct LineOption {
+	int type;
+};
+
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
+ConstantBuffer<LineOption> gLineOption : register(b1);
 
 struct VertexShaderInput {
 	float4 pos : POSITION0;
@@ -13,7 +18,11 @@ struct VertexShaderInput {
 
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
-	output.pos = input.pos;
+	if (gLineOption.type == 0) {
+		output.pos = mul(input.pos, gTransformationMatrix.WVP);
+	} else {
+		output.pos = input.pos;
+	}
 	output.color = input.color;
 	output.width = input.width;
 	output.height = input.height;

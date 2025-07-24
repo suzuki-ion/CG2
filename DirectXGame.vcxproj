@@ -200,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Descriptors\RTV.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\SRV.h" />
     <ClInclude Include="KashipanEngine\Common\Easings.h" />
+    <ClInclude Include="KashipanEngine\Common\LineOption.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
     <ClInclude Include="KashipanEngine\Common\VertexDataLine.h" />
     <ClInclude Include="KashipanEngine\Font\FontLoader.h" />

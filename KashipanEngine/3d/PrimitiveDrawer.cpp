@@ -416,7 +416,7 @@ PipeLineSet PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYP
     return pipelineSet;
 }
 
-PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &location) {
+PipeLineSet PrimitiveDrawer::CreateLinePipeline(LineType lineType, const std::source_location &location) {
     // 呼び出された場所のログを出力
     Log(location);
 
@@ -430,11 +430,15 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
 
     //--------- RootParameter作成 ---------//
 
-    D3D12_ROOT_PARAMETER rootParameters[1]{};
+    D3D12_ROOT_PARAMETER rootParameters[2]{};
     // VertexShaderのTransform
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBVを使う
     rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;// VertexShaderを使う
     rootParameters[0].Descriptor.ShaderRegister = 0;                    // レジスタ番号0を使う
+    // VertexShaderのLineOption
+    rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBVを使う
+    rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;// VertexShaderを使う
+    rootParameters[1].Descriptor.ShaderRegister = 1;                    // レジスタ番号1を使う
 
     // DescriptorRange
     D3D12_DESCRIPTOR_RANGE descriptorRange[1]{};
@@ -535,9 +539,12 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
     Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(
         L"KashipanEngine/Shader/Line.VS.hlsl", L"vs_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
-    Microsoft::WRL::ComPtr<IDxcBlob> GeometryShaderBlob = CompileShader(
-        L"KashipanEngine/Shader/Line.GS.hlsl", L"gs_6_0",
-        dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
+    Microsoft::WRL::ComPtr<IDxcBlob> GeometryShaderBlob;
+    if (lineType == kLineThickness) {
+        GeometryShaderBlob = CompileShader(
+            L"KashipanEngine/Shader/Line.GS.hlsl", L"gs_6_0",
+            dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
+    }
     Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(
         L"KashipanEngine/Shader/Line.PS.hlsl", L"ps_6_0",
         dxcUtils.Get(), dxcCompiler.Get(), includeHandler);
@@ -551,7 +558,7 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
     depthStencilDesc.DepthEnable = true;                            // Depthの機能を有効化する
     depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;   // 深度値を書き込む
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;  // 比較関数
-    
+
     //==================================================
     // PSOを生成する
     //==================================================
@@ -561,8 +568,10 @@ PipeLineSet PrimitiveDrawer::CreateLinePipeline(const std::source_location &loca
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;        // InputLayout
     graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
         vertexShaderBlob->GetBufferSize() };                        // VertexShader
-    graphicsPipelineStateDesc.GS = { GeometryShaderBlob->GetBufferPointer(),
-        GeometryShaderBlob->GetBufferSize() };                      // GeometryShader
+    if (lineType == kLineThickness) {
+        graphicsPipelineStateDesc.GS = { GeometryShaderBlob->GetBufferPointer(),
+            GeometryShaderBlob->GetBufferSize() };                  // GeometryShader
+    }
     graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
         pixelShaderBlob->GetBufferSize() };                         // PixelShader
     graphicsPipelineStateDesc.BlendState = blendDesc;               // BlendState

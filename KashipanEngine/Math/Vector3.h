@@ -18,7 +18,7 @@ struct Vector3 {
     static Vector3 Slerp(const Vector3 &start, const Vector3 &end, float t) noexcept;
     static Vector3 Bezier(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const float t) noexcept;
     static Vector3 CatmullRomInterpolation(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Vector3 &p3, float t) noexcept;
-    static Vector3 CatmullRomPosition(const std::vector<Vector3> &points, float t);
+    static Vector3 CatmullRomPosition(const std::vector<Vector3> &points, float t, bool isLoop = false);
 
     Vector3() noexcept = default;
     constexpr Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}

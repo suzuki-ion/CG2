@@ -108,7 +108,8 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     pipelineSet_[kFillModeWireframe][kBlendModeExclusion] =
         PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeExclusion);
 
-    linePipelineSet_ = PrimitiveDrawer::CreateLinePipeline();
+    linePipelineSet_[kLineNormal] = PrimitiveDrawer::CreateLinePipeline(kLineNormal);
+    linePipelineSet_[kLineThickness] = PrimitiveDrawer::CreateLinePipeline(kLineThickness);
 
     // 初期化完了のログを出力
     Log("Renderer Initialized.");
@@ -172,6 +173,12 @@ void Renderer::PreDraw() {
     // コマンドを積む
     dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);         // ビューポートを設定
     dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);   // シザー矩形を設定
+    // 形状を設定
+    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // シグネチャを設定
+    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[kFillModeSolid][blendMode_].rootSignature.Get());
+    // パイプラインを設定
+    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[kFillModeSolid][blendMode_].pipelineState.Get());
 
     // デバッグカメラが有効ならデバッグカメラの処理
     if (isUseDebugCamera_) {
@@ -185,18 +192,6 @@ void Renderer::PostDraw() {
         directionalLight_ = &sDefaultDirectionalLight;
     }
 
-    // 線の描画
-    for (auto &line : drawLines_) {
-        DrawLine(&line);
-    }
-
-    // 形状を設定
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // シグネチャを設定
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[kFillModeSolid][blendMode_].rootSignature.Get());
-    // パイプラインを設定
-    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[kFillModeSolid][blendMode_].pipelineState.Get());
-
     // 平行光源の設定
     SetLightBuffer(directionalLight_);
     // 通常のオブジェクトの描画
@@ -205,6 +200,10 @@ void Renderer::PostDraw() {
     DrawCommon(drawAlphaObjects_);
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
+    // 線の描画
+    for (auto &line : drawLines_) {
+        DrawLine(&line);
+    }
 
     imguiManager_->EndFrame();
     dxCommon_->PostDraw();
@@ -315,8 +314,8 @@ void Renderer::DrawCommon(ObjectState *objectState) {
 
 void Renderer::DrawLine(LineState *lineState) {
     dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(linePipelineSet_.rootSignature.Get());
-    dxCommon_->GetCommandList()->SetPipelineState(linePipelineSet_.pipelineState.Get());
+    dxCommon_->GetCommandList()->SetGraphicsRootSignature(linePipelineSet_[lineState->lineType].rootSignature.Get());
+    dxCommon_->GetCommandList()->SetPipelineState(linePipelineSet_[lineState->lineType].pipelineState.Get());
 
     // Cameraがnullptrの場合は2D描画
     if (lineState->isUseCamera == false) {
@@ -349,6 +348,9 @@ void Renderer::DrawLine(LineState *lineState) {
 
     // TransformationMatrix用のCBufferの場所を指定
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, lineState->transformationMatrixResource->GetGPUVirtualAddress());
+    // LineOption用のCBufferの場所を指定
+    dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, lineState->lineOptionResource->GetGPUVirtualAddress());
+
     // VBVを設定
     dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &lineState->mesh->vertexBufferView);
     // IBVを設定
