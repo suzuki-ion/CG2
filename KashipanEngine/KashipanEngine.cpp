@@ -22,6 +22,7 @@
 #include "Base/Renderer.h"
 #include "Base/Input.h"
 #include "Base/Sound.h"
+#include "Base/ScreenBuffer.h"
 #include "2d/ImGuiManager.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Vector4.h"
@@ -114,6 +115,9 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
     // 描画用クラス初期化
     sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get());
+
+    // スクリーンバッファ初期化
+    ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get());
 
     // フレーム時間の初期化
     LARGE_INTEGER freq;

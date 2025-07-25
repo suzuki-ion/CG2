@@ -9,6 +9,7 @@
 #include "Base/Texture.h"
 #include "Base/Input.h"
 #include "Base/Sound.h"
+#include "Base/ScreenBuffer.h"
 
 #include "2d/ImGuiManager.h"
 
@@ -252,11 +253,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // テキスト
     //==================================================
 
-    Text text(128);
+    Text text(1024);
     text.SetRenderer(renderer);
     text.SetFont("Resources/Font/test.fnt");
-    char8_t textBuffer[128] = u8"テストテキスト1";
+    char8_t textBuffer[1024] = u8"テストテキスト1";
     text.SetText(textBuffer);
+
+    //==================================================
+    // スクリーンバッファ
+    //==================================================
+
+    ScreenBuffer screenBuffer(1920, 1080);
+    screenBuffer.SetRenderer(renderer);
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -264,6 +272,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
+        screenBuffer.PreDraw();
+        screenBuffer.PostDraw();
         renderer->PreDraw();
         Input::Update();
 

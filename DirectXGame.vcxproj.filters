@@ -201,6 +201,9 @@
     <ClCompile Include="KashipanEngine\Font\FontLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\Common\ConvertString.h">
@@ -341,7 +344,7 @@
     <ClInclude Include="KashipanEngine\Objects\Plane.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h">
+    <ClInclude Include="KashipanEngine\Base\ScreenBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\Base\Sound.h">

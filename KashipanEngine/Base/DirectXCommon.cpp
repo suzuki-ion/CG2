@@ -82,7 +82,7 @@ void DirectXCommon::PreDraw() {
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
     barrier.Transition.pResource = swapChainResources_[backBufferIndex].Get();
-    barrier.Transition.StateBefore = currentBarrierState_;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
     SetBarrier(barrier);
 
@@ -100,7 +100,7 @@ void DirectXCommon::PostDraw() {
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
     barrier.Transition.pResource = swapChainResources_[backBufferIndex].Get();
-    barrier.Transition.StateBefore = currentBarrierState_;
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
     SetBarrier(barrier);
 
@@ -117,7 +117,7 @@ void DirectXCommon::ClearRenderTarget() {
     //==================================================
 
     // 描画先のRTVを設定
-    commandList_->OMSetRenderTargets(1, &rtvHandle_[backBufferIndex], false, nullptr);
+    commandList_->OMSetRenderTargets(1, &rtvHandle_[backBufferIndex], false, &dsvHandle_);
     // 指定した色で画面全体をクリア
     commandList_->ClearRenderTargetView(rtvHandle_[backBufferIndex], clearColor_, 0, nullptr);
 }
@@ -141,6 +141,11 @@ void DirectXCommon::ClearDepthStencil() {
 }
 
 void DirectXCommon::SetBarrier(D3D12_RESOURCE_BARRIER &barrier) {
+    // 同じバリアを張ろうとしてるのは無視
+    if (barrier.Transition.StateAfter == currentBarrierState_) {
+        return;
+    }
+
     // バリアを張る
     commandList_->ResourceBarrier(1, &barrier);
     
@@ -500,11 +505,11 @@ void DirectXCommon::InitializeRTVHandle() {
     rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;  // 2Dテクスチャとして書き込む
 
     // RTVの1つ目を作成。1つ目は最初のところに作る。作る場所をこちらで設定してあげる必要がある
-    rtvHandle_[0] = RTV::GetCPUDescriptorHandle(0);
+    rtvHandle_[0] = RTV::GetCPUDescriptorHandle();
     device_->CreateRenderTargetView(swapChainResources_[0].Get(), &rtvDesc_, rtvHandle_[0]);
 
     // 2つ目のディスクリプタハンドルを得る
-    rtvHandle_[1] = RTV::GetCPUDescriptorHandle(1);
+    rtvHandle_[1] = RTV::GetCPUDescriptorHandle();
     // RTVの2つ目を作成。
     device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandle_[1]);
 

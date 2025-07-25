@@ -18,12 +18,12 @@ Lines::Lines(const int lineCount, LineType lineType) {
     lineOptionMap_->type = lineType_;
     statePtr_.vertexData = mesh_->vertexBufferMap;
 
-    for (int i = 0; i < vertexCount_ - 1; i++) {
+    for (UINT i = 0; i < vertexCount_ - 1; i++) {
         mesh_->indexBufferMap[(i * 2) + 0] = i + 0;
         mesh_->indexBufferMap[(i * 2) + 1] = i + 1;
     }
 
-    for (int i = 0; i < vertexCount_; i++) {
+    for (UINT i = 0; i < vertexCount_; i++) {
         mesh_->vertexBufferMap[i].pos = { 0.0f, 0.0f, 0.0f, 1.0f };
         mesh_->vertexBufferMap[i].color = { 0.0f, 0.0f, 0.0f, 1.0f };
         mesh_->vertexBufferMap[i].width = 0.1f;

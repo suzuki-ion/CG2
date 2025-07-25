@@ -173,13 +173,7 @@ void Renderer::PreDraw() {
     // コマンドを積む
     dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);         // ビューポートを設定
     dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);   // シザー矩形を設定
-    // 形状を設定
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // シグネチャを設定
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[kFillModeSolid][blendMode_].rootSignature.Get());
-    // パイプラインを設定
-    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[kFillModeSolid][blendMode_].pipelineState.Get());
-
+    
     // デバッグカメラが有効ならデバッグカメラの処理
     if (isUseDebugCamera_) {
         sDebugCamera->MoveToMouse(0.1f, 0.01f, 0.1f);
@@ -192,6 +186,18 @@ void Renderer::PostDraw() {
         directionalLight_ = &sDefaultDirectionalLight;
     }
 
+    // 線の描画
+    for (auto &line : drawLines_) {
+        DrawLine(&line);
+    }
+
+    // 形状を設定
+    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // シグネチャを設定
+    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[kFillModeSolid][blendMode_].rootSignature.Get());
+    // パイプラインを設定
+    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[kFillModeSolid][blendMode_].pipelineState.Get());
+
     // 平行光源の設定
     SetLightBuffer(directionalLight_);
     // 通常のオブジェクトの描画
@@ -200,10 +206,6 @@ void Renderer::PostDraw() {
     DrawCommon(drawAlphaObjects_);
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
-    // 線の描画
-    for (auto &line : drawLines_) {
-        DrawLine(&line);
-    }
 
     imguiManager_->EndFrame();
     dxCommon_->PostDraw();

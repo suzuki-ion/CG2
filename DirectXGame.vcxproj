@@ -63,6 +63,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,6 +93,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\GridLine.cpp" />
     <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
+    <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp" />
     <ClCompile Include="KashipanEngine\Common\TimeGet.cpp" />
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
     <ClCompile Include="KashipanEngine\Font\FontLoader.cpp" />
@@ -207,7 +210,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Font\FontStructs.h" />
     <ClInclude Include="KashipanEngine\Objects\Lines.h" />
     <ClInclude Include="MyStd\OnlyPointer.h" />
-    <ClInclude Include="KashipanEngine\Common\ScreenBuffer.h" />
+    <ClInclude Include="KashipanEngine\Base\ScreenBuffer.h" />
     <ClInclude Include="KashipanEngine\Common\TextureData.h" />
     <ClInclude Include="KashipanEngine\Common\TimeGet.h" />
     <ClInclude Include="KashipanEngine\Common\TransformationMatrix.h" />

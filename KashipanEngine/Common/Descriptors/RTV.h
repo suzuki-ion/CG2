@@ -90,7 +90,7 @@ private:
     static DirectXCommon *dxCommon_;
 
     /// @brief ディスクリプタヒープの数
-    static const uint32_t numDescriptors_ = 4;
+    static const uint32_t numDescriptors_ = 8;
     /// @brief ディスクリプタヒープ
     static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
     /// @brief 次に使用するCPUディスクリプタハンドルのインデックス
