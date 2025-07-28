@@ -1,6 +1,7 @@
 #include <cassert>
 #include "WinApp.h"
 #include "DirectXCommon.h"
+#include "3d/PrimitiveDrawer.h"
 #include "Common/Logs.h"
 #include "Common/Descriptors/RTV.h"
 #include "Common/Descriptors/SRV.h"
@@ -41,6 +42,8 @@ ScreenBuffer::ScreenBuffer(uint32_t width, uint32_t height) {
 
     screenWidth_ = width;
     screenHeight_ = height;
+    pipelineSet_ = PrimitiveDrawer::CreateGraphicsPipeline(
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeNormal, true);
     CreateTextureResource();
     CreateDepthStencilResource();
     CreateRenderTarget();
@@ -61,6 +64,8 @@ void ScreenBuffer::PreDraw() {
     sCommandList->OMSetRenderTargets(1, &rtvCPUHandle_, false, &dsvCPUHandle_);
     sCommandList->ClearRenderTargetView(rtvCPUHandle_, clearValue_.Color, 0, nullptr);
     sCommandList->ClearDepthStencilView(dsvCPUHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+
 }
 
 void ScreenBuffer::PostDraw() {

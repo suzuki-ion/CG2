@@ -28,11 +28,6 @@ enum DrawType {
 /// @brief 描画用クラス
 class Renderer {
 public:
-    /// @brief スクリーン情報
-    struct ScreenState {
-
-    };
-
     /// @brief オブジェクト情報
     struct ObjectState {
         /// @brief メッシュへのポインタ
