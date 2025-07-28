@@ -75,28 +75,6 @@ void ImGuiManager::BeginFrame() {
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-
-    /*if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("ファイル")) {
-            ImGui::MenuItem("新規作成", "Ctrl+N");
-            ImGui::MenuItem("開く", "Ctrl+O");
-            ImGui::MenuItem("保存", "Ctrl+S");
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("編集")) {
-            ImGui::MenuItem("元に戻す", "Ctrl+Z");
-            ImGui::MenuItem("やり直す", "Ctrl+Y");
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("オプション")) {
-            ImGui::MenuItem("設定", nullptr);
-            ImGui::EndMenu();
-        }
-
-        ImGui::EndMainMenuBar();
-    }*/
     ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 }
 

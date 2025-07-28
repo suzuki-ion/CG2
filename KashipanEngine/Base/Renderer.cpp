@@ -52,7 +52,13 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     // 各クラスへのポインタを設定
     winApp_ = winApp;
     dxCommon_ = dxCommon;
+#ifdef _DEBUG
     imguiManager_ = imguiManager;
+#else
+    // リリースビルドではimguiManagerは使用しないためnullptrに設定
+    imguiManager_ = nullptr;
+    static_cast<void>(imguiManager);
+#endif
 
     // 2D描画用の行列を初期化
     viewMatrix2D_.MakeIdentity();
@@ -130,7 +136,9 @@ Renderer::~Renderer() {
 void Renderer::PreDraw() {
     dxCommon_->PreDraw();
     dxCommon_->ClearDepthStencil();
+#ifdef _DEBUG
     imguiManager_->BeginFrame();
+#endif
 
     // 平行光源をリセット
     directionalLight_ = nullptr;
@@ -207,7 +215,9 @@ void Renderer::PostDraw() {
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
 
+#ifdef _DEBUG
     imguiManager_->EndFrame();
+#endif
     dxCommon_->PostDraw();
 }
 

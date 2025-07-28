@@ -3,7 +3,6 @@
 #include <wrl.h>
 #include <cstdint>
 #include "Common/PipeLineSet.h"
-#include ""
 
 namespace KashipanEngine {
 
