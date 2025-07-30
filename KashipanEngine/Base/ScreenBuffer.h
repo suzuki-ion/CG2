@@ -3,7 +3,6 @@
 #include <wrl.h>
 #include <cstdint>
 #include "Common/PipeLineSet.h"
-#include ""
 
 namespace KashipanEngine {
 
@@ -27,6 +26,12 @@ public:
     /// @param renderer レンダラーへのポインタ
     void SetRenderer(Renderer *renderer) {
         renderer_ = renderer;
+    }
+
+    /// @brief SRVのCPUハンドルを取得
+    /// @return 
+    D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle() const {
+        return srvGPUHandle_;
     }
 
     /// @brief 描画前処理

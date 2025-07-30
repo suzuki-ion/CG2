@@ -505,11 +505,15 @@ void DirectXCommon::InitializeRTVHandle() {
     rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;  // 2Dテクスチャとして書き込む
 
     // RTVの1つ目を作成。1つ目は最初のところに作る。作る場所をこちらで設定してあげる必要がある
-    rtvHandle_[0] = RTV::GetCPUDescriptorHandle();
+    if (!isInitialized) {
+        rtvHandle_[0] = RTV::GetCPUDescriptorHandle();
+    }
     device_->CreateRenderTargetView(swapChainResources_[0].Get(), &rtvDesc_, rtvHandle_[0]);
 
     // 2つ目のディスクリプタハンドルを得る
-    rtvHandle_[1] = RTV::GetCPUDescriptorHandle();
+    if (!isInitialized) {
+        rtvHandle_[1] = RTV::GetCPUDescriptorHandle();
+    }
     // RTVの2つ目を作成。
     device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandle_[1]);
 

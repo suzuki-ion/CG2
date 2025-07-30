@@ -454,6 +454,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (isXYGrid) gridLineXY.Draw();
         if (isYZGrid) gridLineYZ.Draw();
 
+        // スクリーンバッファの描画
+        auto screenBufferSRVGPUHandle = screenBuffer.GetSRVGPUHandle();
+        ImTextureID screenBufferTextureID = static_cast<ImTextureID>(screenBufferSRVGPUHandle.ptr);
+        ImGui::Image(screenBufferTextureID, ImVec2(1920.0f, 1080.0f));
+
         // 線の描画
         lines.Draw();
 
