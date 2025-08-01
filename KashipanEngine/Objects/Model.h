@@ -46,7 +46,7 @@ private:
 };
 
 /// @brief モデルクラス
-class Model {
+class Model : Object{
 public:
     /// @brief 必ずモデルのデータを設定してもらいたいので、デフォルトコンストラクタは削除
     Model() = delete;
@@ -64,12 +64,12 @@ public:
 
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
-    void SetRenderer(Renderer *renderer);
+    void SetRenderer(Renderer *renderer) override;
 
-    /// @brief transformへのアクセス
-    /// @return モデル全体のtransform
-    Transform &GetTransform() {
-        return transform_;
+    /// @brief オブジェクト情報へのポインタを取得
+    /// @return オブジェクト情報へのポインタ
+    [[nodiscard]] StatePtr GetStatePtr() override {
+        return { nullptr, &transform_, nullptr, &material_, nullptr, nullptr, &fillMode_ };
     }
 
     /// @brief modelデータへのアクセス
@@ -79,11 +79,6 @@ public:
     }
 
 private:
-    /// @brief モデルデータ全体のtransform
-    Transform transform_;
-    /// @brief ワールド行列
-    AffineMatrix worldMatrix_{};
-
     /// @brief モデルデータ
     std::vector<ModelData> models_;
 };

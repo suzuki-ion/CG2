@@ -46,7 +46,7 @@ void Sprite::Draw(WorldTransform &worldTransform) {
 void Sprite::Initialize() {
     Create(4, 6);
     isUseCamera_ = false;
-    material_.enableLighting = false;
+    material_.lightingType = false;
 
     mesh_->indexBufferMap[0] = 0;
     mesh_->indexBufferMap[1] = 1;

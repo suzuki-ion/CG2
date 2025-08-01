@@ -279,21 +279,17 @@ Model::Model(std::string directoryPath, std::string fileName) {
 }
 
 void Model::Draw() {
-    // ワールド行列の計算
-    worldMatrix_.SetSRT(
-        transform_.scale,
-        transform_.rotate,
-        transform_.translate
-    );
-
     // 各モデルデータの描画
     for (auto &model : models_) {
+        *model.GetStatePtr().material = material_;
+        *model.GetStatePtr().transform = transform_;
         model.Draw();
     }
 }
 
 void Model::Draw(WorldTransform &worldTransform) {
     for (auto &model : models_) {
+        *model.GetStatePtr().material = material_;
         model.Draw(worldTransform);
     }
 }

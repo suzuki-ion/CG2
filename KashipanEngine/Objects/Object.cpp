@@ -31,7 +31,7 @@ void Object::DrawCommon() {
 
     // マテリアルを設定
     materialMap_->color = ConvertColor(material_.color);
-    materialMap_->enableLighting = material_.enableLighting;
+    materialMap_->lightingType = material_.lightingType;
     materialMap_->uvTransform.MakeAffine(
         uvTransform_.scale,
         uvTransform_.rotate,
@@ -71,7 +71,7 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
 
     // マテリアルを設定
     materialMap_->color = ConvertColor(material_.color);
-    materialMap_->enableLighting = material_.enableLighting;
+    materialMap_->lightingType = material_.lightingType;
     materialMap_->uvTransform.MakeAffine(
         uvTransform_.scale,
         uvTransform_.rotate,

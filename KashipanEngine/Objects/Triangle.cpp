@@ -13,7 +13,7 @@ Triangle::Triangle() {
 
 void Triangle::Draw() {
     // 法線を設定
-    if (material_.enableLighting == false) {
+    if (material_.lightingType == false) {
         for (int i = 0; i < 3; i++) {
             mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
         }
@@ -41,7 +41,7 @@ void Triangle::Draw() {
 
 void Triangle::Draw(WorldTransform &worldTransform) {
     // 法線を設定
-    if (material_.enableLighting == false) {
+    if (material_.lightingType == false) {
         for (int i = 0; i < 3; i++) {
             mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
         }

@@ -101,37 +101,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Object::StatePtr sphereState = sphere.GetStatePtr();
     sphereState.transform->translate.y = 6.0f;
     *sphereState.normalType = kNormalTypeVertex;
-    *sphereState.fillMode = kFillModeWireframe;
     sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
     sphere.SetRenderer(renderer);
-
-    //==================================================
-    // ICO球
-    //==================================================
-
-    Model icoSphere("Resources/ICOSphere", "icoSphere.obj");
-    icoSphere.SetRenderer(renderer);
-    for (auto &model : icoSphere.GetModels()) {
-        model.GetStatePtr().transform->translate.y = 3.0f;
-        *model.GetStatePtr().fillMode = kFillModeWireframe;
-    }
 
     //==================================================
     // モデル
     //==================================================
 
-    Model model("Resources/nahida", "nahida.obj");
-    model.SetRenderer(renderer);
-    for (auto &modelElement : model.GetModels()) {
-        *modelElement.GetStatePtr().fillMode = kFillModeWireframe;
-    }
-
-    /*Model ground("Resources/Ground", "ground.obj");
+    Model nahida("Resources/nahida", "nahida.obj");
+    nahida.SetRenderer(renderer);
+    Model ground("Resources/Ground", "ground.obj");
     ground.SetRenderer(renderer);
-    for (auto &modelElement : ground.GetModels()) {
-        modelElement.GetStatePtr().material->enableLighting = false;
-        modelElement.GetStatePtr().transform->translate.y = -32.0f;
-    }*/
 
     //==================================================
     // 音声
@@ -161,18 +141,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         Texture::Load("Resources/tmpButton.png")
     );
     button2.SetUIElement("pos", Vector2(352.0f, 64.0f));
-
-    //==================================================
-    // UIグループ
-    //==================================================
-
-    UIGroup uiGroup("TestUIGroup", renderer);
-    uiGroup.SetUIElement<int>(
-        "textureIndex",
-        Texture::Load("Resources/tmpUIGroup.png")
-    );
-    uiGroup.AddChild(&button1);
-    uiGroup.AddChild(&button2);
 
     //==================================================
     // アニメーション用変数
@@ -211,43 +179,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool isXYGrid = false;
     // YZグリッド描画フラグ
     bool isYZGrid = false;
-
-    //==================================================
-    // 線
-    //==================================================
-
-    int lineCount = 100;
-    Lines lines(lineCount);
-    lines.SetRenderer(renderer);
-
-    //==================================================
-    // スプライン曲線
-    //==================================================
-
-    std::vector<Vector3> points = {
-        { 0.0f, 0.0f, 0.0f },
-        { 10.0f, 10.0f, 0.0f },
-        { 10.0f, 15.0f, 0.0f },
-        { 20.0f, 15.0f, 0.0f },
-        { 20.0f, 0.0f, 0.0f },
-        { 30.0f, 0.0f, 0.0f }
-    };
-    float elapsedT = 1.0f / static_cast<float>(lineCount);
-    // 線に適応
-    auto linesStatePtr = lines.GetStatePtr();
-    for (size_t i = 0; i <= lineCount; i++) {
-        float t = elapsedT * static_cast<float>(i);
-        Vector3 pos = Vector3::CatmullRomPosition(points, t);
-        linesStatePtr.vertexData[i].pos = Vector4(pos);
-    }
-
-    std::ofstream file("test.obj");
-    // 頂点座標 (v)
-    for (int i = 0; i <= lineCount; ++i) {
-        const Vector3 &v = Vector3(linesStatePtr.vertexData[i].pos);
-        file << "v " << v.x << " " << v.y << " " << v.z << "\n";
-    }
-    file.close();
 
     //==================================================
     // テキスト
@@ -397,22 +328,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             ImGui::TreePop();
         }
 
-        // UIグループ
-        if (ImGui::TreeNode("UIグループ")) {
-            Vector2 pos = uiGroup.GetUIElement<Vector2>("pos");
-            Vector2 scale = uiGroup.GetUIElement<Vector2>("scale");
-            float degree = uiGroup.GetUIElement<float>("degree");
-            Vector4 color = uiGroup.GetUIElement<Vector4>("color");
-            ImGui::DragFloat2("UIGroup Translate", &pos.x, 1.0f);
-            ImGui::DragFloat2("UIGroup Scale", &scale.x, 0.01f, 0.0f, 100.0f);
-            ImGui::DragFloat("UIGroup Degree", &degree, 0.1f);
-            ImGui::DragFloat4("UIGroup Color", &color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::TreePop();
-            uiGroup.SetUIElement("pos", pos);
-            uiGroup.SetUIElement("scale", scale);
-            uiGroup.SetUIElement("degree", degree);
-            uiGroup.SetUIElement("color", color);
-        }
+        // ナヒーダのモデル
+        //if (ImGui::TreeNode("ナヒーダ")) {
+        //    ImGui::DragFloat3("Nahida Translate", &nahidaTransform.translate.x, 0.01f);
+        //    ImGui::DragFloat3("Nahida Rotate", &nahidaTransform.rotate.x, 0.01f);
+        //    ImGui::DragFloat3("Nahida Scale", &nahidaTransform.scale.x, 0.01f);
+        //    ImGui::DragFloat4("Nahida MaterialColor", &nahidaMaterial.color.x, 1.0f, 0.0f, 255.0f);
+        //    ImGui::TreePop();
+        //}
+        //
+        //// 地面のモデル
+        //if (ImGui::TreeNode("地面")) {
+        //    ImGui::DragFloat3("Ground Translate", &groundTransform.translate.x, 0.01f);
+        //    ImGui::DragFloat3("Ground Rotate", &groundTransform.rotate.x, 0.01f);
+        //    ImGui::DragFloat3("Ground Scale", &groundTransform.scale.x, 0.01f);
+        //    ImGui::DragFloat4("Ground MaterialColor", &groundMaterial.color.x, 1.0f, 0.0f, 255.0f);
+        //    ImGui::TreePop();
+        //}
 
         // テキスト
         if (ImGui::TreeNode("テキスト")) {
@@ -428,17 +360,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::End();
 
         keyFrameAnimation.Update();
-        for (auto &icoShpereModel : icoSphere.GetModels()) {
-            icoShpereModel.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->translate.x =
-                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionX);
-            icoShpereModel.GetStatePtr().transform->translate.z =
-                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionZ);
-        }
-
-        uiGroup.Update();
 
         //==================================================
         // 描画処理
@@ -457,19 +378,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // スクリーンバッファの描画
         screenBuffer.DrawToImGui();
 
-        // 線の描画
-        lines.Draw();
-
         // 球体の描画
         sphere.Draw();
-        // ICO球の描画
-        icoSphere.Draw();
-        // モデルの描画
-        model.Draw();
+        // ナヒーダの描画
+        nahida.Draw();
         // 地面の描画
-        //ground.Draw();
-        // ボタンの描画
-        uiGroup.Draw();
+        ground.Draw();
         // 文字の描画
         text.Draw();
         

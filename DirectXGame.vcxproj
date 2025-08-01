@@ -176,10 +176,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp" />
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Text.cpp" />
+    <ClCompile Include="KashipanEngine\Base\SwapChain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
+    <ClInclude Include="KashipanEngine\Base\SwapChain.h" />
     <ClInclude Include="KashipanEngine\Common\GridLine.h" />
     <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h" />
     <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h" />

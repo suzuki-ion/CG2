@@ -81,9 +81,35 @@ void ScreenBuffer::PostDraw() {
 
 void ScreenBuffer::DrawToImGui() {
     ImGui::Begin(screenName_.c_str());
+    ImVec2 availableSize = ImGui::GetContentRegionAvail();
+
+    //--------- 画像描画サイズ計算 ---------//
+
+    float imageAspect = static_cast<float>(screenWidth_) / static_cast<float>(screenHeight_);
+
+    float targetWidth = availableSize.x;
+    float targetHeight = targetWidth / imageAspect;
+
+    if (targetHeight > availableSize.y) {
+        targetHeight = availableSize.y;
+        targetWidth = targetHeight * imageAspect;
+    }
+
+    //--------- 画像描画位置計算 ---------//
+    
+    ImVec2 offset;
+    offset.x = (availableSize.x - targetWidth) * 0.5f;
+    offset.y = (availableSize.y - targetHeight) * 0.5f;
+
+    // カーソル位置を調整
+    ImGui::SetCursorPos(offset);
+    
+    //--------- 描画 ---------//
+
     ImTextureID screenBufferTextureID = static_cast<ImTextureID>(srvGPUHandle_.ptr);
     ImGui::Image(screenBufferTextureID,
-        ImVec2(static_cast<float>(screenWidth_), static_cast<float>(screenHeight_)));
+        ImVec2(targetWidth, targetHeight));
+    
     ImGui::End();
 }
 
@@ -117,9 +143,9 @@ void ScreenBuffer::CreateTextureResource() {
     //==================================================
 
     clearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    clearValue_.Color[0] = 0.0f;
-    clearValue_.Color[1] = 0.0f;
-    clearValue_.Color[2] = 0.0f;
+    clearValue_.Color[0] = 0.25f;
+    clearValue_.Color[1] = 0.5f;
+    clearValue_.Color[2] = 0.75f;
     clearValue_.Color[3] = 1.0f;
 
     //==================================================

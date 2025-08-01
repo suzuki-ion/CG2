@@ -1,8 +1,12 @@
 #include "Object3d.hlsli"
 
+#define LIGHTING_TYPE_NONE 0
+#define LIGHTING_TYPE_LAMBERT 1
+#define LIGHTING_TYPE_HALF_LAMBERT 2
+
 struct Material {
 	float4 color;
-	int enableLighting;
+	int lightingType;
 	float4x4 uvTransform;
 	float4 diffuseColor;
 	float4 specularColor;
@@ -17,6 +21,19 @@ SamplerState gSampler : register(s0);
 struct PixelShaderOutput {
 	float4 color : SV_TARGET0;
 };
+
+float Dither4x4(int2 pos, float adjustment) {
+	const float4x4 bayer = {
+		0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
+        12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
+        3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
+        15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
+	};
+
+	int2 index = pos % 4;
+	float dithser = bayer[index.y][index.x] + abs(adjustment);
+	return fmod(dithser, 1.0f);
+}
 
 float4 RGBAtoHSVA(float4 rgba) {
 	float4 hsva;
@@ -105,8 +122,13 @@ float4 ColorSaturation(float4 color, float saturation) {
 	return HSVAtoRGBA(hsva);
 }
 
+float Lambert(float3 normal, float3 lightDirection) {
+	float NdotL = dot(normal, -lightDirection);
+	return max(NdotL, 0.0f);
+}
+
 float HalfLambert(float3 normal, float3 lightDirection) {
-	float NdotL = dot(normal, lightDirection);
+	float NdotL = dot(normal, -lightDirection);
 	return pow(max(NdotL, 0.0f) * 0.5f + 0.5f, 2.0f);
 }
 
@@ -117,25 +139,41 @@ float Phong(float3 normal, float3 lightDirection, float3 viewDirection, float sh
 	return pow(max(RdotV, 0.0f), shininess);
 }
 
-float Schlick(float3 normal, float3 viewDirection, float reflectance) {
-	float VdotN = dot(viewDirection, normal);
-	return reflectance + (1.0f - reflectance) * pow(1.0f - VdotN, 5.0f);
-}
-
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+	float alpha = textureColor.a * gMaterial.color.a;
 	
-	if (gMaterial.enableLighting != 0) {
+	if (input.position.z > 1.0f) {
+		discard;
+	}
+	
+	if (alpha == 0.0f) {
+		discard;
+	}
+	
+	if (gMaterial.color.a < 1.0f) {
+		int2 ditherInput = int2(input.position.xy);
+		float ditherValue = Dither4x4(ditherInput, alpha);
+		if (gMaterial.color.a < ditherValue) {
+			discard;
+		}
+	}
+	
+	if (gMaterial.lightingType == 1) {
 		float NdotL = dot(input.normal, gDirectionalLight.direction);
 		float phong = Phong(input.normal, gDirectionalLight.direction, normalize(-input.position.xyz), gDirectionalLight.intensity);
 		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NdotL + (phong) * gDirectionalLight.color.a;
-		output.color.a = gMaterial.color.a * textureColor.a;
+		output.color.a = 1.0f;
 
 	} else {
 		output.color = gMaterial.color * textureColor;
+		output.color.a = 1.0f;
 	}
 	
+	output.color.r = input.position.z;
+	output.color.g = 0.0f;
+	output.color.b = 0.0f;
 	return output;
 }

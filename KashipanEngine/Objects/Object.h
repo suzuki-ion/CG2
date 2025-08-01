@@ -32,9 +32,15 @@ public:
     Object() = default;
     Object(Object &&other) noexcept;
 
+    /// @brief オブジェクトの名前設定
+    /// @param name オブジェクトの名前
+    void SetName(const std::string &name) {
+        name_ = name;
+    }
+
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
-    void SetRenderer(Renderer *renderer) {
+    virtual void SetRenderer(Renderer *renderer) {
         renderer_ = renderer;
     }
 
@@ -64,6 +70,9 @@ protected:
     //==================================================
     // メンバ変数
     //==================================================
+
+    /// @brief オブジェクトの名前
+    std::string name_;
 
     /// @brief レンダラーへのポインタ
     Renderer *renderer_ = nullptr;
