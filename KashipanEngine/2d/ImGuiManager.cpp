@@ -98,6 +98,10 @@ void ImGuiManager::BeginFrame() {
         ImGui::EndMainMenuBar();
     }*/
     ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    ImGui::Begin("Style Editor");
+    ImGui::ShowStyleEditor();
+    ImGui::End();
 }
 
 void ImGuiManager::EndFrame() {

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <imgui.h>
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "3d/PrimitiveDrawer.h"
@@ -76,6 +77,14 @@ void ScreenBuffer::PostDraw() {
     barrier.Transition.StateBefore = beginState;
     barrier.Transition.StateAfter = endState;
     sDxCommon->SetBarrier(barrier);
+}
+
+void ScreenBuffer::DrawToImGui() {
+    ImGui::Begin(screenName_.c_str());
+    ImTextureID screenBufferTextureID = static_cast<ImTextureID>(srvGPUHandle_.ptr);
+    ImGui::Image(screenBufferTextureID,
+        ImVec2(static_cast<float>(screenWidth_), static_cast<float>(screenHeight_)));
+    ImGui::End();
 }
 
 void ScreenBuffer::CreateTextureResource() {

@@ -42,12 +42,6 @@ public:
         const std::source_location &location = std::source_location::current()
     );
 
-    /// @brief DepthStencilResourceの取得
-    /// @return DepthStencilResourceのポインタ
-    [[nodiscard]] static ID3D12Resource *GetDepthStencilResource(
-        const std::source_location &location = std::source_location::current()
-    );
-
     /// @brief CPUディスクリプタハンドルの取得 
     /// @return CPUディスクリプタハンドル
     [[nodiscard]] static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(

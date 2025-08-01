@@ -110,18 +110,6 @@ ID3D12DescriptorHeap *DSV::GetDescriptorHeap(const std::source_location &locatio
     return descriptorHeap_.Get();
 }
 
-ID3D12Resource *DSV::GetDepthStencilResource(const std::source_location &location) {
-    // 呼び出された場所のログを出力
-    Log(location);
-    // 初期化済みフラグをチェック
-    if (!isInitialized_) {
-        Log("DSV is not initialized.", kLogLevelFlagError);
-        assert(false);
-    }
-    // DepthStencilResourceのポインタを返す
-    return depthStencilResource_.Get();
-}
-
 D3D12_CPU_DESCRIPTOR_HANDLE DSV::GetCPUDescriptorHandle(const std::source_location &location) {
     // 呼び出された場所のログを出力
     Log(location);

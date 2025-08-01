@@ -183,8 +183,6 @@ void DirectXCommon::Resize() {
     if (FAILED(hr)) assert(SUCCEEDED(hr));
     // スワップチェインからのリソースを再生成
     InitializeSwapChainResources();
-    // RTVの初期化
-    RTV::Initialize(this);
     // DSVの初期化
     DSV::Initialize(winApp_, this);
     // RTVハンドルの初期化

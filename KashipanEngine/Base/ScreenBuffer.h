@@ -39,6 +39,9 @@ public:
     /// @brief 描画後処理
     void PostDraw();
 
+    /// @brief ImGui上での描画
+    void DrawToImGui();
+
 private:
     static inline const D3D12_RESOURCE_STATES beginState = D3D12_RESOURCE_STATE_RENDER_TARGET;
     static inline const D3D12_RESOURCE_STATES endState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
@@ -48,6 +51,9 @@ private:
     void CreateRenderTarget();
     void CreateShaderResource();
     void CreateDepthStencil();
+
+    // スクリーン名(ImGui上での表示用)
+    std::string screenName_ = "ScreenBuffer";
 
     // レンダラーへのポインタ
     Renderer *renderer_ = nullptr;
