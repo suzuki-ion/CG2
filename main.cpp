@@ -111,10 +111,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     Model icoSphere("Resources/ICOSphere", "icoSphere.obj");
     icoSphere.SetRenderer(renderer);
-    for (auto &model : icoSphere.GetModels()) {
-        model.GetStatePtr().transform->translate.y = 3.0f;
-        *model.GetStatePtr().fillMode = kFillModeWireframe;
-    }
+    icoSphere.GetStatePtr().transform->translate.y = 3.0f;
+    *icoSphere.GetStatePtr().fillMode = kFillModeWireframe;
 
     //==================================================
     // モデル
@@ -122,9 +120,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     Model model("Resources/nahida", "nahida.obj");
     model.SetRenderer(renderer);
-    for (auto &modelElement : model.GetModels()) {
-        *modelElement.GetStatePtr().fillMode = kFillModeWireframe;
-    }
 
     /*Model ground("Resources/Ground", "ground.obj");
     ground.SetRenderer(renderer);
@@ -428,15 +423,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::End();
 
         keyFrameAnimation.Update();
-        for (auto &icoShpereModel : icoSphere.GetModels()) {
-            icoShpereModel.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
-            icoShpereModel.GetStatePtr().transform->translate.x =
-                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionX);
-            icoShpereModel.GetStatePtr().transform->translate.z =
-                keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionZ);
-        }
+        icoSphere.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
+        icoSphere.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
+        icoSphere.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
+        icoSphere.GetStatePtr().transform->translate.x =
+            keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionX);
+        icoSphere.GetStatePtr().transform->translate.z =
+            keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionZ);
 
         uiGroup.Update();
 

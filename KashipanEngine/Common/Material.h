@@ -7,8 +7,8 @@ namespace KashipanEngine {
 struct Material {
     /// @brief マテリアルの色
     Vector4 color = { 255.0f, 255.0f, 255.0f, 255.0f };
-    /// @brief Lightingの有効無効
-    int32_t enableLighting = true;
+    /// @brief Lightingの種類
+    int32_t lightingType = 1;
     /// @brief padding分のメモリ
     float padding[3] = { 0.0f, 0.0f, 0.0f };
     /// @brief テクスチャ用のUVTransform行列
