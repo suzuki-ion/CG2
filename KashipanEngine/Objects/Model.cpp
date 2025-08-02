@@ -142,7 +142,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         // かつ今は面情報じゃない行を読み込んでいたらモデルデータに書き込み
         if (preIdentifier == "f" && identifier != "f") {
             MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-            models_.back().CreateData(vertices, index, materialData);
+            models_.back()->CreateData(vertices, index, materialData);
 
             // 読み込んだデータを一部リセット
             vertices.clear();
@@ -196,7 +196,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
 
             // 前までのIDがfでなければ新しくモデルデータを追加
             if (preIdentifier != "f") {
-                models_.emplace_back();
+                models_.push_back(std::make_unique<ModelData>());
             }
 
             std::vector<VertexData> faceVertices;
@@ -275,31 +275,37 @@ Model::Model(std::string directoryPath, std::string fileName) {
     }
 
     // モデルデータの最後の要素のmeshがemptyなら書き込み
-    if (!models_.back().isMeshExist()) {
+    if (!models_.back()->isMeshExist()) {
         MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-        models_.back().CreateData(vertices, index, materialData);
+        models_.back()->CreateData(vertices, index, materialData);
     }
 }
+
+//Model::Model(Model &&other) noexcept {
+//    for (auto &model : other.models_) {
+//        models_.push_back(std::move(model));
+//    }
+//}
 
 void Model::Draw() {
     // 各モデルデータの描画
     for (auto &model : models_) {
-        *model.GetStatePtr().material = material_;
-        *model.GetStatePtr().transform = transform_;
-        model.Draw();
+        *model->GetStatePtr().material = material_;
+        *model->GetStatePtr().transform = transform_;
+        model->Draw();
     }
 }
 
 void Model::Draw(WorldTransform &worldTransform) {
     for (auto &model : models_) {
-        *model.GetStatePtr().material = material_;
-        model.Draw(worldTransform);
+        *model->GetStatePtr().material = material_;
+        model->Draw(worldTransform);
     }
 }
 
 void Model::SetRenderer(Renderer *renderer) {
     for (auto &model : models_) {
-        model.SetRenderer(renderer);
+        model->SetRenderer(renderer);
     }
 }
 

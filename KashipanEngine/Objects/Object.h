@@ -29,8 +29,13 @@ public:
         FillMode *fillMode = nullptr;
     };
 
-    Object() = default;
+    Object() noexcept = default;
+    virtual ~Object() noexcept = default;
+
+    Object(const Object &) = delete;
+    Object &operator=(const Object &) = delete;
     Object(Object &&other) noexcept;
+    Object &operator=(Object &&) noexcept = delete;
 
     /// @brief オブジェクトの名前設定
     /// @param name オブジェクトの名前

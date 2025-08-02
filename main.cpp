@@ -107,7 +107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>("Resources/uvChecker.png");
     sprite->SetRenderer(renderer);
-    objects.emplace_back(std::move(sprite));
+    objects.push_back(std::move(sprite));
 
     //==================================================
     // 球体
@@ -120,33 +120,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     *sphereState.normalType = kNormalTypeVertex;
     sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
     sphere->SetRenderer(renderer);
-    objects.emplace_back(std::move(sphere));
+    objects.push_back(std::move(sphere));
 
     //==================================================
     // モデル
     //==================================================
 
-    std::unique_ptr<Model> model = nullptr;
+    objects.push_back(std::make_unique<Model>("Resources/nahida", "nahida.obj"));
+    objects.back()->SetRenderer(renderer);
 
-    model = std::make_unique<Model>("Resources/nahida", "nahida.obj");
-    model->SetRenderer(renderer);
-    objects.emplace_back(std::move(model));
+    objects.push_back(std::make_unique<Model>("Resources", "multiMaterial.obj"));
+    objects.back()->SetRenderer(renderer);
 
-    model = std::make_unique<Model>("Resources", "multiMaterial.obj");
-    model->SetRenderer(renderer);
-    objects.emplace_back(std::move(model));
+    objects.push_back(std::make_unique<Model>("Resources", "bunny.obj"));
+    objects.back()->SetRenderer(renderer);
 
-    model = std::make_unique<Model>("Resources", "bunny.obj");
-    model->SetRenderer(renderer);
-    objects.emplace_back(std::move(model));
+    objects.push_back(std::make_unique<Model>("Resources", "teapot.obj"));
+    objects.back()->SetRenderer(renderer);
 
-    model = std::make_unique<Model>("Resources", "teapot.obj");
-    model->SetRenderer(renderer);
-    objects.emplace_back(std::move(model));
-
-    model = std::make_unique<Model>("Resources", "suzanne.obj");
-    model->SetRenderer(renderer);
-    objects.emplace_back(std::move(model));
+    objects.push_back(std::make_unique<Model>("Resources", "suzanne.obj"));
+    objects.back()->SetRenderer(renderer);
 
     //==================================================
     // 音声

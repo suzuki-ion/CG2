@@ -74,13 +74,13 @@ public:
 
     /// @brief modelデータへのアクセス
     /// @return モデルデータの参照
-    std::vector<ModelData> &GetModels() {
+    const std::vector<std::unique_ptr<ModelData>> &GetModels() {
         return models_;
     }
 
 private:
     /// @brief モデルデータ
-    std::vector<ModelData> models_;
+    std::vector<std::unique_ptr<ModelData>> models_;
 };
 
 } // namespace KashipanEngine
