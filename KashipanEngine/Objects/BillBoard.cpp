@@ -33,7 +33,7 @@ void BillBoard::Draw() {
         transform_.rotate.z = 0.0f;
     }
 
-    if (material_.enableLighting == false) {
+    if (material_.lightingType == false) {
         for (int i = 0; i < 4; i++) {
             mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
         }
@@ -77,7 +77,7 @@ void BillBoard::Draw(WorldTransform &worldTransform) {
         worldTransform.rotate_.z = 0.0f;
     }
 
-    if (material_.enableLighting == false) {
+    if (material_.lightingType == false) {
         for (int i = 0; i < 4; i++) {
             mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
         }

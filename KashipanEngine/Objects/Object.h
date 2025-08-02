@@ -29,12 +29,29 @@ public:
         FillMode *fillMode = nullptr;
     };
 
-    Object() = default;
+    Object() noexcept = default;
+    virtual ~Object() noexcept = default;
+
+    Object(const Object &) = delete;
+    Object &operator=(const Object &) = delete;
     Object(Object &&other) noexcept;
+    Object &operator=(Object &&) noexcept = delete;
+
+    /// @brief オブジェクトの名前設定
+    /// @param name オブジェクトの名前
+    void SetName(const std::string &name) {
+        name_ = name;
+    }
+
+    /// @brief オブジェクトの名前の取得
+    /// @return オブジェクトの名前
+    const std::string &GetName() {
+        return name_;
+    }
 
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
-    void SetRenderer(Renderer *renderer) {
+    virtual void SetRenderer(Renderer *renderer) {
         renderer_ = renderer;
     }
 
@@ -42,6 +59,17 @@ public:
     /// @return オブジェクト情報へのポインタ
     [[nodiscard]] virtual StatePtr GetStatePtr() {
         return { nullptr, &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &fillMode_};
+    }
+
+    /// @brief オブジェクトの描画処理
+    virtual void Draw() {
+        DrawCommon();
+    }
+
+    /// @brief オブジェクトの描画処理
+    /// @param worldTransform ワールド変換データ
+    virtual void Draw(WorldTransform &worldTransform) {
+        DrawCommon(worldTransform);
     }
     
 protected:
@@ -64,6 +92,9 @@ protected:
     //==================================================
     // メンバ変数
     //==================================================
+
+    /// @brief オブジェクトの名前
+    std::string name_;
 
     /// @brief レンダラーへのポインタ
     Renderer *renderer_ = nullptr;

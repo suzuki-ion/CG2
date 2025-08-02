@@ -46,7 +46,7 @@ private:
 };
 
 /// @brief モデルクラス
-class Model {
+class Model : public Object{
 public:
     /// @brief 必ずモデルのデータを設定してもらいたいので、デフォルトコンストラクタは削除
     Model() = delete;
@@ -64,28 +64,23 @@ public:
 
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
-    void SetRenderer(Renderer *renderer);
+    void SetRenderer(Renderer *renderer) override;
 
-    /// @brief transformへのアクセス
-    /// @return モデル全体のtransform
-    Transform &GetTransform() {
-        return transform_;
+    /// @brief オブジェクト情報へのポインタを取得
+    /// @return オブジェクト情報へのポインタ
+    [[nodiscard]] StatePtr GetStatePtr() override {
+        return { nullptr, &transform_, nullptr, &material_, nullptr, nullptr, &fillMode_ };
     }
 
     /// @brief modelデータへのアクセス
     /// @return モデルデータの参照
-    std::vector<ModelData> &GetModels() {
+    const std::vector<std::unique_ptr<ModelData>> &GetModels() {
         return models_;
     }
 
 private:
-    /// @brief モデルデータ全体のtransform
-    Transform transform_;
-    /// @brief ワールド行列
-    AffineMatrix worldMatrix_{};
-
     /// @brief モデルデータ
-    std::vector<ModelData> models_;
+    std::vector<std::unique_ptr<ModelData>> models_;
 };
 
 } // namespace KashipanEngine

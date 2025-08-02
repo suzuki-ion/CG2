@@ -9,6 +9,8 @@ Sphere::Sphere(const int subdivision) :
     kSubdivision_(subdivision),
     kVertexCount_(subdivision *subdivision * 4),
     kIndexCount_(subdivision *subdivision * 6) {
+    
+    name_ = "Sphere";
     isUseCamera_ = true;
     Create(kVertexCount_, kIndexCount_);
     const float pi = 3.14159265358979323846f;
@@ -121,7 +123,7 @@ void Sphere::CalcNormal() {
 
             //--------- 法線を設定 ---------//
 
-            if (material_.enableLighting == false) {
+            if (material_.lightingType == false) {
                 for (int i = 0; i < 4; i++) {
                     mesh_->vertexBufferMap[vertexIndex + i].normal = { 0.0f, 0.0f, -1.0f };
                 }
