@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     DirectionalLight directionalLight = {
         { 255.0f, 255.0f, 255.0f, 255.0f },
-        { -0.5f, 0.75f, -0.5f },
+        { -0.5f, -0.75f, -0.5f },
         16.0f
     };
 
@@ -121,12 +121,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Model model("Resources/nahida", "nahida.obj");
     model.SetRenderer(renderer);
 
-    /*Model ground("Resources/Ground", "ground.obj");
+    Model ground("Resources/Ground", "ground.obj");
     ground.SetRenderer(renderer);
-    for (auto &modelElement : ground.GetModels()) {
-        modelElement.GetStatePtr().material->enableLighting = false;
-        modelElement.GetStatePtr().transform->translate.y = -32.0f;
-    }*/
+    ground.GetStatePtr().transform->translate.y = -8.0f;
 
     //==================================================
     // 音声
@@ -460,7 +457,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // モデルの描画
         model.Draw();
         // 地面の描画
-        //ground.Draw();
+        ground.Draw();
         // ボタンの描画
         uiGroup.Draw();
         // 文字の描画

@@ -147,21 +147,24 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
-	float alpha = textureColor.a * gMaterial.color.a;
+	
 	float depth = LinearDepth(input.position.z, 0.1f, 2048.0f);
+	
+	float alphaAll = textureColor.a * gMaterial.color.a * (1.0f - depth);
+	float alphaDither = gMaterial.color.a * (1.0f - depth);
 	
 	if (depth > 1.0f) {
 		discard;
 	}
 	
-	if (alpha == 0.0f) {
+	if (alphaAll == 0.0f) {
 		discard;
 	}
 	
-	if (gMaterial.color.a < 1.0f) {
+	if (alphaDither < 1.0f) {
 		int2 ditherInput = int2(input.position.xy);
-		float ditherValue = Dither4x4(ditherInput, alpha);
-		if (gMaterial.color.a < ditherValue) {
+		float ditherValue = Dither4x4(ditherInput, alphaDither);
+		if (alphaDither < ditherValue) {
 			discard;
 		}
 	}
@@ -169,16 +172,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	if (gMaterial.lightingType == LIGHTING_TYPE_LAMBERT) {
 		float lambert = Lambert(input.normal, gDirectionalLight.direction);
 		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * lambert;
-		output.color.a = 1.0f;
+		output.color.a = textureColor.a;
 
 	} else if (gMaterial.lightingType == LIGHTING_TYPE_HALF_LAMBERT) {
 		float lambert = HalfLambert(input.normal, gDirectionalLight.direction);
 		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * lambert;
-		output.color.a = 1.0f;
+		output.color.a = textureColor.a;
 
 	} else {
 		output.color = gMaterial.color * textureColor;
-		output.color.a = 1.0f;
+		output.color.a = textureColor.a;
 	}
 	
 	return output;
