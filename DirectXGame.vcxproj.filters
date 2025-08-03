@@ -204,6 +204,9 @@
     <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLines.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\Common\ConvertString.h">
@@ -395,10 +398,10 @@
     <ClInclude Include="KashipanEngine\Objects\WorldTransform.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\InputLayout.h">
+    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\InputLayout.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\RootSignature.h">
+    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\RootSignature.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h">
@@ -456,6 +459,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\Common\LineOption.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

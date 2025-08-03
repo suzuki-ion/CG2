@@ -176,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp" />
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Text.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
@@ -191,8 +192,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />
     <ClInclude Include="KashipanEngine\2d\ImGuiManager.h" />
-    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\InputLayout.h" />
-    <ClInclude Include="KashipanEngine\Base\RenderingPipeline\RootSignature.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\InputLayout.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\RootSignature.h" />
     <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h" />
     <ClInclude Include="KashipanEngine\Base\Texture.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertColor.h" />
@@ -262,6 +263,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\Sound.h" />
     <ClInclude Include="KashipanEngine\Objects\WorldTransform.h" />
     <ClInclude Include="KashipanEngine\Objects\Text.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Line.GS.hlsl">
