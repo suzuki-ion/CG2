@@ -23,6 +23,8 @@
 #include "Base/Input.h"
 #include "Base/Sound.h"
 #include "Base/ScreenBuffer.h"
+#include "Base/PipeLines/PipeLines.h"
+#include "Base/PipeLineManager.h"
 #include "2d/ImGuiManager.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Vector4.h"
@@ -52,6 +54,7 @@ std::unique_ptr<WinApp> sWinApp;
 std::unique_ptr<DirectXCommon> sDxCommon;
 std::unique_ptr<ImGuiManager> sImGuiManager;
 std::unique_ptr<Renderer> sRenderer;
+std::unique_ptr<PipeLineManager> sPipeLineManager;
 
 // フレーム時間計算用変数
 int sFrameRate = 60;
@@ -118,6 +121,12 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
     // スクリーンバッファ初期化
     ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get());
+
+    // パイプライン初期化
+    PipeLines::Initialize(sDxCommon.get());
+
+    // パイプラインマネージャ初期化
+    sPipeLineManager = std::make_unique<PipeLineManager>();
 
     // フレーム時間の初期化
     LARGE_INTEGER freq;

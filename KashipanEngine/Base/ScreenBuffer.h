@@ -9,6 +9,7 @@ namespace KashipanEngine {
 class WinApp;
 class DirectXCommon;
 class Renderer;
+class Camera;
 
 class ScreenBuffer {
 public:
@@ -57,6 +58,10 @@ private:
 
     // レンダラーへのポインタ
     Renderer *renderer_ = nullptr;
+    // メインカメラへのポインタ
+    Camera *mainCamera_ = nullptr;
+    // デバッグ用カメラへのポインタ
+    Camera *debugCamera_ = nullptr;
 
     /// @brief 画面クリア時の値
     D3D12_CLEAR_VALUE clearValue_;
@@ -66,7 +71,7 @@ private:
     /// @brief スクリーンの縦幅
     uint32_t screenHeight_ = 0;
 
-    // パイプラインセット
+    /// @brief パイプライン
     PipeLineSet pipelineSet_;
     
     /// @brief 描画用リソース

@@ -61,7 +61,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -91,7 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -118,6 +118,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\GUI\Button.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\UIGroup.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLineManager.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLines\RootSignature.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLines\Shader.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLines\ShaderReflection.cpp" />
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
@@ -129,8 +133,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\Descriptors\DSV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\RTV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp" />
+    <ClCompile Include="KashipanEngine\Common\DirectoryLoader.cpp" />
     <ClCompile Include="KashipanEngine\Common\Easings.cpp" />
     <ClCompile Include="KashipanEngine\Common\GridLine.cpp" />
+    <ClCompile Include="KashipanEngine\Common\JsoncLoader.cpp" />
     <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
     <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp" />
@@ -176,12 +182,24 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp" />
     <ClCompile Include="KashipanEngine\Base\Sound.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Text.cpp" />
-    <ClCompile Include="KashipanEngine\Base\PipeLines.cpp" />
+    <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\BlendState.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DepthStencilState.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DescriptorRange.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\EnumMaps.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RasterizerState.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootParameter.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\Sampler.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
+    <ClInclude Include="KashipanEngine\Common\DirectoryLoader.h" />
     <ClInclude Include="KashipanEngine\Common\GridLine.h" />
+    <ClInclude Include="KashipanEngine\Common\JsoncLoader.h" />
     <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h" />
     <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
@@ -192,8 +210,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\3d\DirectionalLight.h" />
     <ClInclude Include="KashipanEngine\Base\Renderer.h" />
     <ClInclude Include="KashipanEngine\2d\ImGuiManager.h" />
-    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\InputLayout.h" />
-    <ClInclude Include="KashipanEngine\Base\PipeLineCreator\RootSignature.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\InputLayout.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootSignature.h" />
     <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h" />
     <ClInclude Include="KashipanEngine\Base\Texture.h" />
     <ClInclude Include="KashipanEngine\Common\ConvertColor.h" />
@@ -263,7 +281,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\Sound.h" />
     <ClInclude Include="KashipanEngine\Objects\WorldTransform.h" />
     <ClInclude Include="KashipanEngine\Objects\Text.h" />
-    <ClInclude Include="KashipanEngine\Base\PipeLines.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\PipeLines.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Line.GS.hlsl">

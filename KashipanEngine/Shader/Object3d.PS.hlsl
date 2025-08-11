@@ -153,7 +153,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float alphaAll = textureColor.a * gMaterial.color.a * (1.0f - depth);
 	float alphaDither = gMaterial.color.a * (1.0f - depth);
 	
-	if (depth > 1.0f) {
+	if (depth > 1.0f || depth < 0.0f) {
 		discard;
 	}
 	

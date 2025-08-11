@@ -7,6 +7,7 @@
 #include <cassert>
 #include <format>
 #include <dxcapi.h>
+#include <d3d12shader.h>
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -15,6 +16,11 @@ bool PrimitiveDrawer::isInitialized_ = false;
 DirectXCommon *PrimitiveDrawer::dxCommon_ = nullptr;
 
 namespace {
+
+#define DXIL_FOURCC(ch0, ch1, ch2, ch3) (                            \
+  (uint32_t)(uint8_t)(ch0)        | (uint32_t)(uint8_t)(ch1) << 8  | \
+  (uint32_t)(uint8_t)(ch2) << 16  | (uint32_t)(uint8_t)(ch3) << 24   \
+)
 
 /// @brief シェーダーコンパイル用関数
 /// @param filePath コンパイルするシェーダーファイルへのパス
@@ -91,6 +97,44 @@ IDxcBlob *CompileShader(const std::wstring &filePath, const wchar_t *profile,
     hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
     // コンパイル結果の取得に失敗した場合はエラーを出す
     if (FAILED(hr)) assert(SUCCEEDED(hr));
+
+
+
+    // お試しのシェーダーリフレクション
+    LogSimple(std::format(L"Begin Shader Reflection, path:{}, profile:{}", filePath, profile));
+
+    Microsoft::WRL::ComPtr<IDxcLibrary> lib;
+    DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(&lib));
+
+    Microsoft::WRL::ComPtr<IDxcBlobEncoding> binBlob{};
+    lib->CreateBlobWithEncodingOnHeapCopy(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), CP_ACP, &binBlob);
+
+    Microsoft::WRL::ComPtr<IDxcContainerReflection> refl;
+    DxcCreateInstance(CLSID_DxcContainerReflection, IID_PPV_ARGS(&refl));
+
+    // シェーダーバイナリデータをロードし、DXILチャンクブロック（のインデックス）を得る.
+    UINT shdIndex = 0;
+    refl->Load(binBlob.Get());
+    refl->FindFirstPartKind(DXIL_FOURCC('D', 'X', 'I', 'L'), &shdIndex);
+
+    // シェーダーリフレクションインターフェース取得.
+    Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection;
+    refl->GetPartReflection(shdIndex, IID_PPV_ARGS(&shaderReflection));
+
+    lib.Reset();
+    binBlob.Reset();
+    refl.Reset();
+
+    D3D12_SHADER_DESC shaderDesc{};
+    shaderReflection->GetDesc(&shaderDesc);
+    const auto cbcount = shaderDesc.ConstantBuffers;
+    for (UINT i = 0; i < cbcount; ++i) {
+        D3D12_SHADER_BUFFER_DESC cbDesc{};
+        auto cbuffer = shaderReflection->GetConstantBufferByIndex(i);
+        cbuffer->GetDesc(&cbDesc);
+        LogSimple(std::format("ConstantBuffer[{}]: Name:{}, Size:{}, Variables:{}", i, std::string(cbDesc.Name), cbDesc.Size, cbDesc.Variables));
+    }
+
     // コンパイル完了のログを出力
     LogSimple(std::format(L"Compile Succeeded, path:{}, profile:{}", filePath, profile));
     // もう使わないリソースを解放
@@ -179,7 +223,9 @@ PipeLineSet PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYP
 
     //--------- RootParameter作成 ---------//
 
-    D3D12_ROOT_PARAMETER rootParameters[4]{};
+    std::vector<D3D12_ROOT_PARAMETER> rootParameters;
+    rootParameters.resize(4);
+
     // PixelShaderのMaterial
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBVを使う
     rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderを使う
@@ -206,8 +252,8 @@ PipeLineSet PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYP
     rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderを使う
     rootParameters[3].Descriptor.ShaderRegister = 1;                    // レジスタ番号1を使う
 
-    descriptionRootSignature.pParameters = rootParameters;              // ルートパラメータ配列へのポインタ
-    descriptionRootSignature.NumParameters = _countof(rootParameters);  // 配列の長さ
+    descriptionRootSignature.pParameters = rootParameters.data();              // ルートパラメータ配列へのポインタ
+    descriptionRootSignature.NumParameters = static_cast<UINT>(rootParameters.size());  // 配列の長さ
 
     // Samplerの設定
     D3D12_STATIC_SAMPLER_DESC staticSamplers[1]{};
