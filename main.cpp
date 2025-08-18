@@ -50,7 +50,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // テクスチャを読み込む
     uint32_t textures[2];
     textures[0] = Texture::Load("Resources/uvChecker.png");
-    textures[1] = Texture::Load("Resources/monsterBall.png");
 
     // ウィンドウモード
     WindowMode windowMode = kWindow;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mystd {
+namespace MyStd {
 
 template <typename T>
 class OnlyPointer {
@@ -28,4 +28,4 @@ private:
     T *ptr_ = nullptr;
 };
 
-}
+} // namespace MyStd

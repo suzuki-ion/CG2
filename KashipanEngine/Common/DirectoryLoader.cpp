@@ -40,6 +40,7 @@ void AddFileIfValid(const std::filesystem::directory_entry &entry, const std::ve
             files.push_back(fileName);
         }
     }
+}
 
 } // namespace
 

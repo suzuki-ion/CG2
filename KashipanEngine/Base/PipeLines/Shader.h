@@ -19,7 +19,7 @@ public:
     /// @brief シェーダー追加
     /// @param filePath シェーダーファイルへのパス
     /// @param profile コンパイルに使用するプロファイル（例："vs_6_0"、"ps_6_0"など）
-    void AddShader(const std::string &filePath, const wchar_t *profile);
+    void AddShader(const std::string &filePath, const std::string &profile);
 
     /// @brief シェーダー取得
     /// @param filePath シェーダーファイルのパス

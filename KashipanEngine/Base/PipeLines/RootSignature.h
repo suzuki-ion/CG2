@@ -42,7 +42,7 @@ public:
         rootSignatures_[rootSignatureName] = rootSignatureStruct;
     }
 
-    /// @brief ルートシグネチャの設定
+    /// @brief ルートシグネチャの設定(保持している要素の変更あり)
     /// @param rootSignatureName ルートシグネチャ名
     /// @param rootParameters ルートパラメータの配列
     /// @param staticSamplers 静的サンプラーの配列
@@ -53,6 +53,33 @@ public:
         const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers = {},
         D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE
     );
+
+    /// @brief ルートシグネチャのバイナリ作成(保持している要素の変更なし)
+    /// @param rootSignatureName ルートシグネチャ名
+    /// @param rootParameters ルートパラメータの配列
+    /// @param staticSamplers 静的サンプラーの配列
+    /// @param flags ルートシグネチャフラグ
+    /// @return ルートシグネチャのバイナリ
+    [[nodiscard]] ID3D12RootSignature *CreateRootSignatureBinary(
+        const std::string &rootSignatureName,
+        const std::vector<D3D12_ROOT_PARAMETER> &rootParameters,
+        const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers = {},
+        D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE
+    );
+
+    /// @brief ルートシグネチャデスクの取得
+    /// @param rootSignatureName ルートシグネチャ名
+    /// @return ルートシグネチャのデスク
+    [[nodiscard]] const D3D12_ROOT_SIGNATURE_DESC &GetRootSignatureDesc(const std::string &rootSignatureName) const {
+        auto it = rootSignatures_.find(rootSignatureName);
+        if (it != rootSignatures_.end()) {
+            return it->second.rootSignatureDesc;
+        }
+        assert(false && "Root signature not found");
+        // 空のルートシグネチャデスクを返す
+        static D3D12_ROOT_SIGNATURE_DESC emptyDesc = {};
+        return emptyDesc;
+    }
 
     /// @brief ルートシグネチャ(バイナリ)の取得
     /// @param rootSignatureName ルートシグネチャ名

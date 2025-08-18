@@ -126,7 +126,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     PipeLines::Initialize(sDxCommon.get());
 
     // パイプラインマネージャ初期化
-    sPipeLineManager = std::make_unique<PipeLineManager>();
+    sPipeLineManager = std::make_unique<PipeLineManager>(sDxCommon.get());
 
     // フレーム時間の初期化
     LARGE_INTEGER freq;
