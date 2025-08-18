@@ -1,0 +1,23 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// サンプラーの設定の配列
+	"Samplers": [
+		{
+			"Filter": "D3D12_FILTER_MIN_MAG_MIP_LINEAR",
+			"AddressU": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+			"AddressV": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+			"AddressW": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+			"MipLODBias": 0.0,
+			"MaxAnisotropy": 1,
+			"ComparisonFunc": "D3D12_COMPARISON_FUNC_NEVER",
+			"BorderColor": "D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK",
+			"MinLOD": 0.0,
+			// マクロ名での設定も可能
+			"MaxLOD": "D3D12_FLOAT32_MAX",
+			"ShaderRegister": 0,
+			"RegisterSpace": 0,
+			"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL"
+		}
+	]
+}

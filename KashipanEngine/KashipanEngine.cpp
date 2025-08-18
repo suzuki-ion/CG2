@@ -140,6 +140,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
 Engine::~Engine() {
     LogInsertPartition("\n================= Engine Finalize ================\n");
+    sPipeLineManager.reset();
     sRenderer.reset();
     Sound::Finalize();
     Texture::Finalize();

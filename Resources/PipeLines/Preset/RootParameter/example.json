@@ -1,0 +1,52 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// ルートパラメーターの設定の配列
+	"Parameters": [
+		{
+			"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+			"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL",
+			// DescriptorTable、Constants、Descriptorのいずれかを設定可能
+			// もし複数設定した場合、上記の順に優先される
+			"Descriptor": {
+				"RegisterSpace": 0,
+				"RegisterIndex": 0
+			}
+		},
+		// 複数のパラメーターを設定することも可能
+		{
+			"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE",
+			"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+			"DescriptorTable": {
+				// DescriptorTable内でDescriptorRangeが設定可能
+				// 設定項目はDescriptorRangeのexampleを参照
+				"Ranges": [
+					{
+						"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_SRV",
+						"NumDescriptors": 1,
+						"BaseShaderRegister": 0,
+						"RegisterSpace": 0,
+						"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+					},
+					{
+						"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_UAV",
+						"NumDescriptors": 2,
+						"BaseShaderRegister": 1,
+						"RegisterSpace": 0,
+						"OffsetInDescriptorsFromTableStart": 4294967295
+					}
+				]
+			}
+		},
+		{
+			"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS",
+			"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+			// 32bitの定数を設定する場合
+			"Constants": {
+				"RegisterIndex": 1,
+				"RegisterSpace": 0,
+				"Num32BitValues": 4
+			}
+		}
+	]
+}

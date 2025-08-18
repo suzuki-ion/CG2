@@ -191,6 +191,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\BlendState.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ComputePIpeLineState.h" />
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DefineMaps.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\DepthStencilState.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\DescriptorRange.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\EnumMaps.h" />

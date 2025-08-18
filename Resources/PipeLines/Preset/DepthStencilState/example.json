@@ -1,0 +1,23 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// デプスステンシルステートの各設定
+	"DepthEnable": true,
+	"DepthWriteMask": "D3D12_DEPTH_WRITE_MASK_ALL",
+	"DepthFunc": "D3D12_COMPARISON_FUNC_LESS_EQUAL",
+	"StencilEnable": true,
+	"StencilReadMask": "D3D12_DEFAULT_STENCIL_READ_MASK",
+	"StencilWriteMask": "D3D12_DEFAULT_STENCIL_WRITE_MASK",
+	"FrontFace": {
+		"StencilFailOp": "D3D12_STENCIL_OP_KEEP",
+		"StencilDepthFailOp": "D3D12_STENCIL_OP_INCR_SAT",
+		"StencilPassOp": "D3D12_STENCIL_OP_KEEP",
+		"StencilFunc": "D3D12_COMPARISON_FUNC_ALWAYS"
+	},
+	"BackFace": {
+		"StencilFailOp": "D3D12_STENCIL_OP_KEEP",
+		"StencilDepthFailOp": "D3D12_STENCIL_OP_DECR_SAT",
+		"StencilPassOp": "D3D12_STENCIL_OP_KEEP",
+		"StencilFunc": "D3D12_COMPARISON_FUNC_ALWAYS"
+	}
+}

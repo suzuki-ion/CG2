@@ -3,10 +3,12 @@
 #include "Common/DirectoryLoader.h"
 #include "Common/Logs.h"
 #include "PipeLines/EnumMaps.h"
+#include "PipeLines/DefineMaps.h"
 #include "PipeLineManager.h"
 
 namespace KashipanEngine {
 using namespace KashipanEngine::PipeLine::EnumMaps;
+using namespace KashipanEngine::PipeLine::DefineMaps;
 
 PipeLineManager::PipeLineManager(DirectXCommon *dxCommon, const std::string &pipeLineSettingsPath) {
     Log("PipeLineManager constructor called.");
@@ -496,13 +498,43 @@ void PipeLineManager::LoadRootParameter(const Json &json) {
     }
 
     LogSimple("Loading root parameter: " + name, kLogLevelFlagInfo);
+    UINT i = 0;
     for (const auto &param : json["Parameters"]) {
         D3D12_ROOT_PARAMETER rootParam = {};
         if (param.contains("ParameterType")) {
             rootParam.ParameterType = kRootParameterTypeMap.at(param["ParameterType"].get<std::string>());
+        } else {
+            LogSimple("Root parameter type is missing.", kLogLevelFlagWarning);
+            continue;
         }
         if (param.contains("ShaderVisibility")) {
             rootParam.ShaderVisibility = kShaderVisibilityMap.at(param["ShaderVisibility"].get<std::string>());
+        } else {
+            LogSimple("Root parameter shader visibility is missing.", kLogLevelFlagWarning);
+            continue;
+        }
+        if (param.contains("DescriptorTable")) {
+            Json descriptorTableJson = param["DescriptorTable"];
+            // 名前をルートパラメーター名 + インデックスに設定
+            descriptorTableJson["Name"] = name + "_" + std::to_string(i++);
+            LoadDescriptorRange(descriptorTableJson);
+            auto descriptorRanges = pipeLines_.descriptorRange->GetDescriptorRange(descriptorTableJson["Name"].get<std::string>());
+            rootParam.DescriptorTable.NumDescriptorRanges = static_cast<UINT>(descriptorRanges.size());
+            rootParam.DescriptorTable.pDescriptorRanges = descriptorRanges.data();
+
+        } else if (param.contains("Constants")) {
+            Json rootConstantsJson = param["Constants"];
+            // 名前をルートパラメーター名 + インデックスに設定
+            rootConstantsJson["Name"] = name + "_" + std::to_string(i++);
+            LoadRootConstants(rootConstantsJson);
+            rootParam.Constants = pipeLines_.rootConstants->GetRootConstants(rootConstantsJson["Name"].get<std::string>());
+        
+        } else if (param.contains("Descriptor")) {
+            Json rootDescriptorJson = param["Descriptor"];
+            // 名前をルートパラメーター名 + インデックスに設定
+            rootDescriptorJson["Name"] = name + "_" + std::to_string(i++);
+            LoadRootDescriptor(rootDescriptorJson);
+            rootParam.Descriptor = pipeLines_.rootDescriptor->GetRootDescriptor(rootDescriptorJson["Name"].get<std::string>());
         }
 
         rootParameters.push_back(rootParam);
@@ -542,7 +574,13 @@ void PipeLineManager::LoadDescriptorRange(const Json &json) {
             descriptorRange.RegisterSpace = range["RegisterSpace"].get<UINT>();
         }
         if (range.contains("OffsetInDescriptorsFromTableStart")) {
-            descriptorRange.OffsetInDescriptorsFromTableStart = range["OffsetInDescriptorsFromTableStart"].get<UINT>();
+            // 型が文字列の場合はマップから取得
+            if (range["OffsetInDescriptorsFromTableStart"].is_string()) {
+                descriptorRange.OffsetInDescriptorsFromTableStart = std::get<UINT>(kDefineMap.at(range["OffsetInDescriptorsFromTableStart"].get<std::string>()));
+            } else if (range["OffsetInDescriptorsFromTableStart"].is_number()) {
+                // 数値の場合はそのまま使用
+                descriptorRange.OffsetInDescriptorsFromTableStart = range["OffsetInDescriptorsFromTableStart"].get<UINT>();
+            }
         }
         descriptorRanges.push_back(descriptorRange);
     }
@@ -627,10 +665,18 @@ void PipeLineManager::LoadSampler(const Json &json) {
             samplerDesc.AddressW = kTextureAddressModeMap.at(sampler["AddressW"].get<std::string>());
         }
         if (sampler.contains("MipLODBias")) {
-            samplerDesc.MipLODBias = sampler["MipLODBias"].get<float>();
+            if (sampler["MipLODBias"].is_string()) {
+                samplerDesc.MipLODBias = std::get<float>(kDefineMap.at(sampler["MipLODBias"].get<std::string>()));
+            } else if (sampler["MipLODBias"].is_number()) {
+                samplerDesc.MipLODBias = sampler["MipLODBias"].get<float>();
+            }
         }
         if (sampler.contains("MaxAnisotropy")) {
-            samplerDesc.MaxAnisotropy = sampler["MaxAnisotropy"].get<UINT>();
+            if (sampler["MaxAnisotropy"].is_string()) {
+                samplerDesc.MaxAnisotropy = std::get<UINT>(kDefineMap.at(sampler["MaxAnisotropy"].get<std::string>()));
+            } else if (sampler["MaxAnisotropy"].is_number()) {
+                samplerDesc.MaxAnisotropy = sampler["MaxAnisotropy"].get<UINT>();
+            }
         }
         if (sampler.contains("ComparisonFunc")) {
             samplerDesc.ComparisonFunc = kComparisonFuncMap.at(sampler["ComparisonFunc"].get<std::string>());
@@ -639,10 +685,18 @@ void PipeLineManager::LoadSampler(const Json &json) {
             samplerDesc.BorderColor = kStaticBorderColorMap.at(sampler["BorderColor"].get<std::string>());
         }
         if (sampler.contains("MinLOD")) {
-            samplerDesc.MinLOD = sampler["MinLOD"].get<float>();
+            if (sampler["MinLOD"].is_string()) {
+                samplerDesc.MinLOD = std::get<float>(kDefineMap.at(sampler["MinLOD"].get<std::string>()));
+            } else if (sampler["MinLOD"].is_number()) {
+                samplerDesc.MinLOD = sampler["MinLOD"].get<float>();
+            }
         }
         if (sampler.contains("MaxLOD")) {
-            samplerDesc.MaxLOD = sampler["MaxLOD"].get<float>();
+            if (sampler["MaxLOD"].is_string()) {
+                samplerDesc.MaxLOD = std::get<float>(kDefineMap.at(sampler["MaxLOD"].get<std::string>()));
+            } else if (sampler["MaxLOD"].is_number()) {
+                samplerDesc.MaxLOD = sampler["MaxLOD"].get<float>();
+            }
         }
         if (sampler.contains("ShaderRegister")) {
             samplerDesc.ShaderRegister = sampler["ShaderRegister"].get<UINT>();
@@ -687,7 +741,13 @@ void PipeLineManager::LoadInputLayout(const Json &json) {
             inputElement.InputSlot = element["InputSlot"].get<UINT>();
         }
         if (element.contains("AlignedByteOffset")) {
-            inputElement.AlignedByteOffset = element["AlignedByteOffset"].get<UINT>();
+            if (element["AlignedByteOffset"].is_string()) {
+                // 文字列の場合はマップから取得
+                inputElement.AlignedByteOffset = std::get<UINT>(kDefineMap.at(element["AlignedByteOffset"].get<std::string>()));
+            } else if (element["AlignedByteOffset"].is_number()) {
+                // 数値の場合はそのまま使用
+                inputElement.AlignedByteOffset = element["AlignedByteOffset"].get<UINT>();
+            }
         } else {
             // AlignedByteOffsetが指定されていない場合は D3D12_APPEND_ALIGNED_ELEMENT を使用
             inputElement.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
@@ -803,7 +863,7 @@ void PipeLineManager::LoadBlendState(const Json &json) {
             targetDesc.LogicOp = kLogicOpMap.at(target["LogicOp"].get<std::string>());
         }
         if (target.contains("RenderTargetWriteMask")) {
-            targetDesc.RenderTargetWriteMask = target["RenderTargetWriteMask"].get<UINT8>();
+            targetDesc.RenderTargetWriteMask = kColorWriteEnableMap.at(target["RenderTargetWriteMask"].get<std::string>());
         }
         blendDesc.RenderTarget[index] = targetDesc;
         index++;
@@ -871,21 +931,24 @@ void PipeLineManager::LoadShader(const Json &json) {
         }
     } else {
         // シェーダーリフレクションを使わない場合はjsonデータに定義されたルートパラメーターを追加
-        if (json.contains("RootParameters")) {
-            Json rootParametersJson = json["RootParameters"];
+        if (json.contains("RootParameter")) {
+            Json rootParametersJson = json["RootParameter"];
             // ルートパラメーターの名前をシェーダー名に設定
             rootParametersJson["Name"] = name;
             LoadRootParameter(rootParametersJson);
         } else {
             LogSimple("Root parameters are missing in shader JSON.", kLogLevelFlagWarning);
         }
-        if (json.contains("InputLayout")) {
-            Json inputLayoutJson = json["InputLayout"];
-            // インプットレイアウトの名前をシェーダー名に設定
-            inputLayoutJson["Name"] = name;
-            LoadInputLayout(inputLayoutJson);
-        } else {
-            LogSimple("Input layout is missing in shader JSON.", kLogLevelFlagWarning);
+        // 頂点シェーダーの場合はインプットレイアウトも必要
+        if (shaderType == "Vertex") {
+            if (json.contains("InputLayout")) {
+                Json inputLayoutJson = json["InputLayout"];
+                // インプットレイアウトの名前をシェーダー名に設定
+                inputLayoutJson["Name"] = name;
+                LoadInputLayout(inputLayoutJson);
+            } else {
+                LogSimple("Input layout is missing in shader JSON.", kLogLevelFlagWarning);
+            }
         }
     }
 
@@ -918,10 +981,24 @@ void PipeLineManager::LoadDepthStencilState(const Json &json) {
         depthStencilDesc.StencilEnable = json["StencilEnable"].get<bool>() ? TRUE : FALSE;
     }
     if (json.contains("StencilReadMask")) {
-        depthStencilDesc.StencilReadMask = json["StencilReadMask"].get<UINT8>();
+        if (json["StencilReadMask"].is_string()) {
+            // 文字列の場合はマップから取得
+            int stencilReadMask = std::get<int>(kDefineMap.at(json["StencilReadMask"].get<std::string>()));
+            depthStencilDesc.StencilReadMask = static_cast<UINT8>(stencilReadMask);
+        } else if (json["StencilReadMask"].is_number()) {
+            // 数値の場合はそのまま使用
+            depthStencilDesc.StencilReadMask = json["StencilReadMask"].get<UINT8>();
+        }
     }
     if (json.contains("StencilWriteMask")) {
-        depthStencilDesc.StencilWriteMask = json["StencilWriteMask"].get<UINT8>();
+        if (json["StencilWriteMask"].is_string()) {
+            // 文字列の場合はマップから取得
+            int stencilWriteMask = std::get<int>(kDefineMap.at(json["StencilWriteMask"].get<std::string>()));
+            depthStencilDesc.StencilWriteMask = static_cast<UINT8>(stencilWriteMask);
+        } else if (json["StencilWriteMask"].is_number()) {
+            // 数値の場合はそのまま使用
+            depthStencilDesc.StencilWriteMask = json["StencilWriteMask"].get<UINT8>();
+        }
     }
     
     // フロントスタンシル
@@ -975,7 +1052,13 @@ void PipeLineManager::LoadGraphicsPipelineState(const Json &json) {
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC pipeLineDesc = {};
     if (json.contains("SampleMask")) {
-        pipeLineDesc.SampleMask = json["SampleMask"].get<UINT>();
+        if (json["SampleMask"].is_string()) {
+            // 文字列の場合はマップから取得
+            pipeLineDesc.SampleMask = std::get<UINT>(kDefineMap.at(json["SampleMask"].get<std::string>()));
+        } else if (json["SampleMask"].is_number()) {
+            // 数値の場合はそのまま使用
+            pipeLineDesc.SampleMask = json["SampleMask"].get<UINT>();
+        }
     } else {
         // SampleMaskが指定されていない場合はデフォルト値を使用
         pipeLineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
