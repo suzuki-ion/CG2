@@ -11,7 +11,7 @@
 	"Type": "Vertex",
 	// シェーダーのファイルパス
 	// プロジェクトのルートディレクトリからの相対パスで指定
-	"Path": "Resources/PipeLines/Preset/Shader/example.VS.hlsl",
+	"Path": "Resources/PipeLines/Preset/Shader/example/Vertex.hlsl",
 	// シェーダーのターゲットプロファイル
 	"TargetProfile": "vs_6_0",
 	// シェーダーリフレクションを使用する際は以下の項目を記述する

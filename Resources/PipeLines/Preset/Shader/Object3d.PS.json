@@ -1,0 +1,38 @@
+﻿{
+	"Name": "Object3d.PS",
+	"Type": "Pixel",
+	"Path": "Resources/PipeLines/Preset/Shader/Object3d/Pixel.hlsl",
+	"TargetProfile": "ps_6_0",
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"Descriptor": {
+					"ShaderRegister": 0
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"Descriptor": {
+					"ShaderRegister": 1
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"DescriptorTable": {
+					"Ranges": [
+						{
+							"BaseShaderRegister": 0,
+							"NumDescriptors": 1,
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_SRV",
+							"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+						}
+					]
+				}
+			}
+		]
+	}
+}

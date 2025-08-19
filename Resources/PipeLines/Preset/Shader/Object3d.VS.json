@@ -1,0 +1,39 @@
+﻿{
+	"Name": "Object3d.VS",
+	"Type": "Vertex",
+	"Path": "Resources/PipeLines/Preset/Shader/Object3d/Vertex.hlsl",
+	"TargetProfile": "vs_6_0",
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+				"Descriptor": {
+					"ShaderRegister": 0
+				}
+			}
+		]
+	},
+	"InputLayout": {
+		"Elements": [
+			{
+				"SemanticsName": "POSITION",
+				"SemanticsIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32A32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			},
+			{
+				"SemanticsName": "TEXCOORD",
+				"SemanticsIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			},
+			{
+				"SemanticsName": "NORMAL",
+				"SemanticsIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			}
+		]
+	}
+}

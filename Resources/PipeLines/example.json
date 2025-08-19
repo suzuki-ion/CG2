@@ -22,7 +22,7 @@
 			// 事前に設定したプリセットを使用する場合は "UsePreset"を指定する
 			// exampleプリセットを使用したかったが、このまま使うと恐らくエラーになるのでコメントアウト
 			// "UsePreset": "example"
-			"Path": "Resources/PipeLines/Preset/Shader/example.VS.hlsl",
+			"Path": "Resources/PipeLines/Preset/Shader/example/Vertex.hlsl",
 			"TargetProfile": "vs_6_0",
 			"InputLayout": {
 				"Elements": [
@@ -38,7 +38,7 @@
 		"Pixel": {
 			// ここで直に設定することも可能
 			// 設定項目についてはShaderのexample.jsonを参照
-			"Path": "Resources/PipeLines/Preset/Shader/example.PS.hlsl",
+			"Path": "Resources/PipeLines/Preset/Shader/example/Pixel.hlsl",
 			"TargetProfile": "ps_6_0",
 			"isReflection": true
 			//"RootParameter": {
