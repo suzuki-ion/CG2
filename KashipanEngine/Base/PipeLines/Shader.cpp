@@ -31,14 +31,14 @@ Shader::Shader() {
     if (FAILED(hr)) assert(SUCCEEDED(hr));
 }
 
-void Shader::AddShader(const std::string &filePath, const std::string &profile) {
+void Shader::AddShader(const std::string &shaderName, const std::string & filePath, const std::string &profile) {
     // 文字列をUTF-16に変換
     std::wstring wFilePath = ConvertString(filePath);
     std::wstring wProfile = ConvertString(profile);
     // シェーダーをコンパイルしてIDxcBlobを取得
     IDxcBlob *shaderBlob = CompileShader(wFilePath, wProfile.c_str());
     // 取得したIDxcBlobをシェーダーキャッシュに追加
-    shaderCache_[filePath] = shaderBlob;
+    shaderCache_[shaderName] = shaderBlob;
 }
 
 IDxcBlob *Shader::CompileShader(const std::wstring &filePath, const wchar_t *profile) {

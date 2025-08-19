@@ -21,11 +21,9 @@ public:
     /// @param inputLayoutName インプットレイアウト名
     /// @param descriptorRanges インプットレイアウト
     void AddInputLayout(const std::string &inputLayoutName, const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputElementDescs) {
-        InputLayoutStruct inputLayoutStruct;
-        inputLayoutStruct.inputElementDescs = inputElementDescs;
-        inputLayoutStruct.inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
-        inputLayoutStruct.inputLayoutDesc.pInputElementDescs = inputLayoutStruct.inputElementDescs.data();
-        inputLayouts_[inputLayoutName] = inputLayoutStruct;
+        inputLayouts_[inputLayoutName].inputElementDescs = inputElementDescs;
+        inputLayouts_[inputLayoutName].inputLayoutDesc.NumElements = static_cast<UINT>(inputElementDescs.size());
+        inputLayouts_[inputLayoutName].inputLayoutDesc.pInputElementDescs = inputLayouts_[inputLayoutName].inputElementDescs.data();
     }
 
     /// @brief インプットレイアウトの取得

@@ -11,15 +11,15 @@
 	"Type": "Vertex",
 	// シェーダーのファイルパス
 	// プロジェクトのルートディレクトリからの相対パスで指定
-	"Path": "Resources/PipeLines/Preset/Shader/example.hlsl",
+	"Path": "Resources/PipeLines/Preset/Shader/example.VS.hlsl",
 	// シェーダーのターゲットプロファイル
 	"TargetProfile": "vs_6_0",
 	// シェーダーリフレクションを使用する際は以下の項目を記述する
 	/* "isReflection": true */
-	// ルートパラメーターとインプットレイアウトを自動生成できる
+	// ルートパラメーターを自動生成できる。インプットレイアウトはシェーダーリフレクションでは取得できないため手動で設定する必要がある
 
-	// シェーダーリフレクションを使用しない場合はルートパラメーターを手動で設定する必要がある
-	"RootParameters": {
+	// シェーダーリフレクションを使用しない場合、ルートパラメーターは手動で設定
+	"RootParameter": {
 		// 設定の詳細はRootParameterのexampleを参照
 		"Parameters": [
 			{
@@ -41,9 +41,10 @@
 			}
 		]
 	},
-	// 頂点シェーダーの場合はインプットレイアウトの設定が必須
+
+	// 頂点シェーダーの場合はインプットレイアウトの設定が可能
 	"InputLayout": {
-		// インプットレイアウトの詳細はInputLayoutのexampleを参照
+		// 設定の詳細はInputLayoutのexampleを参照
 		"Elements": [
 			{
 				"SemanticsName": "POSITION",

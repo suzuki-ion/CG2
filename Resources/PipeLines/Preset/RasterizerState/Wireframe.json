@@ -1,0 +1,5 @@
+﻿{
+	"Name": "Wireframe",
+	"CullMode": "D3D12_CULL_MODE_NONE",
+	"FillMode": "D3D12_FILL_MODE_WIREFRAME"
+}

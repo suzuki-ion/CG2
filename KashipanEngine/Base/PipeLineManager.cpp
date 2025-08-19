@@ -56,7 +56,7 @@ void PipeLineManager::SetCommandListPipeLine(const std::string &pipeLineName) {
 
 void PipeLineManager::LoadPreset() {
     for (const auto &presetFolder : presetFolderNames_) {
-        auto presetFiles = GetFilesInDirectory(presetFolder.second, {".json", ".jsonc"}, true);
+        auto presetFiles = GetFilesInDirectory(presetFolder.second, {".json", ".jsonc"}, false);
         for (const auto &file : presetFiles) {
             kLoadFunctions_.at(presetFolder.first)(LoadJsonc(file));
         }
@@ -64,7 +64,7 @@ void PipeLineManager::LoadPreset() {
 }
 
 void PipeLineManager::LoadPipeLines() {
-    auto pipeLineFiles = GetFilesInDirectory(pipeLineFolderPath_, {".json", ".jsonc"}, true);
+    auto pipeLineFiles = GetFilesInDirectory(pipeLineFolderPath_, {".json", ".jsonc"}, false);
     for (const auto &file : pipeLineFiles) {
         Json pipeLineJson = LoadJsonc(file);
         // PipeLineの種類を判定してロード
@@ -94,12 +94,13 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
 
     HRESULT hr;
     std::unordered_map<std::string, IDxcBlob *> shaders = {
-            { "VertexShader",   nullptr },
-            { "PixelShader",    nullptr },
-            { "GeometryShader", nullptr },
-            { "HullShader",     nullptr },
-            { "DomainShader",   nullptr }
+            { "Vertex",     nullptr },
+            { "Pixel",      nullptr },
+            { "Geometry",   nullptr },
+            { "Hull",       nullptr },
+            { "Domain",     nullptr }
     };
+    std::vector<std::string> shadersOrder = { "Vertex", "Pixel", "Geometry", "Hull", "Domain" };
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
     std::vector<D3D12_ROOT_PARAMETER> rootParameters;
@@ -115,33 +116,33 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     if (json.contains("Shader")) {
         Json shadersJson = json["Shader"];
         // 頂点シェーダーだけは必須なので、存在しない場合は警告を出して処理を中断
-        if (!shadersJson.contains("VertexShader")) {
+        if (!shadersJson.contains("Vertex")) {
             LogSimple("VertexShader is required but not found in PipeLine JSON.", kLogLevelFlagWarning);
             return;
         }
 
-        for (auto &shaderType : shaders) {
-            if (!shadersJson.contains(shaderType.first)) {
+        for (const auto &shaderType : shadersOrder) {
+            if (!shadersJson.contains(shaderType)) {
                 continue;
             }
-            Json shaderJson = shadersJson[shaderType.first];
+            Json shaderJson = shadersJson[shaderType];
             std::string shaderName;
             if (shaderJson.contains("UsePreset")) {
                 std::string presetName = shaderJson["UsePreset"].get<std::string>();
-                shaderType.second = pipeLines_.shader->GetShader(presetName);
-                if (!shaderType.second) {
+                shaders[shaderType] = pipeLines_.shader->GetShader(presetName);
+                if (!shaders[shaderType]) {
                     LogSimple("Shader preset not found: " + presetName, kLogLevelFlagWarning);
                 }
                 shaderName = presetName;
             } else {
-                if (!shaderJson.contains("Name")) {
-                    // デフォルトでシェーダー名をPipeLine名に設定
-                    shaderJson["Name"] = name + "_" + shaderType.first;
-                    LogSimple("Shader name not found in JSON, using default: " + shaderJson["Name"].get<std::string>(), kLogLevelFlagInfo);
-                }
+                // シェーダー名をPipeLine名に設定
+                shaderJson["Name"] = name + "_" + shaderType;
+                // 種類を設定
+                shaderJson["Type"] = shaderType;
+                LogSimple("Shader name not found in JSON, using default: " + shaderJson["Name"].get<std::string>(), kLogLevelFlagInfo);
                 LoadShader(shaderJson);
-                shaders[shaderType.first] = pipeLines_.shader->GetShader(shaderJson["Name"].get<std::string>());
-                if (!shaders[shaderType.first]) {
+                shaders[shaderType] = pipeLines_.shader->GetShader(shaderJson["Name"].get<std::string>());
+                if (!shaders[shaderType]) {
                     LogSimple("Shader not found: " + shaderJson["Name"].get<std::string>(), kLogLevelFlagWarning);
                 }
                 shaderName = shaderJson["Name"].get<std::string>();
@@ -149,6 +150,11 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
             // シェーダー名からルートパラメーターを取得
             auto rootParametersForShader = pipeLines_.rootParameter->GetRootParameter(shaderName);
             rootParameters.insert(rootParameters.end(), rootParametersForShader.begin(), rootParametersForShader.end());
+
+            // 頂点シェーダーの場合は入力レイアウトも取得
+            if (shaderType == "Vertex") {
+                inputLayoutDesc = pipeLines_.inputLayout->GetInputLayout(shaderName);
+            }
         }
     }
 
@@ -192,12 +198,31 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     }
 
     // ルートシグネチャの作成
-    rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
-    rootSignatureDesc.pParameters = rootParameters.data();
-    rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(samplers.size());
-    rootSignatureDesc.pStaticSamplers = samplers.data();
+    if (!rootParameters.empty()) {
+        rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
+        rootSignatureDesc.pParameters = rootParameters.data();
+    }
+    if (!samplers.empty()) {
+        rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(samplers.size());
+        rootSignatureDesc.pStaticSamplers = samplers.data();
+    }
+    
+    Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+    hr = D3D12SerializeRootSignature(
+        &rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+        signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
+    if (FAILED(hr)) {
+        if (errorBlob) {
+            LogSimple("Root signature serialization failed: " + std::string(static_cast<const char*>(errorBlob->GetBufferPointer())), kLogLevelFlagError);
+        } else {
+            LogSimple("Root signature serialization failed with unknown error.", kLogLevelFlagError);
+        }
+        return;
+    }
     hr = dxCommon_->GetDevice()->CreateRootSignature(
-        0, &rootSignatureDesc, sizeof(rootSignatureDesc), IID_PPV_ARGS(&rootSignature));
+        0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
+        IID_PPV_ARGS(&rootSignature));
     if (FAILED(hr)) {
         LogSimple("Failed to create root signature: " + name, kLogLevelFlagError);
         return;
@@ -214,9 +239,6 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
             LoadInputLayout(inputLayoutJson);
             inputLayoutDesc = pipeLines_.inputLayout->GetInputLayout(name);
         }
-    } else {
-        LogSimple("Input layout is required but not found in PipeLine JSON.", kLogLevelFlagWarning);
-        return;
     }
 
     // ラスタライザーステートの設定
@@ -280,20 +302,20 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     }
 
     pipeLineDesc.pRootSignature = rootSignature.Get();
-    if (shaders["VertexShader"]) {
-        pipeLineDesc.VS = { shaders["VertexShader"]->GetBufferPointer(), shaders["VertexShader"]->GetBufferSize() };
+    if (shaders["Vertex"]) {
+        pipeLineDesc.VS = { shaders["Vertex"]->GetBufferPointer(), shaders["Vertex"]->GetBufferSize() };
     }
-    if (shaders["PixelShader"]) {
-        pipeLineDesc.PS = { shaders["PixelShader"]->GetBufferPointer(), shaders["PixelShader"]->GetBufferSize() };
+    if (shaders["Pixel"]) {
+        pipeLineDesc.PS = { shaders["Pixel"]->GetBufferPointer(), shaders["Pixel"]->GetBufferSize() };
     }
-    if (shaders["GeometryShader"]) {
-        pipeLineDesc.GS = { shaders["GeometryShader"]->GetBufferPointer(), shaders["GeometryShader"]->GetBufferSize() };
+    if (shaders["Geometryr"]) {
+        pipeLineDesc.GS = { shaders["Geometry"]->GetBufferPointer(), shaders["Geometry"]->GetBufferSize() };
     }
-    if (shaders["HullShader"]) {
-        pipeLineDesc.HS = { shaders["HullShader"]->GetBufferPointer(), shaders["HullShader"]->GetBufferSize() };
+    if (shaders["Hull"]) {
+        pipeLineDesc.HS = { shaders["Hull"]->GetBufferPointer(), shaders["Hull"]->GetBufferSize() };
     }
-    if (shaders["DomainShader"]) {
-        pipeLineDesc.DS = { shaders["DomainShader"]->GetBufferPointer(), shaders["DomainShader"]->GetBufferSize() };
+    if (shaders["Domain"]) {
+        pipeLineDesc.DS = { shaders["Domain"]->GetBufferPointer(), shaders["Domain"]->GetBufferSize() };
     }
     pipeLineDesc.InputLayout = inputLayoutDesc;
     pipeLineDesc.RasterizerState = rasterizerDesc;
@@ -919,17 +941,19 @@ void PipeLineManager::LoadShader(const Json &json) {
         return;
     }
     
-    pipeLines_.shader->AddShader(shaderPath, targetProfile);
+    pipeLines_.shader->AddShader(name, shaderPath, targetProfile);
 
+    bool isReflection = false;
     if (json.contains("isReflection")) {
-        bool isReflection = json["isReflection"].get<bool>();
+        isReflection = json["isReflection"].get<bool>();
         if (isReflection) {
-            ShaderReflectionRun(shaderPath);
+            ShaderReflectionRun(name);
             LogSimple("Shader reflection completed for: " + name, kLogLevelFlagInfo);
         } else {
             LogSimple("Shader reflection skipped for: " + name, kLogLevelFlagInfo);
         }
-    } else {
+    }
+    if (!isReflection) {
         // シェーダーリフレクションを使わない場合はjsonデータに定義されたルートパラメーターを追加
         if (json.contains("RootParameter")) {
             Json rootParametersJson = json["RootParameter"];
@@ -937,18 +961,28 @@ void PipeLineManager::LoadShader(const Json &json) {
             rootParametersJson["Name"] = name;
             LoadRootParameter(rootParametersJson);
         } else {
-            LogSimple("Root parameters are missing in shader JSON.", kLogLevelFlagWarning);
+            // ルートパラメーターが指定されていない場合は空のルートパラメーターを追加
+            Json emptyRootParameter = {
+                {"Name", name},
+                {"Parameters", Json::array()}
+            };
+            LoadRootParameter(emptyRootParameter);
         }
-        // 頂点シェーダーの場合はインプットレイアウトも必要
-        if (shaderType == "Vertex") {
-            if (json.contains("InputLayout")) {
-                Json inputLayoutJson = json["InputLayout"];
-                // インプットレイアウトの名前をシェーダー名に設定
-                inputLayoutJson["Name"] = name;
-                LoadInputLayout(inputLayoutJson);
-            } else {
-                LogSimple("Input layout is missing in shader JSON.", kLogLevelFlagWarning);
-            }
+    }
+    // 頂点シェーダーの場合はインプットレイアウトの設定も行う
+    if (shaderType == "Vertex") {
+        if (json.contains("InputLayout")) {
+            Json inputLayoutJson = json["InputLayout"];
+            // インプットレイアウトの名前をシェーダー名に設定
+            inputLayoutJson["Name"] = name;
+            LoadInputLayout(inputLayoutJson);
+        } else {
+            // インプットレイアウトが指定されていない場合は空のインプットレイアウトを追加
+            Json emptyInputLayout = {
+                {"Name", name},
+                {"Elements", Json::array()}
+            };
+            LoadInputLayout(emptyInputLayout);
         }
     }
 
@@ -1155,21 +1189,19 @@ void PipeLineManager::LoadComputePipelineState(const Json &json) {
     LogSimple("Compute pipeline state loaded: " + name, kLogLevelFlagInfo);
 }
 
-void PipeLineManager::ShaderReflectionRun(const std::string &shaderPath) {
-    LogSimple("Running shader reflection for: " + shaderPath, kLogLevelFlagInfo);
-    IDxcBlob *shaderBlob = pipeLines_.shader->GetShader(shaderPath);
+void PipeLineManager::ShaderReflectionRun(const std::string &shaderName) {
+    LogSimple("Running shader reflection for: " + shaderName, kLogLevelFlagInfo);
+    IDxcBlob *shaderBlob = pipeLines_.shader->GetShader(shaderName);
     if (!shaderBlob) {
-        LogSimple("Shader blob not found for: " + shaderPath, kLogLevelFlagError);
+        LogSimple("Shader blob not found for: " + shaderName, kLogLevelFlagWarning);
         return;
     }
     
     auto shaderRefrectionInfo = shaderReflection_->GetShaderReflection(shaderBlob);
     
-    // シェーダーリフレクション情報からルートパラメーターとインプットレイアウトを追加
+    // シェーダーリフレクション情報からルートパラメーターを追加
     auto rootParameters = shaderRefrectionInfo.rootParameters;
-    pipeLines_.rootParameter->AddRootParameter(shaderPath, rootParameters);
-    auto inputLayout = shaderRefrectionInfo.inputLayout;
-    pipeLines_.inputLayout->AddInputLayout(shaderPath, inputLayout);
+    pipeLines_.rootParameter->AddRootParameter(shaderName, rootParameters);
 }
 
 
