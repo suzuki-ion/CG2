@@ -10,13 +10,15 @@ class WinApp;
 class DirectXCommon;
 class Renderer;
 class Camera;
+class PipeLineManager;
 
 class ScreenBuffer {
 public:
     /// @brief 初期化用関数
     /// @param winApp WinAppクラスへのポインタ
     /// @param dxCommon DirectXCommonクラスへのポインタ
-    static void Initialize(WinApp *winApp, DirectXCommon *dxCommon);
+    /// @param pipeLineManager PipeLineManagerクラスへのポインタ
+    static void Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineManager *pipeLineManager);
 
     /// @brief スクリーンバッファのコンストラクタ
     /// @param width スクリーンの横幅

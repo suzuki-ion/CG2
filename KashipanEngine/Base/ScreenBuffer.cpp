@@ -20,6 +20,9 @@ bool isInitialized = false;
 WinApp *sWinApp = nullptr;
 // DirectXCommonクラスへのポインタ
 DirectXCommon *sDxCommon = nullptr;
+// パイプラインマネージャーへのポインタ
+PipeLineManager *sPipeLineManager = nullptr;
+
 /// @brief コマンドリストへのポインタ
 ID3D12GraphicsCommandList *sCommandList = nullptr;
 /// @brief コマンドキューへのポインタ
@@ -29,7 +32,7 @@ ID3D12Device *sDevice = nullptr;
 
 } // namespace
 
-void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon) {
+void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineManager *pipeLineManager) {
     sWinApp = winApp;
     sDxCommon = dxCommon;
     sCommandList = sDxCommon->GetCommandList();

@@ -116,17 +116,17 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // テクスチャ管理クラス初期化
     Texture::Initialize(sDxCommon.get());
 
-    // 描画用クラス初期化
-    sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get());
-
-    // スクリーンバッファ初期化
-    ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get());
-
     // パイプライン初期化
     PipeLines::Initialize(sDxCommon.get());
 
     // パイプラインマネージャ初期化
     sPipeLineManager = std::make_unique<PipeLineManager>(sDxCommon.get());
+
+    // 描画用クラス初期化
+    sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get(), sPipeLineManager.get());
+
+    // スクリーンバッファ初期化
+    ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get(), sPipeLineManager.get());
 
     // フレーム時間の初期化
     LARGE_INTEGER freq;

@@ -5,6 +5,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "Texture.h"
+#include "PipeLineManager.h"
 #include "2d/ImGuiManager.h"
 
 #include "Math/Camera.h"
@@ -35,7 +36,7 @@ DirectionalLight sDefaultDirectionalLight = {
 
 } // namespace
 
-Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager) {
+Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, PipeLineManager *pipeLineManager) {
     // nullチェック
     if (!winApp) {
         Log("winApp is null.", kLogLevelFlagError);
@@ -53,6 +54,7 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     winApp_ = winApp;
     dxCommon_ = dxCommon;
     imguiManager_ = imguiManager;
+    pipeLineManager_ = pipeLineManager;
 
     // 2D描画用の行列を初期化
     viewMatrix2D_.MakeIdentity();
@@ -81,7 +83,7 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     pipelineSet_[kFillModeSolid][kBlendModeNone] =
         PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeNone);
     pipelineSet_[kFillModeSolid][kBlendModeNormal] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeNormal);
+        pipeLineManager_->GetPipeLine("Object3d.BlendNormal");
     pipelineSet_[kFillModeSolid][kBlendModeAdd] =
         PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeAdd);
     pipelineSet_[kFillModeSolid][kBlendModeSubtract] =

@@ -17,6 +17,7 @@ class WinApp;
 class DirectXCommon;
 class ImGuiManager;
 class Camera;
+class PipeLineManager;
 
 struct DirectionalLight;
 
@@ -81,7 +82,8 @@ public:
     /// @param dxCommon DirectXCommonインスタンス
     /// @param primitiveRenderer PrimitiveDrawerインスタンス
     /// @param imguiManager ImGuiManagerインスタンス
-    Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager);
+    /// @param pipeLineManager PipeLineManagerインスタンス
+    Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, PipeLineManager *pipeLineManager);
 
     /// @brief デストラクタ
     ~Renderer();
@@ -147,6 +149,8 @@ private:
     DirectXCommon *dxCommon_ = nullptr;
     /// @brief ImGuiManagerインスタンス
     ImGuiManager *imguiManager_ = nullptr;
+    /// @brief PipeLineManagerインスタンス
+    PipeLineManager *pipeLineManager_ = nullptr;
 
     /// @brief ブレンドモード
     BlendMode blendMode_ = kBlendModeNormal;

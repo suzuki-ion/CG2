@@ -205,6 +205,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\UAV.h" />
     <ClInclude Include="KashipanEngine\Common\DirectoryLoader.h" />
+    <ClInclude Include="KashipanEngine\Common\DrawInfo.h" />
     <ClInclude Include="KashipanEngine\Common\GridLine.h" />
     <ClInclude Include="KashipanEngine\Common\JsoncLoader.h" />
     <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h" />

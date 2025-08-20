@@ -498,7 +498,7 @@ void PipeLineManager::LoadRootSignature(const Json &json) {
             // サンプラー名をルートシグネチャ名に設定
             samplerJson["Name"] = name;
             LoadSampler(samplerJson);
-            auto samplers = pipeLines_.sampler->GetSampler(name);
+            samplers = pipeLines_.sampler->GetSampler(name);
         }
         rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(samplers.size());
         rootSignatureDesc.pStaticSamplers = samplers.data();
@@ -540,7 +540,7 @@ void PipeLineManager::LoadRootParameter(const Json &json) {
             // 名前をルートパラメーター名 + インデックスに設定
             descriptorTableJson["Name"] = name + "_" + std::to_string(i++);
             LoadDescriptorRange(descriptorTableJson);
-            auto descriptorRanges = pipeLines_.descriptorRange->GetDescriptorRange(descriptorTableJson["Name"].get<std::string>());
+            const auto &descriptorRanges = pipeLines_.descriptorRange->GetDescriptorRange(descriptorTableJson["Name"].get<std::string>());
             rootParam.DescriptorTable.NumDescriptorRanges = static_cast<UINT>(descriptorRanges.size());
             rootParam.DescriptorTable.pDescriptorRanges = descriptorRanges.data();
 
@@ -558,7 +558,6 @@ void PipeLineManager::LoadRootParameter(const Json &json) {
             LoadRootDescriptor(rootDescriptorJson);
             rootParam.Descriptor = pipeLines_.rootDescriptor->GetRootDescriptor(rootDescriptorJson["Name"].get<std::string>());
         }
-
         rootParameters.push_back(rootParam);
     }
 
