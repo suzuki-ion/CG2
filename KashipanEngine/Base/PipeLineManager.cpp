@@ -169,7 +169,17 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
             LoadRootSignature(rootSignatureJson);
             rootSignatureDesc = pipeLines_.rootSignature->GetRootSignatureDesc(name);
         }
-        // ルートシグネチャの設定にルートパラメーターが含まれている場合はそっちのルートパラメーターを優先
+        // ルートシグネチャにデフォルトで設定されているか、
+        // 或いはルートシグネチャの設定にルートパラメーターが含まれている場合はそっちのルートパラメーターを優先
+        if ((rootSignatureDesc.NumParameters > 0) && (rootSignatureDesc.pParameters != nullptr)) {
+            // クリアすればこの後の生成で上書きされずに済むのでここでクリア
+            rootParameters.clear();
+        }
+        if ((rootSignatureDesc.NumStaticSamplers > 0) && (rootSignatureDesc.pStaticSamplers != nullptr)) {
+            // クリアすればこの後の生成で上書きされずに済むのでここでクリア
+            samplers.clear();
+        }
+        // 記述がある場合はそちらを優先
         if (rootSignatureJson.contains("RootParameter")) {
             // ルートシグネチャのルートパラメーターを優先するため、既存のルートパラメーターをクリア
             rootParameters.clear();
@@ -292,10 +302,14 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     // パイプラインステートの設定
     if (json.contains("PipelineState")) {
         Json pipeLineStateJson = json["PipelineState"];
-        // パイプラインステートの名前をPipeLine名に設定
-        pipeLineStateJson["Name"] = name;
-        LoadGraphicsPipelineState(pipeLineStateJson);
-        pipeLineDesc = pipeLines_.graphicsPipeLineState->GetPipeLineState(name);
+        if (pipeLineStateJson.contains("UsePreset")) {
+            pipeLineDesc = pipeLines_.graphicsPipeLineState->GetPipeLineState(pipeLineStateJson["UsePreset"].get<std::string>());
+        } else {
+            // パイプラインステートの名前をPipeLine名に設定
+            pipeLineStateJson["Name"] = name;
+            LoadGraphicsPipelineState(pipeLineStateJson);
+            pipeLineDesc = pipeLines_.graphicsPipeLineState->GetPipeLineState(name);
+        }
     } else {
         LogSimple("Pipeline state is required but not found in PipeLine JSON.", kLogLevelFlagWarning);
         return;
@@ -338,7 +352,7 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     // セットにしたものをマップに登録
     pipeLineSets_[name] = pipeLineSet;
 
-    LogSimple("Graphics pipeline state created successfully: " + name, kLogLevelFlagInfo);
+    LogSimple("Graphics pipeline created successfully: " + name, kLogLevelFlagInfo);
 }
 
 void PipeLineManager::LoadComputePipeLine(const Json &json) {
@@ -427,10 +441,14 @@ void PipeLineManager::LoadComputePipeLine(const Json &json) {
     // コンピュートパイプラインステートの設定
     if (json.contains("PipelineState")) {
         Json pipeLineStateJson = json["PipelineState"];
-        // パイプラインステートの名前をPipeLine名に設定
-        pipeLineStateJson["Name"] = name;
-        LoadComputePipelineState(pipeLineStateJson);
-        computePipeLineDesc = pipeLines_.computePipeLineState->GetPipeLineState(name);
+        if (pipeLineStateJson.contains("UsePreset")) {
+            computePipeLineDesc = pipeLines_.computePipeLineState->GetPipeLineState(pipeLineStateJson["UsePreset"].get<std::string>());
+        } else {
+            // パイプラインステートの名前をPipeLine名に設定
+            pipeLineStateJson["Name"] = name;
+            LoadComputePipelineState(pipeLineStateJson);
+            computePipeLineDesc = pipeLines_.computePipeLineState->GetPipeLineState(name);
+        }
     } else {
         LogSimple("Pipeline state is required but not found in Compute PipeLine JSON.", kLogLevelFlagWarning);
         return;
@@ -475,31 +493,33 @@ void PipeLineManager::LoadRootSignature(const Json &json) {
     }
     if (json.contains("RootParameter")) {
         Json rootParameterJson = json["RootParameter"];
-        std::vector<D3D12_ROOT_PARAMETER> rootParameters;
+        std::string rootParameterName;
         if (rootParameterJson.contains("UsePreset")) {
-            rootParameters = pipeLines_.rootParameter->GetRootParameter(rootParameterJson["UsePreset"].get<std::string>());
+            rootParameterName = rootParameterJson["UsePreset"].get<std::string>();
             
         } else {
             // ルートパラメーター名をルートシグネチャ名に設定
             rootParameterJson["Name"] = name;
             LoadRootParameter(rootParameterJson);
-            rootParameters = pipeLines_.rootParameter->GetRootParameter(name);
+            rootParameterName = name;
         }
+        const auto &rootParameters = pipeLines_.rootParameter->GetRootParameter(rootParameterName);
         rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
         rootSignatureDesc.pParameters = rootParameters.data();
     }
     if (json.contains("Sampler")) {
         Json samplerJson = json["Sampler"];
-        std::vector<D3D12_STATIC_SAMPLER_DESC> samplers;
+        std::string samplerName;
         if (samplerJson.contains("UsePreset")) {
-            samplers = pipeLines_.sampler->GetSampler(samplerJson["UsePreset"].get<std::string>());
+            samplerName = samplerJson["UsePreset"].get<std::string>();
 
         } else {
             // サンプラー名をルートシグネチャ名に設定
             samplerJson["Name"] = name;
             LoadSampler(samplerJson);
-            samplers = pipeLines_.sampler->GetSampler(name);
+            samplerName = name;
         }
+        const auto &samplers = pipeLines_.sampler->GetSampler(samplerName);
         rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(samplers.size());
         rootSignatureDesc.pStaticSamplers = samplers.data();
     }

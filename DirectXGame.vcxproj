@@ -125,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\Renderer.cpp" />
     <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp" />
+    <ClCompile Include="KashipanEngine\Base\SceneManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\Texture.cpp" />
     <ClCompile Include="KashipanEngine\Common\ConvertColor.cpp" />
     <ClCompile Include="KashipanEngine\Base\CrashHandler.cpp" />
@@ -135,12 +136,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\UAV.cpp" />
     <ClCompile Include="KashipanEngine\Common\DirectoryLoader.cpp" />
+    <ClCompile Include="KashipanEngine\Common\DynamicVariables.cpp" />
     <ClCompile Include="KashipanEngine\Common\Easings.cpp" />
     <ClCompile Include="KashipanEngine\Common\GridLine.cpp" />
     <ClCompile Include="KashipanEngine\Common\JsoncLoader.cpp" />
+    <ClCompile Include="KashipanEngine\Common\KeyConfig.cpp" />
     <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
     <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp" />
+    <ClCompile Include="KashipanEngine\Common\SceneBase.cpp" />
     <ClCompile Include="KashipanEngine\Common\TimeGet.cpp" />
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
     <ClCompile Include="KashipanEngine\Font\FontLoader.cpp" />
@@ -186,6 +190,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameProgram\GameScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />
@@ -203,11 +208,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLines\Sampler.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
+    <ClInclude Include="KashipanEngine\Base\SceneManager.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\UAV.h" />
     <ClInclude Include="KashipanEngine\Common\DirectoryLoader.h" />
     <ClInclude Include="KashipanEngine\Common\DrawInfo.h" />
+    <ClInclude Include="KashipanEngine\Common\DynamicVariables.h" />
     <ClInclude Include="KashipanEngine\Common\GridLine.h" />
     <ClInclude Include="KashipanEngine\Common\JsoncLoader.h" />
+    <ClInclude Include="KashipanEngine\Common\KeyConfig.h" />
+    <ClInclude Include="KashipanEngine\Common\KeyConfig\DefineMaps.h" />
     <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h" />
     <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h" />
     <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h" />
@@ -232,6 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Easings.h" />
     <ClInclude Include="KashipanEngine\Common\LineOption.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
+    <ClInclude Include="KashipanEngine\Common\SceneBase.h" />
     <ClInclude Include="KashipanEngine\Common\VertexDataLine.h" />
     <ClInclude Include="KashipanEngine\Font\FontLoader.h" />
     <ClInclude Include="KashipanEngine\Font\FontStructs.h" />

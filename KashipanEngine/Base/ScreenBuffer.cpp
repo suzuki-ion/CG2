@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include "WinApp.h"
 #include "DirectXCommon.h"
+#include "Texture.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Common/Logs.h"
 #include "Common/Descriptors/RTV.h"
@@ -41,9 +42,10 @@ void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineM
     isInitialized = true;
 }
 
-ScreenBuffer::ScreenBuffer(uint32_t width, uint32_t height) {
+ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_t height) {
     assert(isInitialized);
 
+    screenName_ = screenName;
     screenWidth_ = width;
     screenHeight_ = height;
     pipelineSet_ = PrimitiveDrawer::CreateGraphicsPipeline(
@@ -53,6 +55,21 @@ ScreenBuffer::ScreenBuffer(uint32_t width, uint32_t height) {
     CreateRenderTarget();
     CreateShaderResource();
     CreateDepthStencil();
+
+    // テクスチャ管理クラスに登録
+    TextureData textureData;
+    textureData.name = screenName_;
+    textureData.resource = resource_.Get();
+    textureData.srvHandleCPU = srvCPUHandle_;
+    textureData.srvHandleGPU = srvGPUHandle_;
+    textureData.width = screenWidth_;
+    textureData.height = screenHeight_;
+    Texture::AddData(textureData);
+}
+
+uint32_t ScreenBuffer::GetTextureIndex() const {
+    // テクスチャ管理クラスからインデックスを取得
+    return Texture::GetTexture(screenName_).index;
 }
 
 void ScreenBuffer::PreDraw() {

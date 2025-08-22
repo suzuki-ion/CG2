@@ -115,17 +115,19 @@ private:
 
     /// @brief 各読み込み関数のマップ
     const std::unordered_map<std::string, std::function<void(const Json &)>> kLoadFunctions_ = {
-        {"RootSignature",       [this](const Json &json) { LoadRootSignature(json); }},
-        {"RootParameter",       [this](const Json &json) { LoadRootParameter(json); }},
-        {"RootConstants",       [this](const Json &json) { LoadRootConstants(json); }},
-        {"RootDescriptor",      [this](const Json &json) { LoadRootDescriptor(json); }},
-        {"DescriptorRange",     [this](const Json &json) { LoadDescriptorRange(json); }},
-        {"Sampler",             [this](const Json &json) { LoadSampler(json); }},
-        {"InputLayout",         [this](const Json &json) { LoadInputLayout(json); }},
-        {"RasterizerState",     [this](const Json &json) { LoadRasterizerState(json); }},
-        {"BlendState",          [this](const Json &json) { LoadBlendState(json); }},
-        {"Shader",              [this](const Json &json) { LoadShader(json); }},
-        {"DepthStencilState",   [this](const Json &json) { LoadDepthStencilState(json); }}
+        {"RootSignature",           [this](const Json &json) { LoadRootSignature(json); }},
+        {"RootParameter",           [this](const Json &json) { LoadRootParameter(json); }},
+        {"RootConstants",           [this](const Json &json) { LoadRootConstants(json); }},
+        {"RootDescriptor",          [this](const Json &json) { LoadRootDescriptor(json); }},
+        {"DescriptorRange",         [this](const Json &json) { LoadDescriptorRange(json); }},
+        {"Sampler",                 [this](const Json &json) { LoadSampler(json); }},
+        {"InputLayout",             [this](const Json &json) { LoadInputLayout(json); }},
+        {"RasterizerState",         [this](const Json &json) { LoadRasterizerState(json); }},
+        {"BlendState",              [this](const Json &json) { LoadBlendState(json); }},
+        {"Shader",                  [this](const Json &json) { LoadShader(json); }},
+        {"DepthStencilState",       [this](const Json &json) { LoadDepthStencilState(json); }},
+        {"GraphicsPipelineState",   [this](const Json &json) { LoadGraphicsPipelineState(json); }},
+        {"ComputePipelineState",    [this](const Json &json) { LoadComputePipelineState(json); }}
     };
 };
 

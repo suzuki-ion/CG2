@@ -244,6 +244,20 @@ uint32_t Texture::Load(const std::string &filePath) {
     return static_cast<uint32_t>(sTextureMap[filePath].index);
 }
 
+uint32_t Texture::AddData(const TextureData &textureData) {
+    // もし同じ名前のテクスチャがあれば、インデックスを返す
+    if (sTextureMap.find(textureData.name) != sTextureMap.end()) {
+        Log(std::format("Texture already exists: {}", textureData.name), kLogLevelFlagWarning);
+        return sTextureMap[textureData.name].index;
+    }
+    // 新しいテクスチャデータを追加
+    sTextureMap[textureData.name] = textureData;
+    sTextureMap[textureData.name].index = static_cast<uint32_t>(sTextureMap.size() - 1);
+    sTextureFilePaths.push_back(textureData.name);
+    // テクスチャのインデックスを返す
+    return sTextureMap[textureData.name].index;
+}
+
 const TextureData &Texture::GetTexture(uint32_t index) {
     // インデックスが範囲外の場合はデフォルトのテクスチャを返す
     if (index >= sTextureFilePaths.size()) {

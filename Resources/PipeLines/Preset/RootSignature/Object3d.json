@@ -1,0 +1,57 @@
+﻿{
+	"Name": "Object3d",
+	"Flags": "D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT",
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"Descriptor": {
+					"ShaderRegister": 0
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+				"Descriptor": {
+					"ShaderRegister": 0
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"DescriptorTable": {
+					"Ranges": [
+						{
+							"BaseShaderRegister": 0,
+							"NumDescriptors": 1,
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_SRV",
+							"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+						}
+					]
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"Descriptor": {
+					"ShaderRegister": 1
+				}
+			}
+		]
+	},
+	"Sampler": {
+		"Samplers": [
+			{
+				"Filter": "D3D12_FILTER_MIN_MAG_MIP_LINEAR",
+				"AddressU": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"AddressV": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"AddressW": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"ComparisonFunc": "D3D12_COMPARISON_FUNC_NEVER",
+				"MaxLOD": "D3D12_FLOAT32_MAX",
+				"ShaderRegister": 0,
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL"
+			}
+		]
+	}
+}

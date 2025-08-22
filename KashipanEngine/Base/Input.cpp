@@ -449,6 +449,61 @@ void Input::Update() {
     ScreenToClient(sWinApp->GetWindowHandle(), &sMousePos);
 }
 
+InputDeviceType Input::GetCurrentInputDeviceType() {
+    // 初期化済みフラグをチェック
+    if (!sIsInitialized) {
+        Log("Input is not initialized.", kLogLevelFlagError);
+        assert(false);
+    }
+
+    InputDeviceType currentDeviceType = InputDeviceType::None;
+    
+    // キーボードが押されているかチェック
+    for (int i = 0; i < 256; ++i) {
+        if (IsKey(CurrentOption::Current, DownStateOption::Down, i)) {
+            currentDeviceType = InputDeviceType::Keyboard;
+            return currentDeviceType;
+        }
+    }
+    // マウスボタンが押されているかチェック
+    for (int i = 0; i < 5; ++i) { // マウスボタンは0〜4まで
+        if (IsMouseButton(CurrentOption::Current, DownStateOption::Down, i)) {
+            currentDeviceType = InputDeviceType::Mouse;
+            return currentDeviceType;
+        }
+    }
+    // マウスカーソルやホイールの位置が変化しているかチェック
+    if (IsMousePos(DownStateOption::Down, AxisOption::X) ||
+        IsMousePos(DownStateOption::Down, AxisOption::Y) ||
+        IsMousePos(DownStateOption::Down, AxisOption::Z)) {
+        currentDeviceType = InputDeviceType::Mouse;
+        return currentDeviceType;
+    }
+    // コントローラーのボタンが押されているかチェック
+    for (int i = 0; i < 4; ++i) { // コントローラーは最大4つまで
+        if (sControllerConnected[i]) {
+            for (int j = 0; j < static_cast<int>(XBoxButtonCode::Count); ++j) {
+                if (IsXBoxButton(CurrentOption::Current, DownStateOption::Down, static_cast<XBoxButtonCode>(j), i)) {
+                    currentDeviceType = InputDeviceType::XBoxController;
+                    return currentDeviceType;
+                }
+            }
+            // コントローラーのスティックやトリガーの状態をチェック
+            if (IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Left, 0, i) ||
+                IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Right, 0, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::X, 0, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::Y, 0, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::X, 0, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::Y, 0, i)) {
+                currentDeviceType = InputDeviceType::XBoxController;
+                return currentDeviceType;
+            }
+        }
+    }
+    
+    return currentDeviceType;
+}
+
 bool Input::IsKey(CurrentOption currentOption, DownStateOption downStateOption, int key) {
     // キーの押下状態を取得する関数を呼び出す
     auto itCurrent = sGetKeyFunctions.find(currentOption);
@@ -516,6 +571,67 @@ bool Input::IsMouseButtonRelease(int button) {
     return (sMouseState.rgbButtons[button] & 0x80) == 0 && (sPreMouseState.rgbButtons[button] & 0x80) != 0;
 }
 
+bool Input::IsMousePos(DownStateOption downStateOption, AxisOption axisOption, int threshold) {
+    int currentValue = 0;
+    int previousValue = 0;
+
+    // Z軸(マウスホイール)の場合は閾値を0に設定
+    if (axisOption == AxisOption::Z) {
+        threshold = 0;
+    }
+    
+    // マウスの位置を取得する関数を呼び出す
+    auto itCurrent = sGetMousePositionFunctions.find(CurrentOption::Current);
+    if (itCurrent == sGetMousePositionFunctions.end()) {
+        return false;
+    }
+    auto itAxis = itCurrent->second.find(axisOption);
+    if (itAxis == itCurrent->second.end()) {
+        return false;
+    }
+    auto itValue = itAxis->second.find(ValueOption::Delta);
+    if (itValue == itAxis->second.end()) {
+        return false;
+    }
+    auto getMousePositionFunction = itValue->second;
+    if (getMousePositionFunction) {
+        currentValue = getMousePositionFunction();
+    }
+    // 取得したい状態がDownの場合は現在の値が閾値以上かどうかをチェック
+    if (downStateOption == DownStateOption::Down) {
+        return std::abs(currentValue) >= threshold;
+    }
+    
+    auto itPreCurrent = sGetMousePositionFunctions.find(CurrentOption::Previous);
+    if (itPreCurrent == sGetMousePositionFunctions.end()) {
+        return false;
+    }
+    auto itPreAxis = itPreCurrent->second.find(axisOption);
+    if (itPreAxis == itPreCurrent->second.end()) {
+        return false;
+    }
+    auto itPreValue = itPreAxis->second.find(ValueOption::Delta);
+    if (itPreValue == itPreAxis->second.end()) {
+        return false;
+    }
+    auto getPreMousePositionFunction = itPreValue->second;
+    if (getPreMousePositionFunction) {
+        previousValue = getPreMousePositionFunction();
+    }
+
+    // 押下状態の判定
+    switch (downStateOption) {
+        case DownStateOption::Trigger:
+            return std::abs(currentValue) >= threshold && std::abs(previousValue) < threshold;
+        case DownStateOption::Release:
+            return std::abs(currentValue) < threshold && std::abs(previousValue) >= threshold;
+        default:
+            break;
+    }
+    
+    return false;
+}
+
 int Input::GetMousePos(CurrentOption currentOption, AxisOption axisOption, ValueOption valueOption) {
     // マウスの位置を取得する関数を呼び出す
     auto itCurrent = sGetMousePositionFunctions.find(currentOption);
@@ -576,6 +692,62 @@ int Input::GetMouseWheel() {
 
 int Input::GetPreMouseWheel() {
     return static_cast<int>(sPreMouseState.lZ);
+}
+
+bool Input::IsXBoxTrigger(DownStateOption downStateOption, LeftRightOption leftRightOption, int threshold, int index) {
+    int currentValue = 0;
+    int previousValue = 0;
+
+    // コントローラーのトリガーの押下状態を取得する関数を呼び出す
+    auto itCurrent = sGetXBoxTriggerFunctions.find(CurrentOption::Current);
+    if (itCurrent == sGetXBoxTriggerFunctions.end()) {
+        return false;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return false;
+    }
+    auto itValue = itLeftRight->second.find(ValueOption::Actual);
+    if (itValue == itLeftRight->second.end()) {
+        return false;
+    }
+    auto getXBoxTriggerFunction = itValue->second;
+    if (getXBoxTriggerFunction) {
+        currentValue = getXBoxTriggerFunction(index);
+    }
+    // 取得したい状態がDownの場合は現在の値が閾値以上かどうかをチェック
+    if (downStateOption == DownStateOption::Down) {
+        return currentValue >= threshold;
+    }
+
+    auto itPreCurrent = sGetXBoxTriggerFunctions.find(CurrentOption::Previous);
+    if (itPreCurrent == sGetXBoxTriggerFunctions.end()) {
+        return false;
+    }
+    auto itPreLeftRight = itPreCurrent->second.find(leftRightOption);
+    if (itPreLeftRight == itPreCurrent->second.end()) {
+        return false;
+    }
+    auto itPreValue = itPreLeftRight->second.find(ValueOption::Actual);
+    if (itPreValue == itPreLeftRight->second.end()) {
+        return false;
+    }
+    auto getPreXBoxTriggerFunction = itPreValue->second;
+    if (getPreXBoxTriggerFunction) {
+        previousValue = getPreXBoxTriggerFunction(index);
+    }
+
+    // 押下状態の判定
+    switch (downStateOption) {
+        case DownStateOption::Trigger:
+            return currentValue >= threshold && previousValue < threshold;
+        case DownStateOption::Release:
+            return currentValue < threshold && previousValue >= threshold;
+        default:
+            break;
+    }
+    
+    return false;
 }
 
 int Input::GetXBoxTrigger(CurrentOption currentOption, LeftRightOption leftRightOption, ValueOption valueOption, int index) {
@@ -656,6 +828,70 @@ float Input::GetXBoxLeftTriggerDeltaRatio(int index) {
 float Input::GetXBoxRightTriggerDeltaRatio(int index) {
     // トリガーの差分値を0から1の範囲に変換
     return static_cast<float>(GetXBoxRightTriggerDelta(index)) / 255.0f;
+}
+
+bool Input::IsXBoxStick(DownStateOption downStateOption, LeftRightOption leftRightOption, AxisOption axisOption, int threshold, int index) {
+    int currentValue = 0;
+    int previousValue = 0;
+    
+    // コントローラーのスティックの値を取得する関数を呼び出す
+    auto itCurrent = sGetXBoxStickFunctions.find(CurrentOption::Current);
+    if (itCurrent == sGetXBoxStickFunctions.end()) {
+        return false;
+    }
+    auto itLeftRight = itCurrent->second.find(leftRightOption);
+    if (itLeftRight == itCurrent->second.end()) {
+        return false;
+    }
+    auto itAxis = itLeftRight->second.find(axisOption);
+    if (itAxis == itLeftRight->second.end()) {
+        return false;
+    }
+    auto getXBoxStickFunction = itAxis->second.find(ValueOption::Actual);
+    if (getXBoxStickFunction == itAxis->second.end()) {
+        return false;
+    }
+    auto getXBoxStickValueFunction = getXBoxStickFunction->second;
+    if (getXBoxStickValueFunction) {
+        currentValue = getXBoxStickValueFunction(index);
+    }
+    // 取得したい状態がDownの場合は現在の値が閾値以上かどうかをチェック
+    if (downStateOption == DownStateOption::Down) {
+        return std::abs(currentValue) >= threshold;
+    }
+    
+    auto itPreCurrent = sGetXBoxStickFunctions.find(CurrentOption::Previous);
+    if (itPreCurrent == sGetXBoxStickFunctions.end()) {
+        return false;
+    }
+    auto itPreLeftRight = itPreCurrent->second.find(leftRightOption);
+    if (itPreLeftRight == itPreCurrent->second.end()) {
+        return false;
+    }
+    auto itPreAxis = itPreLeftRight->second.find(axisOption);
+    if (itPreAxis == itPreLeftRight->second.end()) {
+        return false;
+    }
+    auto getPreXBoxStickFunction = itPreAxis->second.find(ValueOption::Actual);
+    if (getPreXBoxStickFunction == itPreAxis->second.end()) {
+        return false;
+    }
+    auto getPreXBoxStickValueFunction = getPreXBoxStickFunction->second;
+    if (getPreXBoxStickValueFunction) {
+        previousValue = getPreXBoxStickValueFunction(index);
+    }
+    
+    // 押下状態の判定
+    switch (downStateOption) {
+        case DownStateOption::Trigger:
+            return std::abs(currentValue) >= threshold && std::abs(previousValue) < threshold;
+        case DownStateOption::Release:
+            return std::abs(currentValue) < threshold && std::abs(previousValue) >= threshold;
+        default:
+            break;
+    }
+
+    return false;
 }
 
 int Input::GetXBoxStick(CurrentOption currentOption, LeftRightOption leftRightOption, AxisOption axisOption, ValueOption valueOption, int index) {

@@ -13,6 +13,8 @@
 		"RasterizerState": "Resources/PipeLines/Preset/RasterizerState",
 		"BlendState": "Resources/PipeLines/Preset/BlendState",
 		"Shader": "Resources/PipeLines/Preset/Shader",
-		"DepthStencilState": "Resources/PipeLines/Preset/DepthStencilState"
+		"DepthStencilState": "Resources/PipeLines/Preset/DepthStencilState",
+		"GraphicsPipelineState": "Resources/PipeLines/Preset/GraphicsPipelineState",
+		"ComputePipelineState": "Resources/PipeLines/Preset/ComputePipelineState"
 	}
 }

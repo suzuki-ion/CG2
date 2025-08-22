@@ -81,34 +81,34 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     //==================================================
 
     pipelineSet_[kFillModeSolid][kBlendModeNone] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeNone);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendNone");
     pipelineSet_[kFillModeSolid][kBlendModeNormal] =
-        pipeLineManager_->GetPipeLine("Object3d.BlendNormal");
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendNormal");
     pipelineSet_[kFillModeSolid][kBlendModeAdd] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeAdd);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendAdd");
     pipelineSet_[kFillModeSolid][kBlendModeSubtract] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeSubtract);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendSubtract");
     pipelineSet_[kFillModeSolid][kBlendModeMultiply] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeMultiply);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendMultiply");
     pipelineSet_[kFillModeSolid][kBlendModeScreen] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeScreen);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendScreen");
     pipelineSet_[kFillModeSolid][kBlendModeExclusion] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeExclusion);
+        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendExclusion");
 
     pipelineSet_[kFillModeWireframe][kBlendModeNone] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeNone);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendNone");
     pipelineSet_[kFillModeWireframe][kBlendModeNormal] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeNormal);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendNormal");
     pipelineSet_[kFillModeWireframe][kBlendModeAdd] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeAdd);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendAdd");
     pipelineSet_[kFillModeWireframe][kBlendModeSubtract] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeSubtract);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendSubtract");
     pipelineSet_[kFillModeWireframe][kBlendModeMultiply] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeMultiply);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendMultiply");
     pipelineSet_[kFillModeWireframe][kBlendModeScreen] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeScreen);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendScreen");
     pipelineSet_[kFillModeWireframe][kBlendModeExclusion] =
-        PrimitiveDrawer::CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE, kBlendModeExclusion);
+        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendExclusion");
 
     linePipelineSet_[kLineNormal] = PrimitiveDrawer::CreateLinePipeline(kLineNormal);
     linePipelineSet_[kLineThickness] = PrimitiveDrawer::CreateLinePipeline(kLineThickness);

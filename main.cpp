@@ -17,13 +17,10 @@
 #include "Common/ConvertColor.h"
 #include "Common/KeyFrameAnimation.h"
 #include "Common/GridLine.h"
+#include "Common/KeyConfig.h"
 
 #include "3d/DirectionalLight.h"
-#include "Objects/Sphere.h"
-#include "Objects/Model.h"
-#include "Objects/Plane.h"
-#include "Objects/Lines.h"
-#include "Objects/Text.h"
+#include "Objects.h"
 
 #include "2d/UI/GUI/Button.h"
 #include "2d/UI/UIGroup.h"
@@ -117,12 +114,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // モデル
     //==================================================
 
-    Model model("Resources/nahida", "nahida.obj");
+    Model model("Resources/Player", "player.obj");
     model.SetRenderer(renderer);
-
-    Model ground("Resources/Ground", "ground.obj");
-    ground.SetRenderer(renderer);
-    ground.GetStatePtr().transform->translate.y = -8.0f;
 
     //==================================================
     // 音声
@@ -254,8 +247,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // スクリーンバッファ
     //==================================================
 
-    ScreenBuffer screenBuffer(1920, 1080);
+    ScreenBuffer screenBuffer("TestScreen", 1920, 1080);
     screenBuffer.SetRenderer(renderer);
+
+    //==================================================
+    // キーコンフィグ
+    //==================================================
+
+    KeyConfig keyConfig;
+    keyConfig.LoadFromJson("Resources/KeyConfig.json");
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -340,6 +340,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::Text("ブレンドモード: %d", static_cast<int>(blendMode));
         // マウスの座標
         ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
+        
+        // キーコンフィグのテスト用表示
+        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveHorizontal").actionName.c_str());
+        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveHorizontal")));
+        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("Jump").actionName.c_str());
+        ImGui::Text("GetInputValue: %d", std::get<bool>(keyConfig.GetInputValue("Jump")));
 
         // デバッグカメラの有効化
         if (ImGui::Checkbox("デバッグカメラ有効化", &isUseDebugCamera)) {
@@ -455,8 +461,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         icoSphere.Draw();
         // モデルの描画
         model.Draw();
-        // 地面の描画
-        ground.Draw();
         // ボタンの描画
         uiGroup.Draw();
         // 文字の描画

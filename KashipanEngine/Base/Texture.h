@@ -28,6 +28,11 @@ public:
     /// @return テクスチャを読み込んだインデックス
     static uint32_t Load(const std::string &filePath);
 
+    /// @brief テクスチャ管理クラスが管理するテクスチャの追加
+    /// @param textureData 追加するテクスチャデータ
+    /// @return 追加したテクスチャのインデックス
+    static uint32_t AddData(const TextureData &textureData);
+
     /// @brief テクスチャデータの取得
     /// @param index テクスチャのインデックス
     /// @return テクスチャデータ

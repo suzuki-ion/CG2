@@ -21,15 +21,27 @@ public:
     static void Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineManager *pipeLineManager);
 
     /// @brief スクリーンバッファのコンストラクタ
+    /// @param screenName スクリーンの名前
     /// @param width スクリーンの横幅
     /// @param height スクリーンの縦幅
-    ScreenBuffer(uint32_t width, uint32_t height);
+    ScreenBuffer(const std::string screenName, uint32_t width, uint32_t height);
     
     /// @brief レンダラーの設定
     /// @param renderer レンダラーへのポインタ
     void SetRenderer(Renderer *renderer) {
         renderer_ = renderer;
     }
+
+
+    /// @brief スクリーンの名前を取得
+    /// @return スクリーンの名前
+    const std::string &GetScreenName() const {
+        return screenName_;
+    }
+
+    /// @brief スクリーンのテクスチャのインデックスを取得
+    /// @return スクリーンのテクスチャのインデックス
+    uint32_t GetTextureIndex() const;
 
     /// @brief SRVのCPUハンドルを取得
     /// @return 
@@ -55,7 +67,7 @@ private:
     void CreateShaderResource();
     void CreateDepthStencil();
 
-    // スクリーン名(ImGui上での表示用)
+    // スクリーン名
     std::string screenName_ = "ScreenBuffer";
 
     // レンダラーへのポインタ

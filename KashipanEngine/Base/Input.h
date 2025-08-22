@@ -8,8 +8,9 @@ namespace KashipanEngine{
 // 前方宣言
 class WinApp;
 
-// 入力の種類
-enum class InputType {
+// 入力デバイスの種類
+enum class InputDeviceType {
+    None,           // 入力なし
     Keyboard,       // キーボード
     Mouse,          // マウス
     XBoxController, // XBoxコントローラー
@@ -30,7 +31,8 @@ enum class XBoxButtonCode {
     A               = XINPUT_GAMEPAD_A,
     B               = XINPUT_GAMEPAD_B,
     X               = XINPUT_GAMEPAD_X,
-    Y               = XINPUT_GAMEPAD_Y
+    Y               = XINPUT_GAMEPAD_Y,
+    Count // ボタンの数
 };
 
 // 入力はどこでも使えるようにしたいのでstaticにする
@@ -46,6 +48,12 @@ public:
     //==================================================
     // 入力状態のオプション
     //==================================================
+
+    // 入力の種類のオプション
+    enum class InputTypeOption {
+        Digital,    // デジタル入力 (ボタンなど)
+        Analog,     // アナログ入力 (スティックやトリガーなど)
+    };
 
     // 押下状態のオプション
     enum class DownStateOption {
@@ -94,6 +102,37 @@ public:
     static void Update();
 
     //==================================================
+    // 入力状態の取得
+    //==================================================
+
+    /// @brief 現在入力中のデバイスの種類を取得
+    /// @return 入力デバイスの種類 (キーボード、マウス、XBoxコントローラー)
+    static InputDeviceType GetCurrentInputDeviceType();
+
+    /// @brief 入力状態の取得
+    /// @tparam T 取得する値の型 (bool, int, float)
+    /// @param inputDeviceType 入力デバイスの種類
+    /// @param downStateOption 押下状態のオプション
+    /// @param keyCode キーコード (XBoxコントローラーの場合はボタンコード)
+    /// @param inputTypeOption 入力の種類のオプション (デジタル入力かアナログ入力か)
+    /// @param AxisOption 軸方向のオプション (マウスカーソルやXBoxコントローラーのスティックの場合)
+    /// @param leftRightOption 左右のオプション (マウスカーソルやXBoxコントローラーのスティックの場合)
+    /// @param threshold 押下とみなす閾値 (0～) (マウスカーソルやXBoxコントローラーのスティックの場合
+    /// @param controllerIndex コントローラーのインデックス (0～3) (XBoxコントローラーの場合)
+    /// @return 取得した値
+    template <typename T>
+    static T Get(
+        InputDeviceType inputDeviceType,
+        DownStateOption downStateOption,
+        int keyCode,
+        InputTypeOption inputTypeOption = InputTypeOption::Digital,
+        AxisOption axisOption = AxisOption::X,
+        LeftRightOption leftRightOption = LeftRightOption::Left,
+        int threshold = 0,
+        int controllerIndex = 0
+    );
+
+    //==================================================
     // キーボード入力関連
     //==================================================
 
@@ -128,6 +167,23 @@ public:
     // マウス入力関連
     //==================================================
 
+    /// @brief マウスの入力状態を取得
+    /// @tparam T 取得する値の型 (bool, int, float)
+    /// @param inputTypeOption 入力の種類のオプション (デジタル入力かアナログ入力か)
+    /// @param downStateOption 押下状態のオプション
+    /// @param keyCode マウスボタンコード
+    /// @param axisOption X軸かY軸かZ軸(マウスホイール)のオプション
+    /// @param threshold 押下とみなす閾値 (0～)
+    /// @return 取得した値
+    template <typename T>
+    static T GetMouse(
+        InputTypeOption inputTypeOption,
+        DownStateOption downStateOption,
+        int keyCode,
+        AxisOption axisOption = AxisOption::X,
+        int threshold = 0
+    );
+
     //--------- ボタン ---------//
 
     /// @brief マウスのボタンの押下状態を取得
@@ -158,6 +214,13 @@ public:
     static bool IsMouseButtonRelease(int button);
 
     //--------- カーソル ---------//
+
+    /// @brief マウスカーソルの位置をboolで取得
+    /// @param downStateOption 押下状態のオプション
+    /// @param axisOption X軸かY軸かZ軸(マウスホイール)のオプション
+    /// @param threshold 押下とみなす閾値 (0～) (マウスホイールの場合は無視)
+    /// @return マウスカーソルの位置が閾値を超えているかどうか (true: 超えている, false: 超えていない)
+    static bool IsMousePos(DownStateOption downStateOption, AxisOption axisOption, int threshold = 0);
 
     /// @brief マウスカーソルの位置を取得
     /// @param currentOption 現在か前回かのオプション
@@ -212,7 +275,36 @@ public:
     // XBoxコントローラー入力関連
     //==================================================
 
+    /// @brief XBoxコントローラーの入力状態を取得
+    /// @tparam T 取得する値の型 (bool, int, float)
+    /// @param inputTypeOption 入力の種類のオプション (デジタル入力かアナログ入力か)
+    /// @param downStateOption 押下状態のオプション
+    /// @param buttonCode XBoxコントローラーのボタンコード
+    /// @param axisOption X軸かY軸かのオプション
+    /// @param leftRightOption 左側か右側かのオプション
+    /// @param threshold 押下とみなす閾値 (0～255) (スティックやトリガーの場合)
+    /// @param index コントローラーのインデックス (0～3)
+    /// @return 取得した値
+    template <typename T>
+    static T GetXBoxController(
+        InputTypeOption inputTypeOption,
+        DownStateOption downStateOption,
+        int buttonCode,
+        AxisOption axisOption = AxisOption::X,
+        LeftRightOption leftRightOption = LeftRightOption::Left,
+        int threshold = 128,
+        int index = 0
+    );
+
     //--------- トリガーボタン ---------//
+
+    /// @brief XBoxコントローラーのトリガーの押下状態をboolで取得
+    /// @param downStateOption 押下状態のオプション
+    /// @param leftRightOption 左側か右側かのオプション
+    /// @param threshold 押下とみなす閾値 (0～255)
+    /// @param index コントローラーのインデックス (0～3)
+    /// @return トリガーの押下状態 (true: 押下中, false: 押下していない)
+    static bool IsXBoxTrigger(DownStateOption downStateOption, LeftRightOption leftRightOption, int threshold = 128, int index = 0);
 
     /// @brief XBoxコントローラーのトリガーの押下状態を取得
     /// @param currentOption 現在か前回かのオプション
@@ -311,6 +403,15 @@ public:
     static float GetPreXBoxRightTriggerDeltaRatio(int index = 0);
 
     //--------- スティック ---------//
+
+    /// @brief XBoxコントローラーのスティックの座標をboolで取得
+    /// @param downStateOption 押下状態のオプション
+    /// @param leftRightOption 左側か右側かのオプション
+    /// @param axisOption X軸かY軸かのオプション
+    /// @param threshold 押下とみなす閾値 (-32768～32767)
+    /// @param index コントローラーのインデックス (0～3)
+    /// @return スティックの座標が閾値を超えているかどうか (true: 超えている, false: 超えていない)
+    static bool IsXBoxStick(DownStateOption downStateOption, LeftRightOption leftRightOption, AxisOption axisOption, int threshold = 32768, int index = 0);
 
     /// @brief XBoxコントローラーのスティックの座標を取得
     /// @param currentOption 現在か前回かのオプション
@@ -560,5 +661,60 @@ public:
 
 private:
 };
+
+template<typename T>
+inline T Input::Get(InputDeviceType inputDeviceType, DownStateOption downStateOption, int keyCode,
+    InputTypeOption inputTypeOption, AxisOption axisOption, LeftRightOption leftRightOption,
+    int threshold, int controllerIndex) {
+    bool isKey = false;
+    switch (inputDeviceType) {
+        case InputDeviceType::Keyboard:
+            isKey = IsKey(CurrentOption::Current, downStateOption, keyCode);
+            if (inputTypeOption == InputTypeOption::Digital) {
+                return isKey;
+            } else if (inputTypeOption == InputTypeOption::Analog) {
+                return isKey ? static_cast<T>(1) : static_cast<T>(0);
+            }
+        case InputDeviceType::Mouse:
+            return GetMouse<T>(inputTypeOption, downStateOption, keyCode, axisOption, threshold);
+        case InputDeviceType::XBoxController:
+            return GetXBoxController<T>(inputTypeOption, downStateOption, keyCode, axisOption, leftRightOption, threshold, controllerIndex);
+        default:
+            return T();
+    }
+}
+
+template<typename T>
+inline T Input::GetMouse(InputTypeOption inputTypeOption, DownStateOption downStateOption,
+    int keyCode, AxisOption axisOption, int threshold) {
+    switch (inputTypeOption) {
+        case InputTypeOption::Digital:
+            if (keyCode < 0) {
+                return IsMousePos(downStateOption, axisOption, threshold);
+            } else {
+                return IsMouseButton(CurrentOption::Current, downStateOption, keyCode);
+            }
+        case InputTypeOption::Analog:
+            return GetMousePos(CurrentOption::Current, axisOption, ValueOption::Actual);
+        default:
+            return T();
+    }
+}
+
+template<typename T>
+inline T Input::GetXBoxController(InputTypeOption inputTypeOption, DownStateOption downStateOption, int buttonCode, AxisOption axisOption, LeftRightOption leftRightOption, int threshold, int index) {
+    switch (inputTypeOption) {
+        case InputTypeOption::Digital:
+            if (buttonCode < 0) {
+                return IsXBoxStick(downStateOption, leftRightOption, axisOption, threshold, index);
+            } else {
+                return IsXBoxButton(CurrentOption::Current, downStateOption, static_cast<XBoxButtonCode>(buttonCode), index);
+            }
+        case InputTypeOption::Analog:
+            return GetXBoxStick(CurrentOption::Current, leftRightOption, axisOption, ValueOption::Actual, index);
+        default:
+            return T();
+    }
+}
 
 } // namespace KashipanEngine
