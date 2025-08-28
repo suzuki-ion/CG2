@@ -15,7 +15,7 @@ TitleScene::TitleScene() : SceneBase("TitleScene") {
 
     titleLogoText_ = std::make_unique<Text>(32);
     titleLogoText_->SetFont("Resources/Font/jfdot-k14_128.fnt");
-    titleLogoText_->SetText(u8"main() { Shoot(); }");
+    titleLogoText_->SetText(u8"バグ撃");
     titleLogoText_->SetTextAlign(TextAlignX::Center, TextAlignY::Center);
 
     auto titleLogoState = titleLogoText_->GetStatePtr();

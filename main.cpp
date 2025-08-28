@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     isDebug = true;
 #endif
     // エンジンのインスタンスを作成
-    std::unique_ptr<Engine> myGameEngine = std::make_unique<Engine>("LE2A_08_スズキ_イオン_main() { Shoot(); }", 1920, 1080, isDebug);
+    std::unique_ptr<Engine> myGameEngine = std::make_unique<Engine>("LE2A_08_スズキ_イオン_バグ撃", 1920, 1080, isDebug);
 
     //==================================================
     // シーンの生成
