@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <cstdint>
+#include <string>
 #include "Common/PipeLineSet.h"
 
 namespace KashipanEngine {
@@ -85,9 +86,6 @@ private:
     /// @brief スクリーンの縦幅
     uint32_t screenHeight_ = 0;
 
-    /// @brief パイプライン
-    PipeLineSet pipelineSet_;
-    
     /// @brief 描画用リソース
     Microsoft::WRL::ComPtr<ID3D12Resource> resource_;
     /// @brief 深度バッファ用リソース

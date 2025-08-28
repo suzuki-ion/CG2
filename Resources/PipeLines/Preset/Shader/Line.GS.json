@@ -1,0 +1,6 @@
+﻿{
+	"Name": "Line.GS",
+	"Type": "Geometry",
+	"Path": "Resources/PipeLines/Preset/Shader/Line/Geometry.hlsl",
+	"TargetProfile": "gs_6_0"
+}

@@ -1,0 +1,15 @@
+﻿{
+	// 上から順に進行
+	"Waves": [
+		"Resources/Waves/Normal/wave1.json",
+		"Resources/Waves/Normal/wave2.json",
+		"Resources/Waves/Normal/wave3.json",
+		"Resources/Waves/Normal/wave4.json",
+		"Resources/Waves/Normal/wave5.json",
+		"Resources/Waves/Normal/wave6.json",
+		"Resources/Waves/Normal/wave7.json",
+		"Resources/Waves/Normal/wave8.json",
+		"Resources/Waves/Normal/wave9.json",
+		"Resources/Waves/Normal/wave10.json"
+	]
+}

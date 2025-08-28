@@ -34,6 +34,15 @@ DirectionalLight sDefaultDirectionalLight = {
     1.0f
 };
 
+// レンダリングパイプライン名でのソート用関数
+bool ComparePipelineNameObject(const Renderer::ObjectState &a, const Renderer::ObjectState &b) {
+    return a.pipeLineName < b.pipeLineName;
+}
+// レンダリングパイプライン名でのソート用関数
+bool ComparePipelineNameLine(const Renderer::LineState &a, const Renderer::LineState &b) {
+    return a.pipeLineName < b.pipeLineName;
+}
+
 } // namespace
 
 Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, PipeLineManager *pipeLineManager) {
@@ -76,43 +85,6 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
     // 球面座標系に設定
     sDebugCamera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
 
-    //==================================================
-    // パイプラインセットの初期化
-    //==================================================
-
-    pipelineSet_[kFillModeSolid][kBlendModeNone] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendNone");
-    pipelineSet_[kFillModeSolid][kBlendModeNormal] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendNormal");
-    pipelineSet_[kFillModeSolid][kBlendModeAdd] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendAdd");
-    pipelineSet_[kFillModeSolid][kBlendModeSubtract] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendSubtract");
-    pipelineSet_[kFillModeSolid][kBlendModeMultiply] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendMultiply");
-    pipelineSet_[kFillModeSolid][kBlendModeScreen] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendScreen");
-    pipelineSet_[kFillModeSolid][kBlendModeExclusion] =
-        pipeLineManager_->GetPipeLine("Object3d.Solid.BlendExclusion");
-
-    pipelineSet_[kFillModeWireframe][kBlendModeNone] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendNone");
-    pipelineSet_[kFillModeWireframe][kBlendModeNormal] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendNormal");
-    pipelineSet_[kFillModeWireframe][kBlendModeAdd] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendAdd");
-    pipelineSet_[kFillModeWireframe][kBlendModeSubtract] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendSubtract");
-    pipelineSet_[kFillModeWireframe][kBlendModeMultiply] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendMultiply");
-    pipelineSet_[kFillModeWireframe][kBlendModeScreen] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendScreen");
-    pipelineSet_[kFillModeWireframe][kBlendModeExclusion] =
-        pipeLineManager_->GetPipeLine("Object3d.Wireframe.BlendExclusion");
-
-    linePipelineSet_[kLineNormal] = PrimitiveDrawer::CreateLinePipeline(kLineNormal);
-    linePipelineSet_[kLineThickness] = PrimitiveDrawer::CreateLinePipeline(kLineThickness);
-
     // 初期化完了のログを出力
     Log("Renderer Initialized.");
     LogNewLine();
@@ -132,18 +104,12 @@ Renderer::~Renderer() {
 void Renderer::PreDraw() {
     dxCommon_->PreDraw();
     dxCommon_->ClearDepthStencil();
+#ifdef _DEBUG
     imguiManager_->BeginFrame();
+#endif
 
     // 平行光源をリセット
     directionalLight_ = nullptr;
-    // ブレンドモードを初期化
-    blendMode_ = kBlendModeNormal;
-    // 描画オブジェクトのクリア
-    drawObjects_.clear();
-    drawAlphaObjects_.clear();
-    draw2DObjects_.clear();
-    // グリッドラインのクリア
-    drawLines_.clear();
 
     // 2D用のプロジェクション行列を設定
     projectionMatrix2D_ = MakeOrthographicMatrix(
@@ -183,6 +149,12 @@ void Renderer::PreDraw() {
 }
 
 void Renderer::PostDraw() {
+    // 描画オブジェクトをパイプライン名でソート
+    //std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
+    //std::sort(drawAlphaObjects_.begin(), drawAlphaObjects_.end(), ComparePipelineNameObject);
+    //std::sort(draw2DObjects_.begin(), draw2DObjects_.end(), ComparePipelineNameObject);
+    //std::sort(drawLines_.begin(), drawLines_.end(), ComparePipelineNameLine);
+
     // 光源が設定されていなければデフォルトの光源を設定
     if (directionalLight_ == nullptr) {
         directionalLight_ = &sDefaultDirectionalLight;
@@ -193,12 +165,7 @@ void Renderer::PostDraw() {
         DrawLine(&line);
     }
 
-    // 形状を設定
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // シグネチャを設定
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[kFillModeSolid][blendMode_].rootSignature.Get());
-    // パイプラインを設定
-    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[kFillModeSolid][blendMode_].pipelineState.Get());
+    pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
 
     // 平行光源の設定
     SetLightBuffer(directionalLight_);
@@ -209,8 +176,17 @@ void Renderer::PostDraw() {
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
 
+#ifdef _DEBUG
     imguiManager_->EndFrame();
+#endif
     dxCommon_->PostDraw();
+
+    // 描画オブジェクトのクリア
+    drawObjects_.clear();
+    drawAlphaObjects_.clear();
+    draw2DObjects_.clear();
+    // グリッドラインのクリア
+    drawLines_.clear();
 }
 
 void Renderer::ToggleDebugCamera() {
@@ -270,10 +246,10 @@ void Renderer::DrawCommon(std::vector<ObjectState> &objects) {
 }
 
 void Renderer::DrawCommon(ObjectState *objectState) {
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // ルートシグネチャを設定
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipelineSet_[objectState->fillMode][blendMode_].rootSignature.Get());
-    dxCommon_->GetCommandList()->SetPipelineState(pipelineSet_[objectState->fillMode][blendMode_].pipelineState.Get());
+    if (usePipeLineName_ != objectState->pipeLineName) {
+        usePipeLineName_ = objectState->pipeLineName;
+        pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
+    }
 
     // Cameraがnullptrの場合は2D描画
     if (objectState->isUseCamera == false) {
@@ -291,13 +267,7 @@ void Renderer::DrawCommon(ObjectState *objectState) {
         }
     }
 
-    // SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-    if ((objectState->fillMode == kFillModeWireframe) ||
-        objectState->useTextureIndex <= 0) {
-        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(0).srvHandleGPU);
-    } else {
-        dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
-    }
+    dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(objectState->useTextureIndex).srvHandleGPU);
 
     // VBVを設定
     dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &objectState->mesh->vertexBufferView);
@@ -317,9 +287,10 @@ void Renderer::DrawCommon(ObjectState *objectState) {
 }
 
 void Renderer::DrawLine(LineState *lineState) {
-    dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
-    dxCommon_->GetCommandList()->SetGraphicsRootSignature(linePipelineSet_[lineState->lineType].rootSignature.Get());
-    dxCommon_->GetCommandList()->SetPipelineState(linePipelineSet_[lineState->lineType].pipelineState.Get());
+    if (usePipeLineName_ != lineState->pipeLineName) {
+        usePipeLineName_ = lineState->pipeLineName;
+        pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
+    }
 
     // Cameraがnullptrの場合は2D描画
     if (lineState->isUseCamera == false) {

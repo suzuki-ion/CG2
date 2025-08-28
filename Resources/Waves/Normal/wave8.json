@@ -1,0 +1,60 @@
+﻿{
+  "Enemies": [
+    // 層0（中心1体）
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 0.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+
+    // 層1（8体）
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": 0.0 }, "Level": 10, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": 0.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+
+    // 層2（12体）
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -6.2, "y": 0.0 }, "Level": 10, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 6.2, "y": 0.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -6.2, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -6.2, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 6.2, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 6.2, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+
+    // 層3（16体）
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -9.3, "y": 0.0 }, "Level": 10, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 9.3, "y": 0.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -9.3, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -9.3, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 9.3, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 9.3, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -6.2, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -6.2, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 6.2, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 6.2, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": -10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": -10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": -10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": -10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -3.1, "y": 10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 3.1, "y": 10.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+
+    // 層4（最外周8体）
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -12.4, "y": 0.0 }, "Level": 10, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 12.4, "y": 0.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -12.4, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -12.4, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 12.4, "y": -3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 12.4, "y": 3.5 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -9.3, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -9.3, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 9.3, "y": -7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 9.3, "y": 7.0 }, "Level": 10, "SpawnTime": 0.0, "IsRandomSpawnPosition": false }
+  ]
+}

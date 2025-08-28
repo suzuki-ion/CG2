@@ -1,0 +1,5 @@
+﻿{
+    "Enemies": [
+        { "Type": "StopMidway", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 4.0 }, "Level": 1, "SpawnTime": 0.0, "IsRandomSpawnPosition": false }
+    ]
+}

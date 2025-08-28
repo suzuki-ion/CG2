@@ -7,6 +7,7 @@
 #include "Common/Material.h"
 #include "3d/PrimitiveDrawer.h"
 
+class Engine;
 namespace KashipanEngine {
 
 // 前方宣言
@@ -26,10 +27,11 @@ public:
         Material *material = nullptr;
         int *useTextureIndex = nullptr;
         NormalType *normalType = nullptr;
-        FillMode *fillMode = nullptr;
+        std::string *pipeLineName = nullptr;
     };
 
-    Object() noexcept = default;
+    static void Initialize(Engine *engine);
+    Object() noexcept;
     virtual ~Object() noexcept = default;
 
     Object(const Object &) = delete;
@@ -43,10 +45,33 @@ public:
         name_ = name;
     }
 
+    /// @brief 使用するレンダリングパイプライン名の設定
+    /// @param pipelineName レンダリングパイプライン名
+    void SetPipelineName(const std::string &pipelineName) {
+        pipeLineName_ = pipelineName;
+    }
+
     /// @brief オブジェクトの名前の取得
     /// @return オブジェクトの名前
     const std::string &GetName() {
         return name_;
+    }
+
+    /// @brief 頂点数の取得
+    /// @return 頂点数
+    UINT GetVertexCount() const {
+        return vertexCount_;
+    }
+    /// @brief インデックス数の取得
+    /// @return インデックス数
+    UINT GetIndexCount() const {
+        return indexCount_;
+    }
+
+    /// @brief 描画フラグの取得
+    /// @return 描画フラグ
+    bool IsDraw() const {
+        return isDraw_;
     }
 
     /// @brief レンダラーの設定
@@ -58,7 +83,7 @@ public:
     /// @brief オブジェクト情報へのポインタを取得
     /// @return オブジェクト情報へのポインタ
     [[nodiscard]] virtual StatePtr GetStatePtr() {
-        return { nullptr, &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &fillMode_};
+        return { nullptr, &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &pipeLineName_};
     }
 
     /// @brief オブジェクトの描画処理
@@ -70,6 +95,16 @@ public:
     /// @param worldTransform ワールド変換データ
     virtual void Draw(WorldTransform &worldTransform) {
         DrawCommon(worldTransform);
+    }
+
+    /// @brief 描画フラグの設定(表示)
+    void Show() {
+        isDraw_ = true;
+    }
+
+    /// @brief 描画フラグの設定(非表示)
+    void Hide() {
+        isDraw_ = false;
     }
     
 protected:
@@ -87,6 +122,7 @@ protected:
 
     /// @brief オブジェクト共通の描画処理
     /// @param worldTransform ワールド変換データ
+    /// @param color 色
     void DrawCommon(WorldTransform &worldTransform);
 
     //==================================================
@@ -95,6 +131,8 @@ protected:
 
     /// @brief オブジェクトの名前
     std::string name_;
+    /// @brief 使用するレンダリングパイプライン名
+    std::string pipeLineName_ = "Object3d.Solid.BlendNormal";
 
     /// @brief レンダラーへのポインタ
     Renderer *renderer_ = nullptr;
@@ -136,11 +174,11 @@ protected:
     int useTextureIndex_ = -1;
     /// @brief 法線のタイプ
     NormalType normalType_ = kNormalTypeVertex;
-    /// @brief 塗りつぶしモード
-    FillMode fillMode_ = kFillModeSolid;
 
     /// @brief カメラ使用フラグ
     bool isUseCamera_ = false;
+    /// @brief 描画フラグ
+    bool isDraw_ = true;
 };
 
 } // namespace KashipanEngine

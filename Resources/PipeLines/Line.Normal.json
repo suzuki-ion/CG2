@@ -1,0 +1,24 @@
+﻿{
+	"PipeLineType": "Render",
+	"Name": "Line.Normal",
+	"Shader": {
+		"Vertex": {
+			"UsePreset": "Line.VS"
+		},
+		"Pixel": {
+			"UsePreset": "Line.PS"
+		}
+	},
+	"RasterizerState": {
+		"UsePreset": "DoubleSidedCulling"
+	},
+	"BlendState": {
+		"UsePreset": "Normal"
+	},
+	"DepthStencilState": {
+		"UsePreset": "DepthEnable"
+	},
+	"PipelineState": {
+		"UsePreset": "Line"
+	}
+}

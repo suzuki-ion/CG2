@@ -181,11 +181,24 @@ public:
         }
         return vec_[index];
     }
+    auto find(const Key &key) {
+        auto it = map_.find(key);
+        if (it == map_.end()) {
+            return vec_.end();
+        }
+        return vec_.begin() + it->second;
+    }
+    auto find(size_t index) {
+        if (index >= vec_.size()) {
+            return vec_.end();
+        }
+        return vec_.begin() + index;
+    }
 
-    auto begin() const {
+    auto begin() {
         return vec_.begin();
     }
-    auto end() const {
+    auto end() {
         return vec_.end();
     }
 

@@ -32,7 +32,7 @@ enum class XBoxButtonCode {
     B               = XINPUT_GAMEPAD_B,
     X               = XINPUT_GAMEPAD_X,
     Y               = XINPUT_GAMEPAD_Y,
-    Count // ボタンの数
+    Count           = 14, // ボタンの数
 };
 
 // 入力はどこでも使えるようにしたいのでstaticにする
@@ -220,7 +220,7 @@ public:
     /// @param axisOption X軸かY軸かZ軸(マウスホイール)のオプション
     /// @param threshold 押下とみなす閾値 (0～) (マウスホイールの場合は無視)
     /// @return マウスカーソルの位置が閾値を超えているかどうか (true: 超えている, false: 超えていない)
-    static bool IsMousePos(DownStateOption downStateOption, AxisOption axisOption, int threshold = 0);
+    static bool IsMousePos(DownStateOption downStateOption, AxisOption axisOption, int threshold = 16);
 
     /// @brief マウスカーソルの位置を取得
     /// @param currentOption 現在か前回かのオプション
@@ -599,31 +599,31 @@ public:
     /// @param button ボタンコード
     /// @param index コントローラーのインデックス (0～3)
     /// @return 押下状態
-    static bool IsXBoxButton(CurrentOption currentOption, DownStateOption downStateOption, XBoxButtonCode button, int index = 0);
+    static bool IsXBoxButton(CurrentOption currentOption, DownStateOption downStateOption, int button, int index = 0);
 
     /// @brief XBoxコントローラーのボタンの押下状態を取得
     /// @param button ボタンコード
     /// @param index コントローラーのインデックス (0～3)
     /// @return 押下状態
-    static bool IsXBoxButtonDown(XBoxButtonCode button, int index = 0);
+    static bool IsXBoxButtonDown(int button, int index = 0);
 
     /// @brief 前回のXBoxコントローラーのボタンの押下状態を取得
     /// @param button ボタンコード
     /// @param index コントローラーのインデックス (0～3)
     /// @return 前回の押下状態
-    static bool IsPreXBoxButtonDown(XBoxButtonCode button, int index = 0);
+    static bool IsPreXBoxButtonDown(int button, int index = 0);
 
     /// @brief XBoxコントローラーのボタンのトリガー状態を取得
     /// @param button ボタンコード
     /// @param index コントローラーのインデックス (0～3)
     /// @return トリガー状態
-    static bool IsXBoxButtonTrigger(XBoxButtonCode button, int index = 0);
+    static bool IsXBoxButtonTrigger(int button, int index = 0);
 
     /// @brief XBoxコントローラーのボタンのリリース状態を取得
     /// @param button ボタンコード
     /// @param index コントローラーのインデックス (0～3)
     /// @return リリース状態
-    static bool IsXBoxButtonRelease(XBoxButtonCode button, int index = 0);
+    static bool IsXBoxButtonRelease(int button, int index = 0);
 
     //--------- 接続状態 ---------//
 
@@ -695,7 +695,7 @@ inline T Input::GetMouse(InputTypeOption inputTypeOption, DownStateOption downSt
                 return IsMouseButton(CurrentOption::Current, downStateOption, keyCode);
             }
         case InputTypeOption::Analog:
-            return GetMousePos(CurrentOption::Current, axisOption, ValueOption::Actual);
+            return static_cast<T>(GetMousePos(CurrentOption::Current, axisOption, ValueOption::Actual));
         default:
             return T();
     }
@@ -708,10 +708,10 @@ inline T Input::GetXBoxController(InputTypeOption inputTypeOption, DownStateOpti
             if (buttonCode < 0) {
                 return IsXBoxStick(downStateOption, leftRightOption, axisOption, threshold, index);
             } else {
-                return IsXBoxButton(CurrentOption::Current, downStateOption, static_cast<XBoxButtonCode>(buttonCode), index);
+                return IsXBoxButton(CurrentOption::Current, downStateOption, buttonCode, index);
             }
         case InputTypeOption::Analog:
-            return GetXBoxStick(CurrentOption::Current, leftRightOption, axisOption, ValueOption::Actual, index);
+            return GetXBoxStickRatio(CurrentOption::Current, leftRightOption, axisOption, ValueOption::Actual, index);
         default:
             return T();
     }

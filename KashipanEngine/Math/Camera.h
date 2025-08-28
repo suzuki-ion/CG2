@@ -1,11 +1,10 @@
 #pragma once
+#include "Common/CameraPerspective.h"
+#include "Common/CameraViewport.h"
 #include "AffineMatrix.h"
 #include "SphericalCoordinateSystem.h"
 
 namespace KashipanEngine {
-
-// 前方宣言
-class WinApp;
 
 class Camera {
 public:
@@ -13,8 +12,6 @@ public:
         kDecart,
         kSpherical,
     };
-
-    static void Initialize(WinApp *winApp) noexcept;
 
     Camera();
     Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept;
@@ -47,6 +44,14 @@ public:
     /// @brief カメラのワールド行列を設定する
     /// @param worldMatrix ワールド行列
     void SetWorldMatrix(const Matrix4x4 &worldMatrix) noexcept;
+
+    /// @brief カメラのパースペクティブを設定する
+    /// @param cameraPerspective カメラのパースペクティブ
+    void SetCameraPerspective(const CameraPerspective &cameraPerspective) noexcept;
+
+    /// @brief カメラのビューポートを設定する
+    /// @param cameraViewport カメラのビューポート
+    void SetCameraViewport(const CameraViewport &cameraViewport) noexcept;
 
     /// @brief 球面座標系を設定する
     /// @param sphericalCoordinateSystem 球面座標系
@@ -96,6 +101,18 @@ public:
     /// @return カメラの平行移動ベクトルへのポインタ
     [[nodiscard]] Vector3 *GetTranslatePtr() noexcept {
         return &cameraTranslate_;
+    }
+
+    /// @brief カメラのパースペクティブを取得する
+    /// @return カメラのパースペクティブ
+    [[nodiscard]] const CameraPerspective &GetCameraPerspective() const noexcept {
+        return cameraPerspective_;
+    }
+
+    /// @brief カメラのビューポートを取得する
+    /// @return カメラのビューポート
+    [[nodiscard]] const CameraViewport &GetCameraViewport() const noexcept {
+        return cameraViewport_;
     }
 
     /// @brief カメラ行列を取得する
@@ -152,7 +169,10 @@ private:
     Vector3 cameraScale_;
     Vector3 cameraRotate_;
     Vector3 cameraTranslate_;
-    
+
+    CameraPerspective cameraPerspective_;
+    CameraViewport cameraViewport_;
+
     AffineMatrix cameraMatrix_;
     Matrix4x4 worldMatrix_;
     Matrix4x4 viewMatrix_;

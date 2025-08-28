@@ -5,7 +5,7 @@
 #include "Common/Logs.h"
 #include "Common/ConvertString.h"
 #include "Common/Descriptors/SRV.h"
-#include <unordered_map>
+#include <VectorMap.h>
 #include <filesystem>
 
 namespace KashipanEngine {
@@ -15,9 +15,7 @@ namespace {
 /// @brief DirectXCommonインスタンス
 DirectXCommon *sDxCommon = nullptr;
 /// @brief テクスチャのデータ
-std::unordered_map<std::string, TextureData> sTextureMap;
-/// @brief テクスチャのファイルパス
-std::vector<std::string> sTextureFilePaths;
+MyStd::VectorMap<std::string, TextureData> sTextureMap;
 
 /// @brief テクスチャファイルを読み込んで扱えるようにする
 /// @param filePath テクスチャファイルのパス
@@ -79,7 +77,7 @@ void CreateTextureResource(const DirectX::TexMetadata &metadata) {
     // Resourceを生成する
     //==================================================
 
-    auto textureResource = &sTextureMap[sTextureFilePaths.back()].resource;
+    auto textureResource = &sTextureMap.back().value.resource;
     HRESULT hr = sDxCommon->GetDevice()->CreateCommittedResource(
         &heapProperties,                // Heapの設定
         D3D12_HEAP_FLAG_NONE,           // Heapの特殊な設定
@@ -152,17 +150,15 @@ void Texture::Initialize(DirectXCommon *dxCommon) {
 
 void Texture::Finalize() {
     // テクスチャのリソースを解放
-    for (auto &textureFilePath : sTextureFilePaths) {
-        auto &texture = sTextureMap[textureFilePath];
-        if (texture.resource) {
-            texture.resource.Reset();
+    for (auto &textureData : sTextureMap) {
+        if (textureData.value.resource) {
+            textureData.value.resource.Reset();
         }
-        if (texture.intermediateResource) {
-            texture.intermediateResource.Reset();
+        if (textureData.value.intermediateResource) {
+            textureData.value.intermediateResource.Reset();
         }
     }
     sTextureMap.clear();
-    sTextureFilePaths.clear();
     // 終了完了のログを出力
     Log("Texture Finalized.");
 }
@@ -171,7 +167,7 @@ uint32_t Texture::Load(const std::string &filePath) {
     // 読み込む前に同じ名前のテクスチャがあるか確認
     if (sTextureMap.find(filePath) != sTextureMap.end()) {
         Log(std::format("Texture already loaded: {}", filePath), kLogLevelFlagWarning);
-        return sTextureMap[filePath].index;
+        return sTextureMap[filePath].value.index;
     }
     Log(std::format("Texture loading: {}", filePath), kLogLevelFlagInfo);
 
@@ -194,14 +190,13 @@ uint32_t Texture::Load(const std::string &filePath) {
         static_cast<uint32_t>(metadata.height)
     };
     sTextureMap[filePath] = texture;
-    sTextureFilePaths.push_back(filePath);
 
     // テクスチャリソースを作成
     CreateTextureResource(metadata);
 
     // テクスチャリソースをアップロード
-    sTextureMap[filePath].intermediateResource = UploadTextureData(
-        sTextureMap[filePath].resource.Get(),
+    sTextureMap[filePath].value.intermediateResource = UploadTextureData(
+        sTextureMap[filePath].value.resource.Get(),
         mipImages
     );
 
@@ -217,16 +212,16 @@ uint32_t Texture::Load(const std::string &filePath) {
 
     // SRVの生成
     sDxCommon->GetDevice()->CreateShaderResourceView(
-        sTextureMap[filePath].resource.Get(),
+        sTextureMap[filePath].value.resource.Get(),
         &srvDesc,
-        sTextureMap[filePath].srvHandleCPU
+        sTextureMap[filePath].value.srvHandleCPU
     );
 
     // Barrierを元に戻す
     D3D12_RESOURCE_BARRIER barrier{};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = sTextureMap[filePath].resource.Get();
+    barrier.Transition.pResource = sTextureMap[filePath].value.resource.Get();
     barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -235,44 +230,43 @@ uint32_t Texture::Load(const std::string &filePath) {
     // 読み込んだテクスチャとそのインデックスをログに出力
     LogSimple(std::format("Complete Load Texture: {} ({}x{}) index: {}",
         filePath,
-        sTextureMap[filePath].width,
-        sTextureMap[filePath].height,
-        static_cast<uint32_t>(sTextureMap[filePath].index)
+        sTextureMap[filePath].value.width,
+        sTextureMap[filePath].value.height,
+        static_cast<uint32_t>(sTextureMap[filePath].value.index)
     ), kLogLevelFlagInfo);
 
     // テクスチャのインデックスを返す
-    return static_cast<uint32_t>(sTextureMap[filePath].index);
+    return sTextureMap[filePath].value.index;
 }
 
 uint32_t Texture::AddData(const TextureData &textureData) {
     // もし同じ名前のテクスチャがあれば、インデックスを返す
     if (sTextureMap.find(textureData.name) != sTextureMap.end()) {
         Log(std::format("Texture already exists: {}", textureData.name), kLogLevelFlagWarning);
-        return sTextureMap[textureData.name].index;
+        return sTextureMap[textureData.name].value.index;
     }
     // 新しいテクスチャデータを追加
     sTextureMap[textureData.name] = textureData;
-    sTextureMap[textureData.name].index = static_cast<uint32_t>(sTextureMap.size() - 1);
-    sTextureFilePaths.push_back(textureData.name);
+    sTextureMap[textureData.name].value.index = static_cast<uint32_t>(sTextureMap.size() - 1);
     // テクスチャのインデックスを返す
-    return sTextureMap[textureData.name].index;
+    return sTextureMap[textureData.name].value.index;
 }
 
 const TextureData &Texture::GetTexture(uint32_t index) {
     // インデックスが範囲外の場合はデフォルトのテクスチャを返す
-    if (index >= sTextureFilePaths.size()) {
+    if (index >= sTextureMap.size()) {
         Log("TextureData index out of range.", kLogLevelFlagWarning);
-        return sTextureMap[sTextureFilePaths[0]];
+        return sTextureMap[0];
     }
     // テクスチャデータを返す
-    return sTextureMap[sTextureFilePaths[index]];
+    return sTextureMap[index];
 }
 
 const TextureData &Texture::GetTexture(const std::string &filePath) {
     // ファイルパスが存在しない場合はデフォルトのテクスチャを返す
     if (sTextureMap.find(filePath) == sTextureMap.end()) {
         Log(std::format("TextureData not found: {}", filePath), kLogLevelFlagWarning);
-        return sTextureMap[sTextureFilePaths[0]];
+        return sTextureMap[0];
     }
     // テクスチャデータを返す
     return sTextureMap[filePath];

@@ -11,8 +11,10 @@ namespace KashipanEngine {
 
 class Renderer;
 
-struct Lines {
+class Lines {
 public:
+    static void Initialize(Renderer *renderer);
+
     struct StatePtr {
         VertexDataLine *vertexData;
     };
@@ -20,9 +22,6 @@ public:
     Lines() = delete;
     Lines(const int lineCount, LineType lineType = kLineNormal);
 
-    void SetRenderer(Renderer *renderer) {
-        renderer_ = renderer;
-    }
     void SetLineType(LineType lineType) {
         lineType_ = lineType;
         lineOptionMap_->type = lineType_;
@@ -44,6 +43,7 @@ private:
 
     Renderer *renderer_ = nullptr;
     LineType lineType_ = kLineNormal;
+    std::string pipelineName_ = "Line.Normal";
 
     std::unique_ptr<Mesh<VertexDataLine>> mesh_;
     Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;

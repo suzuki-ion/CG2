@@ -11,6 +11,17 @@ Plane::Plane() {
     mesh_->indexBufferMap[3] = 1;
     mesh_->indexBufferMap[4] = 3;
     mesh_->indexBufferMap[5] = 2;
+
+    // 頂点座標
+    mesh_->vertexBufferMap[0].position = { -0.5f, 0.0f, -0.5f, 1.0f };
+    mesh_->vertexBufferMap[1].position = { -0.5f, 0.0f, 0.5f, 1.0f };
+    mesh_->vertexBufferMap[2].position = { 0.5f, 0.0f, -0.5f, 1.0f };
+    mesh_->vertexBufferMap[3].position = { 0.5f, 0.0f, 0.5f, 1.0f };
+    // UV座標
+    mesh_->vertexBufferMap[0].texCoord = { 0.0f, 1.0f };
+    mesh_->vertexBufferMap[1].texCoord = { 0.0f, 0.0f };
+    mesh_->vertexBufferMap[2].texCoord = { 1.0f, 1.0f };
+    mesh_->vertexBufferMap[3].texCoord = { 1.0f, 0.0f };
 }
 
 void Plane::Draw() {

@@ -38,7 +38,7 @@ ShaderReflectionInfo ShaderReflection::GetShaderReflection(IDxcBlob *shaderBlob)
 
     hr = dxcLibrary_->CreateBlobWithEncodingOnHeapCopy(
         shaderBlob->GetBufferPointer(),
-        shaderBlob->GetBufferSize(),
+        static_cast<UINT32>(shaderBlob->GetBufferSize()),
         CP_ACP, &shaderBlobEncoding
     );
     if (FAILED(hr)) {
@@ -87,7 +87,7 @@ ShaderReflectionInfo ShaderReflection::GetShaderReflection(IDxcBlob *shaderBlob)
     return shaderReflectionInfo;
 }
 
-const std::vector<D3D12_ROOT_PARAMETER> &ShaderReflection::CreateRootParameters(ID3D12ShaderReflection *shaderReflectionInfo) const {
+const std::vector<D3D12_ROOT_PARAMETER> ShaderReflection::CreateRootParameters(ID3D12ShaderReflection *shaderReflectionInfo) const {
     D3D12_SHADER_DESC shaderDesc;
     HRESULT hr = shaderReflectionInfo->GetDesc(&shaderDesc);
     if (FAILED(hr)) {
@@ -96,8 +96,6 @@ const std::vector<D3D12_ROOT_PARAMETER> &ShaderReflection::CreateRootParameters(
     }
 
     std::vector<D3D12_ROOT_PARAMETER> rootParameters;
-
-    UINT rootParameterIndex = 0;
     for (UINT i = 0; i < shaderDesc.BoundResources; ++i) {
         D3D12_SHADER_INPUT_BIND_DESC bindDesc;
         hr = shaderReflectionInfo->GetResourceBindingDesc(i, &bindDesc);
@@ -176,7 +174,7 @@ const std::vector<D3D12_ROOT_PARAMETER> &ShaderReflection::CreateRootParameters(
     return rootParameters;
 }
 
-const std::vector<D3D12_INPUT_ELEMENT_DESC> &ShaderReflection::CreateInputLayout(ID3D12ShaderReflection *shaderReflectionInfo) const {
+const std::vector<D3D12_INPUT_ELEMENT_DESC> ShaderReflection::CreateInputLayout(ID3D12ShaderReflection *shaderReflectionInfo) const {
     D3D12_SHADER_DESC shaderDesc;
     HRESULT hr = shaderReflectionInfo->GetDesc(&shaderDesc);
     if (FAILED(hr)) {

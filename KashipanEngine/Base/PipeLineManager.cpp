@@ -42,13 +42,13 @@ void PipeLineManager::ReloadPipeLines() {
 }
 
 void PipeLineManager::SetCommandListPipeLine(const std::string &pipeLineName) {
-    Log("Setting command list pipeline: " + pipeLineName);
-    auto it = pipeLineSets_.find(pipeLineName);
-    if (it != pipeLineSets_.end()) {
-        auto &pipeLineSet = it->second;
+    auto it = pipeLineInfos_.find(pipeLineName);
+    if (it != pipeLineInfos_.end()) {
+        auto topology = it->second.topologyType;
+        auto &pipeLineSet = it->second.pipeLineSet;
+        dxCommon_->GetCommandList()->IASetPrimitiveTopology(topology);
         dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipeLineSet.rootSignature.Get());
         dxCommon_->GetCommandList()->SetPipelineState(pipeLineSet.pipelineState.Get());
-        LogSimple("Command list pipeline set to: " + pipeLineName, kLogLevelFlagInfo);
     } else {
         LogSimple("PipeLine not found: " + pipeLineName, kLogLevelFlagError);
     }
@@ -149,8 +149,10 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
             }
             // シェーダー名からルートパラメーターを取得
             auto rootParametersForShader = pipeLines_.rootParameter->GetRootParameter(shaderName);
-            rootParameters.insert(rootParameters.end(), rootParametersForShader.begin(), rootParametersForShader.end());
-
+            if (!rootParametersForShader.empty()) {
+                rootParameters.insert(rootParameters.end(), rootParametersForShader.begin(), rootParametersForShader.end());
+            }
+            
             // 頂点シェーダーの場合は入力レイアウトも取得
             if (shaderType == "Vertex") {
                 inputLayoutDesc = pipeLines_.inputLayout->GetInputLayout(shaderName);
@@ -346,11 +348,30 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     }
 
     // 生成したものをセットにする
-    PipeLineSet pipeLineSet;
-    pipeLineSet.rootSignature = rootSignature;
-    pipeLineSet.pipelineState = pipelineState;
+    PipeLineInfo pipeLineInfo;
+    pipeLineInfo.name = name;
+    pipeLineInfo.type = json["PipeLineType"].get<std::string>();
+    switch (pipeLineDesc.PrimitiveTopologyType) {
+        case D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT:
+            pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+            break;
+        case D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE:
+            pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+            break;
+        case D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE:
+            pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            break;
+        case D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH:
+            pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST;
+            break;
+        default:
+            pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+            break;
+    }
+    pipeLineInfo.pipeLineSet.rootSignature = rootSignature;
+    pipeLineInfo.pipeLineSet.pipelineState = pipelineState;
     // セットにしたものをマップに登録
-    pipeLineSets_[name] = pipeLineSet;
+    pipeLineInfos_[name] = pipeLineInfo;
 
     LogSimple("Graphics pipeline created successfully: " + name, kLogLevelFlagInfo);
 }
@@ -467,11 +488,14 @@ void PipeLineManager::LoadComputePipeLine(const Json &json) {
     }
 
     // 生成したものをセットにする
-    PipeLineSet pipeLineSet;
-    pipeLineSet.rootSignature = rootSignature;
-    pipeLineSet.pipelineState = pipelineState;
+    PipeLineInfo pipeLineInfo;
+    pipeLineInfo.name = name;
+    pipeLineInfo.type = json["PipeLineType"].get<std::string>();
+    pipeLineInfo.topologyType = D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    pipeLineInfo.pipeLineSet.rootSignature = rootSignature;
+    pipeLineInfo.pipeLineSet.pipelineState = pipelineState;
     // セットにしたものをマップに登録
-    pipeLineSets_[name] = pipeLineSet;
+    pipeLineInfos_[name] = pipeLineInfo;
 
     LogSimple("Compute pipeline state created successfully: " + name, kLogLevelFlagInfo);
 }
@@ -904,7 +928,7 @@ void PipeLineManager::LoadBlendState(const Json &json) {
             targetDesc.LogicOp = kLogicOpMap.at(target["LogicOp"].get<std::string>());
         }
         if (target.contains("RenderTargetWriteMask")) {
-            targetDesc.RenderTargetWriteMask = kColorWriteEnableMap.at(target["RenderTargetWriteMask"].get<std::string>());
+            targetDesc.RenderTargetWriteMask = static_cast<UINT8>(kColorWriteEnableMap.at(target["RenderTargetWriteMask"].get<std::string>()));
         }
         blendDesc.RenderTarget[index] = targetDesc;
         index++;

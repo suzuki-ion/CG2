@@ -1,0 +1,5 @@
+﻿{
+  "Enemies": [
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -5.0, "y": 3.0 }, "Level": 1, "SpawnTime": 0.0, "IsRandomSpawnPosition": false }
+  ]
+}

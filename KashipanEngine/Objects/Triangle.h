@@ -3,10 +3,6 @@
 
 namespace KashipanEngine {
 
-class Line;
-class Ray;
-class Segment;
-
 class Triangle : public Object {
 public:
     Triangle();

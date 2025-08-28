@@ -45,7 +45,7 @@ public:
     /// @param actionName アクション名
     /// @return アクションの値
     ActionValue GetInputValue(const std::string &actionName);
-    
+
     /// @brief キーコンフィグを追加
     /// @param actionName アクション名
     /// @param config キーコンフィグのデータ

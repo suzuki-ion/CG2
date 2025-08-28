@@ -50,6 +50,7 @@ struct FontCommon {
 /// @brief フォント画像(テクスチャ)の情報
 struct FontPage {
     int id;             ///< ページID (0から始まる)
+    int textureIndex;   ///< 使用するテクスチャのインデックス
     std::string file;   ///< ページに対応する画像ファイル名
 };
 

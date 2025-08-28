@@ -6,6 +6,7 @@
 namespace KashipanEngine {
 
 Text::Text(uint32_t textCount) {
+    textCodePoints_.resize(textCount, -1);
     vertexCount_ = textCount * 4;
     indexCount_ = textCount * 6;
     Create(vertexCount_, indexCount_);
@@ -27,6 +28,7 @@ Text::Text(uint32_t textCount) {
     }
 
     isUseCamera_ = false;
+    material_.lightingType = 0;
 }
 
 void Text::SetFont(const char *fontFilePath) {
@@ -37,15 +39,19 @@ void Text::SetFont(const char *fontFilePath) {
     fontData_ = LoadFNT(fontFilePath);
     
     // 使用するテクスチャを取得
-    fontTextureIDs_.clear();
-    fontTextureIDs_.resize(fontData_.pages.size());
     for (auto &page : fontData_.pages) {
         // 最初に取得したディレクトリパスとファイル名を結合してフルパスを作成
-        fontTextureIDs_[page.id] = Texture::Load(directory + '/' + page.file);
+        page.textureIndex = Texture::Load(directory + '/' + page.file);
     }
 
     // まだ1メッシュに対して複数テクスチャ使えないので、最初のテクスチャを使う
-    useTextureIndex_ = static_cast<int>(fontTextureIDs_[0]);
+    useTextureIndex_ = static_cast<int>(fontData_.pages[0].textureIndex);
+}
+
+void Text::SetFont(const FontData &fontData) {
+    fontData_ = fontData;
+    // まだ1メッシュに対して複数テクスチャ使えないので、最初のテクスチャを使う
+    useTextureIndex_ = static_cast<int>(fontData_.pages[0].textureIndex);
 }
 
 void Text::SetText(const std::u8string &text) {
@@ -55,7 +61,11 @@ void Text::SetText(const std::u8string &text) {
     }
 
     text_ = text;
-
+    lineInfos_.clear();
+    lineInfos_.emplace_back(LineInfo());
+    lineInfos_.back().beginVertexIndex = 0;
+    lineInfos_.back().height = fontData_.common.lineHeight;
+    UINT charIndex = 0;
     UINT vertexIndex = 0;
     float cursorX = 0.0f;
     float cursorY = 0.0f;
@@ -75,6 +85,10 @@ void Text::SetText(const std::u8string &text) {
         if (codePoint == '\n') {
             cursorX = 0.0f;
             cursorY += fontData_.common.lineHeight;
+            lineInfos_.back().endVertexIndex = vertexIndex;
+            lineInfos_.emplace_back(LineInfo());
+            lineInfos_.back().beginVertexIndex = vertexIndex;
+            lineInfos_.back().height = fontData_.common.lineHeight;
             continue;
         }
 
@@ -103,8 +117,30 @@ void Text::SetText(const std::u8string &text) {
         vertexIndex += 4;
         // カーソルを更新
         cursorX += charData.xAdvance;
+        // テキストの幅を更新
+        lineInfos_.back().width += charData.xAdvance;
+        // 文字コードを保存
+        if (charIndex < textCodePoints_.size()) {
+            textCodePoints_[charIndex] = codePoint;
+        }
+        // 文字インデックスを更新
+        charIndex++;
+        
     }
+    // 最後の行の頂点インデックスを設定
+    lineInfos_.back().endVertexIndex = vertexIndex;
 
+    // テキストの位置を再計算
+    TextAlignX currentTextAlignX = textAlignX_;
+    TextAlignY currentTextAlignY = textAlignY_;
+    textAlignX_ = TextAlignX::Left;
+    textAlignY_ = TextAlignY::Top;
+    SetTextAlign(currentTextAlignX, currentTextAlignY);
+
+    // 使用していない文字コードをクリア
+    for (UINT i = charIndex; i < textCodePoints_.size(); ++i) {
+        textCodePoints_[i] = -1;
+    }
     // 残りの頂点をクリア
     for (UINT i = vertexIndex; i < vertexCount_; ++i) {
         mesh_->vertexBufferMap[i].position = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -112,12 +148,91 @@ void Text::SetText(const std::u8string &text) {
     }
 }
 
-void Text::Draw() {
-    DrawCommon();
+void Text::SetTextAlign(TextAlignX textAlignX, TextAlignY textAlignY) {
+    if (textAlignX_ != textAlignX) {
+        CalculateTextAlignX(textAlignX);
+        textAlignX_ = textAlignX;
+    }
+    if (textAlignY_ != textAlignY) {
+        CalculateTextAlignY(textAlignY);
+        textAlignY_ = textAlignY;
+    }
 }
 
-void Text::Draw(WorldTransform &worldTransform) {
-    DrawCommon(worldTransform);
+void Text::CalculateTextAlignX(TextAlignX newTextAlignX) {
+    // 一度元の位置に戻す
+    for (auto &lineInfo : lineInfos_) {
+        // テキストの幅を取得
+        float textWidth = lineInfo.width;
+        // テキストのX座標を計算
+        float offsetX = 0.0f;
+        if (textAlignX_ == TextAlignX::Center) {
+            offsetX = textWidth / 2.0f;
+        } else if (textAlignX_ == TextAlignX::Right) {
+            offsetX = textWidth;
+        }
+        
+        // 各頂点のX座標を更新
+        for (UINT i = lineInfo.beginVertexIndex; i < lineInfo.endVertexIndex; ++i) {
+            mesh_->vertexBufferMap[i].position.x += offsetX;
+        }
+    }
+
+    // 新しい位置に移動
+    for (auto &lineInfo : lineInfos_) {
+        // テキストの幅を取得
+        float textWidth = lineInfo.width;
+        // テキストのX座標を計算
+        float offsetX = 0.0f;
+        if (newTextAlignX == TextAlignX::Center) {
+            offsetX = -textWidth / 2.0f;
+        } else if (newTextAlignX == TextAlignX::Right) {
+            offsetX = -textWidth;
+        }
+        
+        // 各頂点のX座標を更新
+        for (UINT i = lineInfo.beginVertexIndex; i < lineInfo.endVertexIndex; ++i) {
+            mesh_->vertexBufferMap[i].position.x += offsetX;
+        }
+    }
+}
+
+void Text::CalculateTextAlignY(TextAlignY newTextAlignY) {
+    // 一度元の位置に戻す
+    for (auto &lineInfo : lineInfos_) {
+        // テキストの高さを取得
+        float textHeight = lineInfo.height;
+        // テキストのY座標を計算
+        float offsetY = 0.0f;
+        if (textAlignY_ == TextAlignY::Center) {
+            offsetY = textHeight / 2.0f;
+        } else if (textAlignY_ == TextAlignY::Bottom) {
+            offsetY = textHeight;
+        }
+        
+        // 各頂点のY座標を更新
+        for (UINT i = lineInfo.beginVertexIndex; i < lineInfo.endVertexIndex; ++i) {
+            mesh_->vertexBufferMap[i].position.y += offsetY;
+        }
+    }
+
+    // 新しい位置に移動
+    for (auto &lineInfo : lineInfos_) {
+        // テキストの高さを取得
+        float textHeight = lineInfo.height;
+        // テキストのY座標を計算
+        float offsetY = 0.0f;
+        if (newTextAlignY == TextAlignY::Center) {
+            offsetY = -textHeight / 2.0f;
+        } else if (newTextAlignY == TextAlignY::Bottom) {
+            offsetY = -textHeight;
+        }
+        
+        // 各頂点のY座標を更新
+        for (UINT i = lineInfo.beginVertexIndex; i < lineInfo.endVertexIndex; ++i) {
+            mesh_->vertexBufferMap[i].position.y += offsetY;
+        }
+    }
 }
 
 } // namespace KashipanEngine

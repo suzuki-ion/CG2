@@ -281,7 +281,7 @@ std::unordered_map<Input::CurrentOption, std::unordered_map<Input::LeftRightOpti
 };
 
 /// @brief コントローラーのボタン取得関数マップ
-std::unordered_map<Input::CurrentOption, std::unordered_map<Input::DownStateOption, std::function<bool(XBoxButtonCode, int)>>> sGetXBoxButtonFunctions = {
+std::unordered_map<Input::CurrentOption, std::unordered_map<Input::DownStateOption, std::function<bool(int, int)>>> sGetXBoxButtonFunctions = {
     { Input::CurrentOption::Current, {
         { Input::DownStateOption::Down, Input::IsXBoxButtonDown },
         { Input::DownStateOption::Trigger, Input::IsXBoxButtonTrigger },
@@ -292,6 +292,27 @@ std::unordered_map<Input::CurrentOption, std::unordered_map<Input::DownStateOpti
         { Input::DownStateOption::Trigger, Input::IsXBoxButtonTrigger },
         { Input::DownStateOption::Release, Input::IsXBoxButtonRelease }
     }}
+};
+
+//==================================================
+// 値マップ
+//==================================================
+
+std::unordered_map<int, XBoxButtonCode> sXBoxButtonCodeMap = {
+    { 0, XBoxButtonCode::UP },
+    { 1, XBoxButtonCode::DOWN },
+    { 2, XBoxButtonCode::LEFT },
+    { 3, XBoxButtonCode::RIGHT },
+    { 4, XBoxButtonCode::START },
+    { 5, XBoxButtonCode::BACK },
+    { 6, XBoxButtonCode::LEFT_THUMB },
+    { 7, XBoxButtonCode::RIGHT_THUMB },
+    { 8, XBoxButtonCode::LEFT_SHOULDER },
+    { 9, XBoxButtonCode::RIGHT_SHOULDER },
+    { 10, XBoxButtonCode::A },
+    { 11, XBoxButtonCode::B },
+    { 12, XBoxButtonCode::X },
+    { 13, XBoxButtonCode::Y }
 };
 
 } // namespace
@@ -483,18 +504,19 @@ InputDeviceType Input::GetCurrentInputDeviceType() {
     for (int i = 0; i < 4; ++i) { // コントローラーは最大4つまで
         if (sControllerConnected[i]) {
             for (int j = 0; j < static_cast<int>(XBoxButtonCode::Count); ++j) {
-                if (IsXBoxButton(CurrentOption::Current, DownStateOption::Down, static_cast<XBoxButtonCode>(j), i)) {
+                int buttonCode = static_cast<int>(sXBoxButtonCodeMap.at(j));
+                if (IsXBoxButton(CurrentOption::Current, DownStateOption::Down, buttonCode, i)) {
                     currentDeviceType = InputDeviceType::XBoxController;
                     return currentDeviceType;
                 }
             }
             // コントローラーのスティックやトリガーの状態をチェック
-            if (IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Left, 0, i) ||
-                IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Right, 0, i) ||
-                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::X, 0, i) ||
-                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::Y, 0, i) ||
-                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::X, 0, i) ||
-                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::Y, 0, i)) {
+            if (IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Left, 1, i) ||
+                IsXBoxTrigger(DownStateOption::Down, LeftRightOption::Right, 1, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::X, 4096, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Left, AxisOption::Y, 4096, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::X, 4096, i) ||
+                IsXBoxStick(DownStateOption::Down, LeftRightOption::Right, AxisOption::Y, 4096, i)) {
                 currentDeviceType = InputDeviceType::XBoxController;
                 return currentDeviceType;
             }
@@ -575,9 +597,9 @@ bool Input::IsMousePos(DownStateOption downStateOption, AxisOption axisOption, i
     int currentValue = 0;
     int previousValue = 0;
 
-    // Z軸(マウスホイール)の場合は閾値を0に設定
+    // Z軸(マウスホイール)の場合は閾値を1に設定
     if (axisOption == AxisOption::Z) {
-        threshold = 0;
+        threshold = 1;
     }
     
     // マウスの位置を取得する関数を呼び出す
@@ -599,7 +621,7 @@ bool Input::IsMousePos(DownStateOption downStateOption, AxisOption axisOption, i
     }
     // 取得したい状態がDownの場合は現在の値が閾値以上かどうかをチェック
     if (downStateOption == DownStateOption::Down) {
-        return std::abs(currentValue) >= threshold;
+        return currentValue >= threshold;
     }
     
     auto itPreCurrent = sGetMousePositionFunctions.find(CurrentOption::Previous);
@@ -622,9 +644,9 @@ bool Input::IsMousePos(DownStateOption downStateOption, AxisOption axisOption, i
     // 押下状態の判定
     switch (downStateOption) {
         case DownStateOption::Trigger:
-            return std::abs(currentValue) >= threshold && std::abs(previousValue) < threshold;
+            return currentValue >= threshold && previousValue < threshold;
         case DownStateOption::Release:
-            return std::abs(currentValue) < threshold && std::abs(previousValue) >= threshold;
+            return currentValue < threshold && previousValue >= threshold;
         default:
             break;
     }
@@ -857,7 +879,7 @@ bool Input::IsXBoxStick(DownStateOption downStateOption, LeftRightOption leftRig
     }
     // 取得したい状態がDownの場合は現在の値が閾値以上かどうかをチェック
     if (downStateOption == DownStateOption::Down) {
-        return std::abs(currentValue) >= threshold;
+        return currentValue >= threshold;
     }
     
     auto itPreCurrent = sGetXBoxStickFunctions.find(CurrentOption::Previous);
@@ -884,9 +906,9 @@ bool Input::IsXBoxStick(DownStateOption downStateOption, LeftRightOption leftRig
     // 押下状態の判定
     switch (downStateOption) {
         case DownStateOption::Trigger:
-            return std::abs(currentValue) >= threshold && std::abs(previousValue) < threshold;
+            return currentValue >= threshold && previousValue < threshold;
         case DownStateOption::Release:
-            return std::abs(currentValue) < threshold && std::abs(previousValue) >= threshold;
+            return currentValue < threshold && previousValue >= threshold;
         default:
             break;
     }
@@ -1106,7 +1128,7 @@ float Input::GetPreXBoxRightStickDeltaRatioY(int index) {
     return std::clamp(static_cast<float>(GetPreXBoxRightStickDeltaY(index)) / 32767.0f, -1.0f, 1.0f);
 }
 
-bool Input::IsXBoxButton(CurrentOption currentOption, DownStateOption downStateOption, XBoxButtonCode button, int index) {
+bool Input::IsXBoxButton(CurrentOption currentOption, DownStateOption downStateOption, int button, int index) {
     // コントローラーのボタンの押下状態を取得する関数を呼び出す
     auto itCurrent = sGetXBoxButtonFunctions.find(currentOption);
     if (itCurrent == sGetXBoxButtonFunctions.end()) {
@@ -1124,20 +1146,20 @@ bool Input::IsXBoxButton(CurrentOption currentOption, DownStateOption downStateO
     return false;
 }
 
-bool Input::IsXBoxButtonDown(XBoxButtonCode button, int index) {
+bool Input::IsXBoxButtonDown(int button, int index) {
     return sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button) ? true : false;
 }
 
-bool Input::IsPreXBoxButtonDown(XBoxButtonCode button, int index) {
+bool Input::IsPreXBoxButtonDown(int button, int index) {
     return sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button) ? true : false;
 }
 
-bool Input::IsXBoxButtonTrigger(XBoxButtonCode button, int index) {
+bool Input::IsXBoxButtonTrigger(int button, int index) {
     return (sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) != 0 &&
         (sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) == 0;
 }
 
-bool Input::IsXBoxButtonRelease(XBoxButtonCode button, int index) {
+bool Input::IsXBoxButtonRelease(int button, int index) {
     return (sControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) == 0 &&
         (sPreControllerState[index].Gamepad.wButtons & static_cast<WORD>(button)) != 0;
 }

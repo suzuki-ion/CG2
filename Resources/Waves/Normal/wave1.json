@@ -1,0 +1,24 @@
+﻿{
+  "Enemies": [
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -5.0, "y": 3.0 }, "Level": 1, "SpawnTime": 0.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 5.0, "y": -2.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 4.0 }, "Level": 1, "SpawnTime": 2.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 8.0, "y": 0.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -8.0, "y": -1.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "Normal", "SpawnPosition": { "x": -6.0, "y": 2.0 }, "Level": 2, "SpawnTime": 2.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": 4.0, "y": -3.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -4.0, "y": 3.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "Normal", "SpawnPosition": { "x": 0.0, "y": -4.0 }, "Level": 2, "SpawnTime": 2.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 10.0, "y": -2.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "None", "SpawnPosition": { "x": -10.0, "y": 2.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 3.0, "y": 4.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "Normal", "SpawnPosition": { "x": -3.0, "y": -4.0 }, "Level": 2, "SpawnTime": 2.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 7.0, "y": -1.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -7.0, "y": 1.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 2.0, "y": -5.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "None", "SpawnPosition": { "x": 0.0, "y": 5.0 }, "Level": 1, "SpawnTime": 2.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": -2.0, "y": 5.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "Normal", "BulletType": "Normal", "SpawnPosition": { "x": 6.0, "y": -3.0 }, "Level": 1, "SpawnTime": 1.0, "IsRandomSpawnPosition": false },
+    { "Type": "StopMidway", "BulletType": "Normal", "SpawnPosition": { "x": -6.0, "y": -2.0 }, "Level": 2, "SpawnTime": 2.0, "IsRandomSpawnPosition": false }
+  ]
+}

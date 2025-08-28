@@ -69,7 +69,7 @@ public:
     /// @brief オブジェクト情報へのポインタを取得
     /// @return オブジェクト情報へのポインタ
     [[nodiscard]] StatePtr GetStatePtr() override {
-        return { nullptr, &transform_, nullptr, &material_, nullptr, nullptr, &fillMode_ };
+        return { nullptr, &transform_, nullptr, &material_, nullptr, nullptr, &pipeLineName_ };
     }
 
     /// @brief modelデータへのアクセス

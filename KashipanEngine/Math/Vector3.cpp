@@ -9,7 +9,7 @@
 namespace KashipanEngine {
 
 Vector3 Vector3::Lerp(const Vector3 &start, const Vector3 &end, float t) noexcept {
-    return t * start + (1.0f - t) * end;
+    return start * (1.0f - t) + end * t;
 }
 
 Vector3 Vector3::Slerp(const Vector3 &start, const Vector3 &end, float t) noexcept {
@@ -144,9 +144,10 @@ Vector3 &Vector3::operator/=(const float scalar) {
         y = 0.0f;
         z = 0.0f;
     } else {
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
+        float invScalar = 1.0f / scalar;
+        x *= invScalar;
+        y *= invScalar;
+        z *= invScalar;
     }
     return *this;
 }

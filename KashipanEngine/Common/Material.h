@@ -6,7 +6,7 @@ namespace KashipanEngine {
 
 struct Material {
     /// @brief マテリアルの色
-    Vector4 color = { 255.0f, 255.0f, 255.0f, 255.0f };
+    Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
     /// @brief Lightingの種類
     int32_t lightingType = 1;
     /// @brief padding分のメモリ

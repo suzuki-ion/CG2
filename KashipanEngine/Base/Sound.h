@@ -24,7 +24,7 @@ public:
     /// @param volume ボリューム(0.0f ~ 1.0f)
     /// @param pitch ピッチ(1.0fで半音上がる)
     /// @param loop ループ再生するかどうか
-    static void Play(int index, float volume = 1.0f, float pitch = 1.0f, bool loop = false);
+    static void Play(int index, float volume = 1.0f, float pitch = 0.0f, bool loop = false);
 
     /// @brief 音声を停止する
     /// @param index 音声データのインデックス

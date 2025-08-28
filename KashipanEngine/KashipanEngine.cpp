@@ -14,6 +14,8 @@
 #include "Common/Descriptors/RTV.h"
 #include "Common/Descriptors/SRV.h"
 #include "Common/Descriptors/DSV.h"
+#include "Common/SceneBase.h"
+#include "Common/Random.h"
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
 #include "Base/Texture.h"
@@ -34,6 +36,7 @@
 #include "Math/RenderingPipeline.h"
 #include "Objects/Object.h"
 #include "Objects/Model.h"
+#include "Objects/Lines.h"
 #include "KashipanEngine.h"
 
 using namespace KashipanEngine;
@@ -65,6 +68,9 @@ LARGE_INTEGER sNowTime;
 unsigned int sCountFps = 0;
 float sElapsedSeconds = 0.0f;
 float sDeltaTime = 0.0f;
+
+// ゲーム終了フラグ
+bool sIsQuitGame = false;
 
 } // namespace
 
@@ -107,9 +113,6 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // 音声初期化
     Sound::Initialize();
 
-    // カメラの初期化
-    Camera::Initialize(sWinApp.get());
-
     // ImGui初期化
     sImGuiManager = std::make_unique<ImGuiManager>(sWinApp.get(), sDxCommon.get());
 
@@ -125,8 +128,20 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // 描画用クラス初期化
     sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get(), sPipeLineManager.get());
 
+    // オブジェクト初期化
+    Object::Initialize(this);
+
+    // ライン初期化
+    Lines::Initialize(sRenderer.get());
+
     // スクリーンバッファ初期化
     ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get(), sPipeLineManager.get());
+
+    // シーンの初期化
+    SceneBase::Initialize(this);
+
+    // 乱数の初期化
+    InitializeRandom();
 
     // フレーム時間の初期化
     LARGE_INTEGER freq;
@@ -178,19 +193,14 @@ void Engine::BeginFrame() {
 }
 
 bool Engine::BeginGameLoop() {
-    // 指定のフレームレートが1以下なら1固定
-    if (sFrameRate < 1) {
-        sFrameRate = 1;
-    } else {
-        // モニターのフレームレートを取得
-        HDC hdc = GetDC(sWinApp->GetWindowHandle());
-        int monitorFrameRate = GetDeviceCaps(hdc, VREFRESH);
-        ReleaseDC(sWinApp->GetWindowHandle(), hdc);
+    // モニターのフレームレートを取得
+    HDC hdc = GetDC(sWinApp->GetWindowHandle());
+    int monitorFrameRate = GetDeviceCaps(hdc, VREFRESH);
+    ReleaseDC(sWinApp->GetWindowHandle(), hdc);
 
-        // 指定のフレームレートがモニターのFPS以上なら垂直同期
-        if (sFrameRate > monitorFrameRate) {
-            sFrameRate = monitorFrameRate;
-        }
+    // 指定のフレームレートがモニターのFPS以上なら垂直同期
+    if (sFrameRate > monitorFrameRate) {
+        sFrameRate = monitorFrameRate;
     }
 
     if (sDeltaTime > 1.0f / static_cast<float>(sFrameRate)) {
@@ -202,10 +212,23 @@ bool Engine::BeginGameLoop() {
 }
 
 void Engine::EndFrame() {
+    sRenderer->PreDraw();
+    sRenderer->PostDraw();
+}
+
+void Engine::QuitGame() {
+    sIsQuitGame = true;
 }
 
 void Engine::SetFrameRate(int frameRate) {
     sFrameRate = frameRate;
+    // 指定のフレームレートが24以下なら垂直同期
+    if (sFrameRate < 24) {
+        // モニターのフレームレートを取得
+        HDC hdc = GetDC(sWinApp->GetWindowHandle());
+        sFrameRate = GetDeviceCaps(hdc, VREFRESH);
+        ReleaseDC(sWinApp->GetWindowHandle(), hdc);
+    }
 }
 
 float Engine::GetDeltaTime() {
@@ -230,6 +253,10 @@ KashipanEngine::Renderer *Engine::GetRenderer() const {
 }
 
 int Engine::ProccessMessage() {
+    // ゲーム終了フラグが立ってたら終了
+    if (sIsQuitGame) {
+        return -1;
+    }
     return sWinApp->ProccessMessage();
 }
 
