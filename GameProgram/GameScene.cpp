@@ -33,7 +33,6 @@ GameScene::GameScene() : SceneBase("GameScene") {
 
     camera_->SetCameraPerspective(cameraPerspective);
     camera_->SetCameraViewport(cameraViewport);
-    engine_->GetRenderer()->SetCamera(camera_.get());
 
     //==================================================
     // モデル生成
@@ -193,6 +192,8 @@ GameScene::GameScene() : SceneBase("GameScene") {
 };
 
 void GameScene::Initialize() {
+    engine_->GetRenderer()->SetCamera(camera_.get());
+
     //==================================================
     // オブジェクト設定
     //==================================================
