@@ -153,21 +153,21 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float alphaAll = textureColor.a * gMaterial.color.a * (1.0f - depth);
 	float alphaDither = gMaterial.color.a * (1.0f - depth);
 	
-	if (depth > 1.0f || depth < 0.0f) {
-		discard;
-	}
+	//if (depth > 1.0f || depth < 0.0f) {
+	//	discard;
+	//}
 	
-	if (alphaAll == 0.0f) {
-		discard;
-	}
+	//if (alphaAll == 0.0f) {
+	//	discard;
+	//}
 	
-	if (alphaDither < 1.0f) {
-		int2 ditherInput = int2(input.position.xy);
-		float ditherValue = Dither4x4(ditherInput, alphaDither);
-		if (alphaDither < ditherValue) {
-			discard;
-		}
-	}
+	//if (alphaDither < 1.0f) {
+	//	int2 ditherInput = int2(input.position.xy);
+	//	float ditherValue = Dither4x4(ditherInput, alphaDither);
+	//	if (alphaDither < ditherValue) {
+	//		discard;
+	//	}
+	//}
 	
 	if (gMaterial.lightingType == LIGHTING_TYPE_LAMBERT) {
 		float lambert = Lambert(input.normal, gDirectionalLight.direction);
