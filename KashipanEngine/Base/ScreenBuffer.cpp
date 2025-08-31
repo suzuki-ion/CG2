@@ -99,6 +99,7 @@ void ScreenBuffer::PostDraw() {
 }
 
 void ScreenBuffer::DrawToImGui() {
+#ifdef _DEBUG
     ImGui::Begin(screenName_.c_str());
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
 
@@ -130,6 +131,7 @@ void ScreenBuffer::DrawToImGui() {
         ImVec2(targetWidth, targetHeight));
     
     ImGui::End();
+#endif
 }
 
 void ScreenBuffer::CreateTextureResource() {

@@ -279,6 +279,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             winApp->SetWindowMode(windowMode);
         }
 
+#ifdef _DEBUG
         ImGuiManager::Begin("KashipanEngine");
         // FPSの表示
         ImGui::Text("FPS: %d", myGameEngine->GetFPS());
@@ -409,6 +410,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
 
         ImGui::End();
+#else
+        static_cast<void>(isLoop);
+        static_cast<void>(pitch);
+        static_cast<void>(volume);
+        static_cast<void>(soundIndex);
+#endif
 
         keyFrameAnimation.Update();
         icoSphere.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
