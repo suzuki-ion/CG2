@@ -49,7 +49,7 @@ public:
         /// @brief テクスチャのインデックス
         int useTextureIndex = -1;
         /// @brief 使用するレンダリングパイプライン名
-        std::string pipeLineName = "Object3d.Solid.Normal";
+        std::string pipeLineName = "Object3d.Solid.BlendNormal";
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };
@@ -72,7 +72,7 @@ public:
         /// @brief インデックス数
         UINT indexCount = 0;
         /// @brief 使用するレンダリングパイプライン名
-        std::string pipeLineName = "Line.Thicness";
+        std::string pipeLineName = "Line.Normal";
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };

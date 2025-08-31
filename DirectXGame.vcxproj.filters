@@ -228,9 +228,6 @@
     <ClCompile Include="KashipanEngine\Common\Descriptors\UAV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="KashipanEngine\Common\DynamicVariables.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="KashipanEngine\Common\KeyConfig.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -238,6 +235,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KashipanEngine\Base\SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Random.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Cube.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -563,9 +566,6 @@
     <ClInclude Include="KashipanEngine\Common\DrawInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="KashipanEngine\Common\DynamicVariables.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="KashipanEngine\Common\KeyConfig\DefineMaps.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -576,6 +576,21 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\Common\SceneBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\CameraPerspective.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\CameraViewport.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\ParseInt.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Random.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Cube.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

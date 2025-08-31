@@ -212,8 +212,6 @@ bool Engine::BeginGameLoop() {
 }
 
 void Engine::EndFrame() {
-    sRenderer->PreDraw();
-    sRenderer->PostDraw();
 }
 
 void Engine::QuitGame() {

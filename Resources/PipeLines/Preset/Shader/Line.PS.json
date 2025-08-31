@@ -1,0 +1,6 @@
+﻿{
+	"Name": "Line.PS",
+	"Type": "Pixel",
+	"Path": "Resources/PipeLines/Preset/Shader/Line/Pixel.hlsl",
+	"TargetProfile": "ps_6_0"
+}

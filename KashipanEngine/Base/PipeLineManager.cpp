@@ -51,6 +51,7 @@ void PipeLineManager::SetCommandListPipeLine(const std::string &pipeLineName) {
         dxCommon_->GetCommandList()->SetPipelineState(pipeLineSet.pipelineState.Get());
     } else {
         LogSimple("PipeLine not found: " + pipeLineName, kLogLevelFlagError);
+        assert(false);
     }
 }
 
@@ -324,7 +325,7 @@ void PipeLineManager::LoadRenderPipeLine(const Json &json) {
     if (shaders["Pixel"]) {
         pipeLineDesc.PS = { shaders["Pixel"]->GetBufferPointer(), shaders["Pixel"]->GetBufferSize() };
     }
-    if (shaders["Geometryr"]) {
+    if (shaders["Geometry"]) {
         pipeLineDesc.GS = { shaders["Geometry"]->GetBufferPointer(), shaders["Geometry"]->GetBufferSize() };
     }
     if (shaders["Hull"]) {

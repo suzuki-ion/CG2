@@ -66,6 +66,7 @@ void Lines::Draw() const {
     lineState.lineOptionMap = lineOptionMap_;
     lineState.indexCount = indexCount_;
     lineState.vertexCount = vertexCount_;
+    lineState.pipeLineName = pipelineName_;
     lineState.isUseCamera = true;
     renderer_->DrawSetLine(lineState);
 }

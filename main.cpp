@@ -179,6 +179,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     GridLine gridLineXZ(GridLineType::XZ, 1.0f, 10000);
     GridLine gridLineXY(GridLineType::XY, 1.0f, 10000);
     GridLine gridLineYZ(GridLineType::YZ, 1.0f, 10000);
+    gridLineXZ.SetRenderer(renderer);
+    gridLineXY.SetRenderer(renderer);
+    gridLineYZ.SetRenderer(renderer);
     // XZグリッド描画フラグ
     bool isXZGrid = true;
     // XYグリッド描画フラグ
@@ -227,7 +230,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //==================================================
 
     Text text(1024);
-    text.SetRenderer(renderer);
     text.SetFont("Resources/Font/test.fnt");
     char8_t textBuffer[1024] = u8"テストテキスト1";
     text.SetText(textBuffer);
@@ -244,7 +246,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //==================================================
 
     KeyConfig keyConfig;
-    keyConfig.LoadFromJson("Resources/KeyConfig.json");
+    keyConfig.LoadFromJson("Resources/KeyConfig/example.json");
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {

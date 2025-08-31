@@ -136,7 +136,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp" />
     <ClCompile Include="KashipanEngine\Common\Descriptors\UAV.cpp" />
     <ClCompile Include="KashipanEngine\Common\DirectoryLoader.cpp" />
-    <ClCompile Include="KashipanEngine\Common\DynamicVariables.cpp" />
     <ClCompile Include="KashipanEngine\Common\Easings.cpp" />
     <ClCompile Include="KashipanEngine\Common\GridLine.cpp" />
     <ClCompile Include="KashipanEngine\Common\JsoncLoader.cpp" />
@@ -144,6 +143,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp" />
     <ClCompile Include="KashipanEngine\Common\Logs.cpp" />
     <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp" />
+    <ClCompile Include="KashipanEngine\Common\Random.cpp" />
     <ClCompile Include="KashipanEngine\Common\SceneBase.cpp" />
     <ClCompile Include="KashipanEngine\Common\TimeGet.cpp" />
     <ClCompile Include="KashipanEngine\Base\WinApp.cpp" />
@@ -166,6 +166,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Math\Vector3.cpp" />
     <ClCompile Include="KashipanEngine\Math\Vector4.cpp" />
     <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Cube.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Lines.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Model.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Object.cpp" />
@@ -208,10 +209,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
     <ClInclude Include="KashipanEngine\Base\SceneManager.h" />
+    <ClInclude Include="KashipanEngine\Common\CameraPerspective.h" />
+    <ClInclude Include="KashipanEngine\Common\CameraViewport.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\UAV.h" />
     <ClInclude Include="KashipanEngine\Common\DirectoryLoader.h" />
     <ClInclude Include="KashipanEngine\Common\DrawInfo.h" />
-    <ClInclude Include="KashipanEngine\Common\DynamicVariables.h" />
     <ClInclude Include="KashipanEngine\Common\GridLine.h" />
     <ClInclude Include="KashipanEngine\Common\JsoncLoader.h" />
     <ClInclude Include="KashipanEngine\Common\KeyConfig.h" />
@@ -240,10 +242,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Common\Easings.h" />
     <ClInclude Include="KashipanEngine\Common\LineOption.h" />
     <ClInclude Include="KashipanEngine\Common\Logs.h" />
+    <ClInclude Include="KashipanEngine\Common\ParseInt.h" />
+    <ClInclude Include="KashipanEngine\Common\Random.h" />
     <ClInclude Include="KashipanEngine\Common\SceneBase.h" />
     <ClInclude Include="KashipanEngine\Common\VertexDataLine.h" />
     <ClInclude Include="KashipanEngine\Font\FontLoader.h" />
     <ClInclude Include="KashipanEngine\Font\FontStructs.h" />
+    <ClInclude Include="KashipanEngine\Objects\Cube.h" />
     <ClInclude Include="KashipanEngine\Objects\Lines.h" />
     <ClInclude Include="MyStd\AnyUnorderedMap.h" />
     <ClInclude Include="MyStd\AnyVector.h" />

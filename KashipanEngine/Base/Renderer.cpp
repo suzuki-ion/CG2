@@ -165,7 +165,7 @@ void Renderer::PostDraw() {
         DrawLine(&line);
     }
 
-    pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
+    pipeLineManager_->SetCommandListPipeLine("Object3d.Solid.BlendNormal");
 
     // 平行光源の設定
     SetLightBuffer(directionalLight_);

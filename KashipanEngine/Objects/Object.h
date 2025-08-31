@@ -171,7 +171,7 @@ protected:
     Material material_;
 
     /// @brief 使用するテクスチャのインデックス
-    int useTextureIndex_ = -1;
+    int useTextureIndex_ = 0;
     /// @brief 法線のタイプ
     NormalType normalType_ = kNormalTypeVertex;
 
