@@ -246,10 +246,7 @@ void Renderer::DrawCommon(std::vector<ObjectState> &objects) {
 }
 
 void Renderer::DrawCommon(ObjectState *objectState) {
-    if (usePipeLineName_ != objectState->pipeLineName) {
-        usePipeLineName_ = objectState->pipeLineName;
-        pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
-    }
+    pipeLineManager_->SetCommandListPipeLine(objectState->pipeLineName);
 
     // Cameraがnullptrの場合は2D描画
     if (objectState->isUseCamera == false) {
@@ -287,10 +284,7 @@ void Renderer::DrawCommon(ObjectState *objectState) {
 }
 
 void Renderer::DrawLine(LineState *lineState) {
-    if (usePipeLineName_ != lineState->pipeLineName) {
-        usePipeLineName_ = lineState->pipeLineName;
-        pipeLineManager_->SetCommandListPipeLine(usePipeLineName_);
-    }
+    pipeLineManager_->SetCommandListPipeLine(lineState->pipeLineName);
 
     // Cameraがnullptrの場合は2D描画
     if (lineState->isUseCamera == false) {

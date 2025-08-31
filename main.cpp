@@ -442,9 +442,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (isXYGrid) gridLineXY.Draw();
         if (isYZGrid) gridLineYZ.Draw();
 
-        // スクリーンバッファの描画
-        screenBuffer.DrawToImGui();
-
         // 線の描画
         lines.Draw();
 
@@ -458,6 +455,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         uiGroup.Draw();
         // 文字の描画
         text.Draw();
+
+        // スクリーンバッファの描画
+        screenBuffer.DrawToImGui();
         
         renderer->PostDraw();
         myGameEngine->EndFrame();

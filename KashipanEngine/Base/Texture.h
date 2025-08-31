@@ -25,13 +25,23 @@ public:
 
     /// @brief テクスチャの読み込み
     /// @param filePath 読み込むテクスチャのファイル名
+    /// @param textureName テクスチャの名前(設定しなかった場合はファイルパスになる)
     /// @return テクスチャを読み込んだインデックス
-    static uint32_t Load(const std::string &filePath);
+    static uint32_t Load(const std::string &filePath, const std::string &textureName = "");
+
+    /// @brief jsonファイルからのテクスチャの一括読み込み
+    /// @param jsonFilePath jsonファイルのパス
+    static void LoadFromJson(const std::string &jsonFilePath);
 
     /// @brief テクスチャ管理クラスが管理するテクスチャの追加
     /// @param textureData 追加するテクスチャデータ
     /// @return 追加したテクスチャのインデックス
     static uint32_t AddData(const TextureData &textureData);
+
+    /// @brief テクスチャのインデックスの取得
+    /// @param filePath テクスチャのファイルパス
+    /// @return テクスチャのインデックス。 見つからなかった場合は0を返す
+    static int32_t FindIndex(const std::string &filePath);
 
     /// @brief テクスチャデータの取得
     /// @param index テクスチャのインデックス

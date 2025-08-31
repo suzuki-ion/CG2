@@ -42,8 +42,14 @@ void PipeLineManager::ReloadPipeLines() {
 }
 
 void PipeLineManager::SetCommandListPipeLine(const std::string &pipeLineName) {
+    // 現在設定しているパイプラインと同じなら何もしない
+    if (currentPipeLineName_ == pipeLineName) {
+        return;
+    }
+
     auto it = pipeLineInfos_.find(pipeLineName);
     if (it != pipeLineInfos_.end()) {
+        currentPipeLineName_ = pipeLineName;
         auto topology = it->second.topologyType;
         auto &pipeLineSet = it->second.pipeLineSet;
         dxCommon_->GetCommandList()->IASetPrimitiveTopology(topology);

@@ -3,7 +3,6 @@
 #include <wrl.h>
 #include <cstdint>
 #include <string>
-#include "Common/PipeLineSet.h"
 
 namespace KashipanEngine {
 
@@ -21,6 +20,11 @@ public:
     /// @param pipeLineManager PipeLineManagerクラスへのポインタ
     static void Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineManager *pipeLineManager);
 
+    /// @brief スクリーンバッファの取得
+    /// @param screenName スクリーンの名前
+    /// @return スクリーンバッファへのポインタ
+    static ScreenBuffer *GetScreenBuffer(const std::string &screenName);
+
     /// @brief スクリーンバッファのコンストラクタ
     /// @param screenName スクリーンの名前
     /// @param width スクリーンの横幅
@@ -32,7 +36,6 @@ public:
     void SetRenderer(Renderer *renderer) {
         renderer_ = renderer;
     }
-
 
     /// @brief スクリーンの名前を取得
     /// @return スクリーンの名前

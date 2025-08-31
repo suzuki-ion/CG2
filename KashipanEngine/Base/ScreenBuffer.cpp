@@ -43,6 +43,10 @@ void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineM
     isInitialized = true;
 }
 
+ScreenBuffer *ScreenBuffer::GetScreenBuffer(const std::string &screenName) {
+    return nullptr;
+}
+
 ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_t height) {
     assert(isInitialized);
 

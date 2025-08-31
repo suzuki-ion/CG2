@@ -124,6 +124,8 @@ private:
     std::string pipeLineFolderPath_;
     /// @brief プリセットのフォルダ名のマップ
     std::unordered_map<std::string, std::string> presetFolderNames_;
+    /// @brief 現在設定しているパイプラインの名前
+    std::string currentPipeLineName_;
 
     /// @brief 各読み込み関数のマップ
     const std::unordered_map<std::string, std::function<void(const Json &)>> kLoadFunctions_ = {

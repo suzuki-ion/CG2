@@ -146,9 +146,6 @@ private:
     /// @brief PipeLineManagerインスタンス
     PipeLineManager *pipeLineManager_ = nullptr;
 
-    /// @brief 使用するパイプライン名
-    std::string usePipeLineName_ = "Object3d.Solid.BlendNormal";
-
     /// @brief デバッグカメラ使用フラグ
     bool isUseDebugCamera_ = false;
     /// @brief 平行光源へのポインタ

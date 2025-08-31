@@ -3,6 +3,7 @@
 #include "2d/ImGuiManager.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Common/Logs.h"
+#include "Common/JsoncLoader.h"
 #include "Common/ConvertString.h"
 #include "Common/Descriptors/SRV.h"
 #include <VectorMap.h>
@@ -163,7 +164,14 @@ void Texture::Finalize() {
     Log("Texture Finalized.");
 }
 
-uint32_t Texture::Load(const std::string &filePath) {
+uint32_t Texture::Load(const std::string &filePath, const std::string &textureName) {
+    // ファイルの存在確認
+    if (!std::filesystem::exists(filePath)) {
+        Log(std::format("Texture file not found: {}", filePath), kLogLevelFlagError);
+        // ファイルが存在しない場合はデフォルトのテクスチャを返す
+        return 0;
+    }
+
     // 読み込む前に同じ名前のテクスチャがあるか確認
     if (sTextureMap.find(filePath) != sTextureMap.end()) {
         Log(std::format("Texture already loaded: {}", filePath), kLogLevelFlagWarning);
@@ -178,7 +186,7 @@ uint32_t Texture::Load(const std::string &filePath) {
 
     // テクスチャデータを作成
     TextureData texture = {
-        filePath,
+        (!textureName.empty()) ? textureName : filePath,
         static_cast<uint32_t>(sTextureMap.size()),
         nullptr,
         nullptr,
@@ -239,6 +247,13 @@ uint32_t Texture::Load(const std::string &filePath) {
     return sTextureMap[filePath].value.index;
 }
 
+void Texture::LoadFromJson(const std::string &jsonFilePath) {
+    Json texturesJson = LoadJsonc(jsonFilePath);
+    for (auto it = texturesJson["Textures"].begin(); it != texturesJson["Textures"].end(); ++it) {
+        Load(it->get<std::string>(), it.key());
+    }
+}
+
 uint32_t Texture::AddData(const TextureData &textureData) {
     // もし同じ名前のテクスチャがあれば、インデックスを返す
     if (sTextureMap.find(textureData.name) != sTextureMap.end()) {
@@ -250,6 +265,15 @@ uint32_t Texture::AddData(const TextureData &textureData) {
     sTextureMap[textureData.name].value.index = static_cast<uint32_t>(sTextureMap.size() - 1);
     // テクスチャのインデックスを返す
     return sTextureMap[textureData.name].value.index;
+}
+
+int32_t Texture::FindIndex(const std::string &filePath) {
+    // ファイルパスが存在しない場合は0を返す
+    if (sTextureMap.find(filePath) == sTextureMap.end()) {
+        return 0;
+    }
+    // テクスチャのインデックスを返す
+    return static_cast<int32_t>(sTextureMap[filePath].value.index);
 }
 
 const TextureData &Texture::GetTexture(uint32_t index) {

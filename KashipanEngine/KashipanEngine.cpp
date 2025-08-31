@@ -14,6 +14,7 @@
 #include "Common/Descriptors/RTV.h"
 #include "Common/Descriptors/SRV.h"
 #include "Common/Descriptors/DSV.h"
+#include "Common/Descriptors/UAV.h"
 #include "Common/SceneBase.h"
 #include "Common/Random.h"
 #include "Base/WinApp.h"
@@ -107,6 +108,9 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // InputManager初期化
     Input::Initialize(sWinApp.get());
 
+    // UAV初期化
+    UAV::Initialize(sDxCommon.get());
+
     // プリミティブ描画クラス初期化
     PrimitiveDrawer::Initialize(sDxCommon.get());
 
@@ -163,6 +167,7 @@ Engine::~Engine() {
     sDxCommon.reset();
     sWinApp.reset();
     // DescriptorHeapの解放
+    UAV::Finalize();
     RTV::Finalize();
     DSV::Finalize();
     SRV::Finalize();
