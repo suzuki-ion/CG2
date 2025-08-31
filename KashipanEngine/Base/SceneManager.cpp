@@ -5,22 +5,28 @@
 namespace KashipanEngine {
 namespace {
 std::vector<std::string> sSceneNames;
-std::unordered_map<std::string, SceneBase *> sScenes;
+std::unordered_map<std::string, std::unique_ptr<SceneBase>> sScenes;
 SceneBase *sActiveScene = nullptr;
 } // namespace
 
-void SceneManager::AddScene(const std::string &sceneName, SceneBase *scene) {
+void SceneManager::AddScene(const std::string &sceneName, std::unique_ptr<SceneBase> scene) {
     if (sScenes.find(sceneName) != sScenes.end()) {
-        // 既に同名のシーンが存在する場合は警告だけする
+        // 既に同名のシーンが存在する場合は警告
         Log("Scene with name '" + sceneName + "' already exists. Skipping addition.", kLogLevelFlagWarning);
         return;
     }
-    sScenes[sceneName] = scene;
+
+    // 既に初期化されている場合は一度終了処理を行う
+    if (scene->IsInitialized()) {
+        scene->Finalize();
+    }
+    sScenes[sceneName] = std::move(scene);
     sSceneNames.push_back(sceneName);
 
     // アクティブシーンがまだ設定されていない場合は、追加したシーンをアクティブにする
     if (sActiveScene == nullptr) {
-        sActiveScene = scene;
+        sActiveScene = sScenes[sceneName].get();
+        sActiveScene->Initialize();
     }
 }
 
@@ -34,10 +40,23 @@ void SceneManager::RemoveScene(const std::string &sceneName) {
     }
 }
 
+void SceneManager::ClearScenes() {
+    sScenes.clear();
+    sSceneNames.clear();
+    sActiveScene = nullptr;
+}
+
 void SceneManager::SetActiveScene(const std::string &sceneName) {
     auto it = sScenes.find(sceneName);
     if (it != sScenes.end()) {
-        sActiveScene = it->second;
+        if (sActiveScene->IsInitialized()) {
+            sActiveScene->Finalize();
+        }
+        sActiveScene = it->second.get();
+        if (!sActiveScene->IsInitialized()) {
+            sActiveScene->Initialize();
+        }
+
     } else {
         Log("Scene with name '" + sceneName + "' does not exist. Cannot set as active.", kLogLevelFlagWarning);
     }
@@ -62,7 +81,7 @@ void SceneManager::DrawActiveScene() {
 std::string SceneManager::GetActiveSceneName() {
     if (sActiveScene) {
         for (const auto &pair : sScenes) {
-            if (pair.second == sActiveScene) {
+            if (pair.second.get() == sActiveScene) {
                 return pair.first;
             }
         }

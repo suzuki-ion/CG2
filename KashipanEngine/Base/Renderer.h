@@ -48,8 +48,8 @@ public:
         UINT indexCount = 0;
         /// @brief テクスチャのインデックス
         int useTextureIndex = -1;
-        /// @brief 塗りつぶしモード
-        FillMode fillMode = kFillModeSolid;
+        /// @brief 使用するレンダリングパイプライン名
+        std::string pipeLineName = "Object3d.Solid.Normal";
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };
@@ -71,8 +71,8 @@ public:
         UINT vertexCount = 0;
         /// @brief インデックス数
         UINT indexCount = 0;
-        /// @brief 線の種類
-        LineType lineType = kLineNormal;
+        /// @brief 使用するレンダリングパイプライン名
+        std::string pipeLineName = "Line.Thicness";
         /// @brief カメラを使用するかどうか
         bool isUseCamera = false;
     };
@@ -106,12 +106,6 @@ public:
     /// @brief カメラの設定
     /// @param camera カメラへのポインタ
     void SetCamera(Camera *camera);
-
-    /// @brief ブレンドモードの設定
-    /// @param blendMode ブレンドモード
-    void SetBlendMode(BlendMode blendMode) {
-        blendMode_ = blendMode;
-    }
 
     /// @brief 平行光源の設定
     /// @param light 平行光源へのポインタ
@@ -152,12 +146,8 @@ private:
     /// @brief PipeLineManagerインスタンス
     PipeLineManager *pipeLineManager_ = nullptr;
 
-    /// @brief ブレンドモード
-    BlendMode blendMode_ = kBlendModeNormal;
-    /// @brief パイプラインセット
-    std::array<std::array<PipeLineSet, kBlendModeMax>, 2> pipelineSet_;
-    /// @brief ライン用のパイプラインセット
-    std::array<PipeLineSet, 2> linePipelineSet_;
+    /// @brief 使用するパイプライン名
+    std::string usePipeLineName_ = "Object3d.Solid.BlendNormal";
 
     /// @brief デバッグカメラ使用フラグ
     bool isUseDebugCamera_ = false;

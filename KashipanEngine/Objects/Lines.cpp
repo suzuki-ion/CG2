@@ -3,11 +3,32 @@
 
 namespace KashipanEngine {
 
+namespace {
+Renderer *sRenderer = nullptr;
+} // namespace
+
+void Lines::Initialize(Renderer *renderer) {
+    sRenderer = renderer;
+}
+
 Lines::Lines(const int lineCount, LineType lineType) {
+    renderer_ = sRenderer;
+
     vertexCount_ = lineCount + 1;
     indexCount_ = lineCount * 2;
 
-    lineType_ = lineType;
+    switch (lineType) {
+        case KashipanEngine::kLineNormal:
+            pipelineName_ = "Line.Normal";
+            break;
+        case KashipanEngine::kLineThickness:
+            pipelineName_ = "Line.Thickness";
+            break;
+        default:
+            pipelineName_ = "Line.Normal";
+            break;
+    }
+
     mesh_ = PrimitiveDrawer::CreateMesh<VertexDataLine>(vertexCount_, indexCount_, sizeof(VertexDataLine));
 
     transformationMatrixResource_ = PrimitiveDrawer::CreateBufferResources(sizeof(TransformationMatrix));
@@ -45,7 +66,6 @@ void Lines::Draw() const {
     lineState.lineOptionMap = lineOptionMap_;
     lineState.indexCount = indexCount_;
     lineState.vertexCount = vertexCount_;
-    lineState.lineType = lineType_;
     lineState.isUseCamera = true;
     renderer_->DrawSetLine(lineState);
 }

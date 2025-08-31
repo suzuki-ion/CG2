@@ -4,8 +4,21 @@
 
 namespace KashipanEngine {
 
-void RootSignature::SetRootSignature(const std::string &rootSignatureName, const std::vector<D3D12_ROOT_PARAMETER> &rootParameters, const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers, D3D12_ROOT_SIGNATURE_FLAGS flags) {
+void RootSignature::SetRootSignature(const std::string &rootSignatureName, const std::vector<D3D12_ROOT_PARAMETER> &rootParameters, const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers) {
     HRESULT hr;
+    if (rootSignatures_.find(rootSignatureName) != rootSignatures_.end()) {
+        Log(("Root signature already exists: " + rootSignatureName).c_str(), kLogLevelFlagWarning);
+        return;
+    }
+
+    if (!rootParameters.empty()) {
+        rootSignatures_[rootSignatureName].rootSignatureDesc.pParameters = rootParameters.data();
+        rootSignatures_[rootSignatureName].rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
+    }
+    if (!staticSamplers.empty()) {
+        rootSignatures_[rootSignatureName].rootSignatureDesc.pStaticSamplers = staticSamplers.data();
+        rootSignatures_[rootSignatureName].rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(staticSamplers.size());
+    }
 
     Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;

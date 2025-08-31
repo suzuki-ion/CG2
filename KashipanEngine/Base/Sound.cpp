@@ -8,9 +8,8 @@
 #include <wrl.h>
 #include <cassert>
 #include <fstream>
-#include <vector>
 #include <format>
-#include <map>
+#include <VectorMap.h>
 
 #include "Sound.h"
 #include "Common/Logs.h"
@@ -50,14 +49,14 @@ Microsoft::WRL::ComPtr<IXAudio2> sXaudio2;
 /// @brief マスターボイス
 IXAudio2MasteringVoice *sMasterVoice;
 /// @brief 音声データのリスト
-std::vector<SoundData> sSoundData;
+MyStd::VectorMap<std::string, SoundData> sSoundData;
 
 //==================================================
 // テーブル
 //==================================================
 
 /// @brief ピッチテーブル
-std::map<std::string, float> sPitchTable = {
+std::unordered_map<std::string, float> sPitchTable = {
     {"C0", -48.0f}, {"C#0", -47.0f}, {"D0", -46.0f}, {"D#0", -45.0f}, {"E0", -44.0f}, {"F0", -43.0f}, {"F#0", -42.0f}, {"G0", -41.0f}, {"G#0", -40.0f}, {"A0", -39.0f}, {"A#0", -38.0f}, {"B0", -37.0f},
     {"C1", -36.0f}, {"C#1", -35.0f}, {"D1", -34.0f}, {"D#1", -33.0f}, {"E1", -32.0f}, {"F1", -31.0f}, {"F#1", -30.0f}, {"G1", -29.0f}, {"G#1", -28.0f}, {"A1", -27.0f}, {"A#1", -26.0f}, {"B1", -25.0f},
     {"C2", -24.0f}, {"C#2", -23.0f}, {"D2", -22.0f}, {"D#2", -21.0f}, {"E2", -20.0f}, {"F2", -19.0f}, {"F#2", -18.0f}, {"G2", -17.0f}, {"G#2", -16.0f}, {"A2", -15.0f}, {"A#2", -14.0f}, {"B2", -13.0f},
@@ -114,6 +113,12 @@ void Sound::Finalize() {
 }
 
 int Sound::Load(const std::string &filePath) {
+    // ファイルの重複読み込みを防止
+    if (sSoundData.find(filePath) != sSoundData.end()) {
+        Log("Sound already loaded: " + filePath, kLogLevelFlagWarning);
+        return static_cast<int>(sSoundData.find(filePath)->index);
+    }
+
     //==================================================
     // ソースリーダーの作成
     //==================================================
@@ -230,7 +235,8 @@ int Sound::Load(const std::string &filePath) {
     data.bufferSize = sizeof(BYTE) * static_cast<unsigned int>(mediaData.size());
     data.pBuffer = new BYTE[mediaData.size()];
     std::memcpy(data.pBuffer, mediaData.data(), mediaData.size());
-    sSoundData.push_back(data);
+    data.pSourceVoice = nullptr;
+    sSoundData.push_back(filePath, data);
 
     // 読み込んだ音声ファイルのログ
     Log(std::format("Load Sound: {} ({} bytes)", filePath, data.bufferSize), kLogLevelFlagInfo);
@@ -244,10 +250,10 @@ void Sound::Unload(int index) {
         return;
     }
     // 音声データの解放
-    delete[] sSoundData[index].pBuffer;
-    sSoundData[index].pBuffer = nullptr;
-    sSoundData[index].bufferSize = 0;
-    sSoundData[index].wfex = {};
+    delete[] sSoundData[index].value.pBuffer;
+    sSoundData[index].value.pBuffer = nullptr;
+    sSoundData[index].value.bufferSize = 0;
+    sSoundData[index].value.wfex = {};
 }
 
 void Sound::Play(int index, float volume, float pitch, bool loop) {
@@ -259,8 +265,8 @@ void Sound::Play(int index, float volume, float pitch, bool loop) {
 
     // 波形フォーマットを元にSourceVoiceの作成
     hr = sXaudio2->CreateSourceVoice(
-        &sSoundData[index].pSourceVoice,
-        &sSoundData[index].wfex);
+        &sSoundData[index].value.pSourceVoice,
+        &sSoundData[index].value.wfex);
     if (FAILED(hr)) {
         Log("Failed to create source voice: " + std::to_string(index), kLogLevelFlagError);
         assert(SUCCEEDED(hr));
@@ -268,27 +274,27 @@ void Sound::Play(int index, float volume, float pitch, bool loop) {
 
     // 再生する音声データの設定
     XAUDIO2_BUFFER buffer = { 0 };
-    buffer.AudioBytes = sSoundData[index].bufferSize;
-    buffer.pAudioData = sSoundData[index].pBuffer;
+    buffer.AudioBytes = sSoundData[index].value.bufferSize;
+    buffer.pAudioData = sSoundData[index].value.pBuffer;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 
     // 音声データの再生
-    hr = sSoundData[index].pSourceVoice->SubmitSourceBuffer(&buffer);
+    hr = sSoundData[index].value.pSourceVoice->SubmitSourceBuffer(&buffer);
     if (FAILED(hr)) {
         Log("Failed to submit source buffer: " + std::to_string(index), kLogLevelFlagError);
         assert(SUCCEEDED(hr));
     }
     // 音声データの再生開始
-    hr = sSoundData[index].pSourceVoice->Start();
+    hr = sSoundData[index].value.pSourceVoice->Start();
     if (FAILED(hr)) {
         Log("Failed to start source voice: " + std::to_string(index), kLogLevelFlagError);
         assert(SUCCEEDED(hr));
     }
     // 音声データのボリューム設定
-    sSoundData[index].pSourceVoice->SetVolume(volume);
+    sSoundData[index].value.pSourceVoice->SetVolume(volume);
     // 音声データのピッチ設定
-    sSoundData[index].pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(pitch));
+    sSoundData[index].value.pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(pitch));
 }
 
 void Sound::Stop(int index) {
@@ -296,12 +302,16 @@ void Sound::Stop(int index) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
 
     // 音声データの停止
-    if (sSoundData[index].pSourceVoice) {
-        sSoundData[index].pSourceVoice->Stop();
-        sSoundData[index].pSourceVoice->DestroyVoice();
-        sSoundData[index].pSourceVoice = nullptr;
+    if (sSoundData[index].value.pSourceVoice) {
+        sSoundData[index].value.pSourceVoice->Stop();
+        sSoundData[index].value.pSourceVoice->DestroyVoice();
+        sSoundData[index].value.pSourceVoice = nullptr;
     }
 }
 
@@ -316,9 +326,13 @@ void Sound::Pause(int index) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
     // 音声データの一時停止
-    if (sSoundData[index].pSourceVoice) {
-        sSoundData[index].pSourceVoice->Stop();
+    if (sSoundData[index].value.pSourceVoice) {
+        sSoundData[index].value.pSourceVoice->Stop();
     }
 }
 
@@ -327,9 +341,13 @@ void Sound::Resume(int index) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
     // 音声データの再開
-    if (sSoundData[index].pSourceVoice) {
-        sSoundData[index].pSourceVoice->Start();
+    if (sSoundData[index].value.pSourceVoice) {
+        sSoundData[index].value.pSourceVoice->Start();
     }
 }
 
@@ -338,9 +356,12 @@ bool Sound::IsPlaying(int index) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return false;
     }
+    if (!sSoundData[index].value.pSourceVoice) {
+        return false;
+    }
     // 音声データの再生状態を取得
     XAUDIO2_VOICE_STATE state;
-    sSoundData[index].pSourceVoice->GetState(&state);
+    sSoundData[index].value.pSourceVoice->GetState(&state);
     return state.BuffersQueued > 0;
 }
 
@@ -349,9 +370,13 @@ void Sound::SetVolume(int index, float volume) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
     // 音声データのボリューム設定
-    if (sSoundData[index].pSourceVoice) {
-        sSoundData[index].pSourceVoice->SetVolume(volume);
+    if (sSoundData[index].value.pSourceVoice) {
+        sSoundData[index].value.pSourceVoice->SetVolume(volume);
     }
 }
 
@@ -360,9 +385,13 @@ void Sound::SetPitch(int index, float pitch) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
     // 音声データのピッチ設定
-    if (sSoundData[index].pSourceVoice) {
-        sSoundData[index].pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(pitch));
+    if (sSoundData[index].value.pSourceVoice) {
+        sSoundData[index].value.pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(pitch));
     }
 }
 
@@ -371,11 +400,15 @@ void Sound::SetPitch(int index, char *pitch) {
         Log("Invalid sound index: " + std::to_string(index), kLogLevelFlagError);
         return;
     }
+    // 音声が再生されていない場合は何もしない
+    if (!IsPlaying(index)) {
+        return;
+    }
     // 音声データのピッチ設定
-    if (sSoundData[index].pSourceVoice) {
+    if (sSoundData[index].value.pSourceVoice) {
         auto it = sPitchTable.find(pitch);
         if (it != sPitchTable.end()) {
-            sSoundData[index].pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(it->second));
+            sSoundData[index].value.pSourceVoice->SetFrequencyRatio(XAudio2SemitonesToFrequencyRatio(it->second));
         } else {
             Log("Invalid pitch name: " + std::string(pitch), kLogLevelFlagError);
         }

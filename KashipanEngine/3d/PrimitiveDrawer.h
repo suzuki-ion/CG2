@@ -15,23 +15,6 @@
 
 namespace KashipanEngine {
 
-enum BlendMode {
-    kBlendModeNone,
-    kBlendModeNormal,
-    kBlendModeAdd,
-    kBlendModeSubtract,
-    kBlendModeMultiply,
-    kBlendModeScreen,
-    kBlendModeExclusion,
-
-    kBlendModeMax,
-};
-
-enum FillMode {
-    kFillModeSolid,
-    kFillModeWireframe,
-};
-
 enum LineType {
     kLineNormal,
     kLineThickness
@@ -90,12 +73,6 @@ public:
         return mesh;
     }
     
-    /// @brief グラフィックパイプライン生成
-    /// @param topologyType トポロジータイプ
-    /// @param blendMode ブレンドモード
-    /// @return パイプラインセット
-    static PipeLineSet CreateGraphicsPipeline(D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType, BlendMode blendMode, const bool isDepthEnable = true, const std::source_location &location = std::source_location::current());
-
     /// @brief 線用のパイプライン生成
     /// @return 線用のパイプラインセット
     static PipeLineSet CreateLinePipeline(LineType lineType, const std::source_location &location = std::source_location::current());

@@ -190,7 +190,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameProgram\GameScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />

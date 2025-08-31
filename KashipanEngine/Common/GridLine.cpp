@@ -43,7 +43,7 @@ void GridLine::Draw() const {
     lineState.lineOptionMap = lineOptionMap_;
     lineState.indexCount = indexCount_;
     lineState.vertexCount = vertexCount_;
-    lineState.lineType = kLineThickness;
+    lineState.pipeLineName = "Line.Thickness";
     lineState.isUseCamera = true;
     renderer_->DrawSetLine(lineState);
 }

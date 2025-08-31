@@ -1,10 +1,11 @@
 #pragma once
+
+namespace KashipanEngine::KeyConfigDefineMaps {
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <Xinput.h>
 #include <string>
 #include <unordered_map>
-
-namespace KashipanEngine::KeyConfigDefineMaps {
 
 enum class MouseAnalogInputType {
     CursorX,
@@ -402,17 +403,21 @@ const std::unordered_map<std::string, int> kMouseAnalogInputMap = {
 
 const std::unordered_map<std::string, int> kXInputButtonMap = {
     { "A", XINPUT_GAMEPAD_A },
+    { "ButtonA", XINPUT_GAMEPAD_A },
     { "B", XINPUT_GAMEPAD_B },
+    { "ButtonB", XINPUT_GAMEPAD_B },
     { "X", XINPUT_GAMEPAD_X },
+    { "ButtonX", XINPUT_GAMEPAD_X },
     { "Y", XINPUT_GAMEPAD_Y },
-    { "DPadUp", XINPUT_GAMEPAD_DPAD_UP },
+    { "ButtonY", XINPUT_GAMEPAD_Y },
     { "Up", XINPUT_GAMEPAD_DPAD_UP },
-    { "DPadDown", XINPUT_GAMEPAD_DPAD_DOWN },
+    { "DPadUp", XINPUT_GAMEPAD_DPAD_UP },
     { "Down", XINPUT_GAMEPAD_DPAD_DOWN },
-    { "DPadLeft", XINPUT_GAMEPAD_DPAD_LEFT },
+    { "DPadDown", XINPUT_GAMEPAD_DPAD_DOWN },
     { "Left", XINPUT_GAMEPAD_DPAD_LEFT },
-    { "DPadRight", XINPUT_GAMEPAD_DPAD_RIGHT },
+    { "DPadLeft", XINPUT_GAMEPAD_DPAD_LEFT },
     { "Right", XINPUT_GAMEPAD_DPAD_RIGHT },
+    { "DPadRight", XINPUT_GAMEPAD_DPAD_RIGHT },
     { "Start", XINPUT_GAMEPAD_START },
     { "Back", XINPUT_GAMEPAD_BACK },
     { "LeftThumb", XINPUT_GAMEPAD_LEFT_THUMB },

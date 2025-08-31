@@ -8,7 +8,7 @@
 namespace KashipanEngine {
 
 Vector2 Vector2::Lerp(const Vector2 &start, const Vector2 &end, float t) noexcept {
-    return t * start + (1.0f - t) * end;
+    return start * (1.0f - t) + end * t;
 }
 
 Vector2 Vector2::Slerp(const Vector2 &start, const Vector2 &end, float t) noexcept {

@@ -1,11 +1,24 @@
 #include <cassert>
 
+#include "KashipanEngine.h"
 #include "Object.h"
 #include "Base/Renderer.h"
 #include "Common/ConvertColor.h"
 #include "Common/Logs.h"
 
 namespace KashipanEngine {
+
+namespace {
+Engine *sKashipanEngine = nullptr;
+} // namespace
+
+void Object::Initialize(Engine *engine) {
+    sKashipanEngine = engine;
+}
+
+Object::Object() noexcept {
+    renderer_ = sKashipanEngine->GetRenderer();
+}
 
 Object::Object(Object &&other) noexcept {
     if (!other.mesh_) {
@@ -29,8 +42,13 @@ void Object::DrawCommon() {
         return;
     }
 
+    // 描画フラグがfalseの場合は終了
+    if (!isDraw_) {
+        return;
+    }
+
     // マテリアルを設定
-    materialMap_->color = ConvertColor(material_.color);
+    materialMap_->color = material_.color;
     materialMap_->lightingType = material_.lightingType;
     materialMap_->uvTransform.MakeAffine(
         uvTransform_.scale,
@@ -56,7 +74,7 @@ void Object::DrawCommon() {
     objectState.vertexCount = vertexCount_;
     objectState.indexCount = indexCount_;
     objectState.useTextureIndex = useTextureIndex_;
-    objectState.fillMode = fillMode_;
+    objectState.pipeLineName = pipeLineName_;
     objectState.isUseCamera = isUseCamera_;
     bool isSemitransparent = (material_.color.w < 255.0f);
     renderer_->DrawSet(objectState, isUseCamera_, isSemitransparent);
@@ -68,22 +86,23 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
         Log("Renderer is not set.", kLogLevelFlagError);
         return;
     }
-
+    
+    // 描画フラグがfalseの場合は終了
+    if (!isDraw_) {
+        return;
+    }
+    
     // マテリアルを設定
-    materialMap_->color = ConvertColor(material_.color);
+    materialMap_->color = material_.color;
     materialMap_->lightingType = material_.lightingType;
     materialMap_->uvTransform.MakeAffine(
         uvTransform_.scale,
         uvTransform_.rotate,
         uvTransform_.translate
     );
-    materialMap_->diffuseColor = ConvertColor(material_.diffuseColor);
-    materialMap_->specularColor = ConvertColor(material_.specularColor);
-    materialMap_->emissiveColor = ConvertColor(material_.emissiveColor);
 
     // ワールド行列を転送
     worldTransform.TransferMatrix();
-
     Renderer::ObjectState objectState;
     objectState.mesh = mesh_.get();
     objectState.materialResource = materialResource_.Get();
@@ -93,7 +112,7 @@ void Object::DrawCommon(WorldTransform &worldTransform) {
     objectState.vertexCount = vertexCount_;
     objectState.indexCount = indexCount_;
     objectState.useTextureIndex = useTextureIndex_;
-    objectState.fillMode = fillMode_;
+    objectState.pipeLineName = pipeLineName_;
     objectState.isUseCamera = isUseCamera_;
     bool isSemitransparent = (material_.color.w < 255.0f);
     renderer_->DrawSet(objectState, isUseCamera_, isSemitransparent);

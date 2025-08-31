@@ -7,6 +7,18 @@
 namespace KashipanEngine {
 using Json = nlohmann::json;
 
+/// @brief パイプライン情報用構造体
+struct PipeLineInfo {
+    /// @brief パイプラインの名前
+    std::string name;
+    /// @brief パイプラインの種類（"Render" or "Compute"）
+    std::string type;
+    /// @brief コマンドリストに設定する際のトポロジータイプ
+    D3D12_PRIMITIVE_TOPOLOGY topologyType = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    /// @brief パイプラインセット
+    PipeLineSet pipeLineSet;
+};
+
 class PipeLineManager {
 public:
     PipeLineManager() = delete;
@@ -21,18 +33,18 @@ public:
     /// @brief パイプラインの再読み込み
     void ReloadPipeLines();
 
-    /// @brief パイプラインの取得
+    /// @brief パイプライン情報の取得
     /// @param pipeLineName パイプラインの名前
-    /// @return PipeLineSetの参照
-    [[nodiscard]] PipeLineSet &GetPipeLine(const std::string &pipeLineName) {
-        return pipeLineSets_.at(pipeLineName);
+    /// @return PipeLineInfoの参照
+    [[nodiscard]] PipeLineInfo &GetPipeLine(const std::string &pipeLineName) {
+        return pipeLineInfos_.at(pipeLineName);
     }
 
     /// @brief パイプラインの存在確認
     /// @param pipeLineName パイプラインの名前
     /// @return 存在する場合はtrue、存在しない場合はfalse
     [[nodiscard]] bool HasPipeLine(const std::string &pipeLineName) const {
-        return pipeLineSets_.find(pipeLineName) != pipeLineSets_.end();
+        return pipeLineInfos_.find(pipeLineName) != pipeLineInfos_.end();
     }
 
     /// @brief コマンドリストにパイプラインを設定
@@ -101,8 +113,8 @@ private:
 
     /// @brief パイプラインの設定データ
     PipeLines pipeLines_;
-    /// @brief パイプラインセットのマップ
-    std::unordered_map<std::string, PipeLineSet> pipeLineSets_;
+    /// @brief パイプライン情報のマップ
+    std::unordered_map<std::string, PipeLineInfo> pipeLineInfos_;
     /// @brief シェーダーリフレクション用クラス
     std::unique_ptr<ShaderReflection> shaderReflection_;
 

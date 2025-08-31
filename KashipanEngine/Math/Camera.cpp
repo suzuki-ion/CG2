@@ -3,7 +3,6 @@
 #include "Camera.h"
 #include "RenderingPipeline.h"
 #include "Vector2.h"
-#include "Base/WinApp.h"
 #include "Base/Input.h"
 #include "Common/Logs.h"
 
@@ -15,9 +14,6 @@
 namespace KashipanEngine {
 
 namespace {
-
-// WinAppのポインタ
-WinApp *sWinApp_ = nullptr;
 
 Vector3 CalcCameraForward(const Vector3 &rotation) {
     float yaw = rotation.y;
@@ -45,15 +41,6 @@ Vector3 CalcCameraUp(const Vector3 &rotation) {
 }
 
 } // namespace
-
-void Camera::Initialize(WinApp *winApp) noexcept {
-    // nullチェック
-    if (!winApp) {
-        Log("winApp is null.", kLogLevelFlagError);
-        assert(false);
-    }
-    sWinApp_ = winApp;
-}
 
 Camera::Camera() {
     coordinateSystem_ = CoordinateSystem::kDecart;
@@ -83,6 +70,25 @@ void Camera::CalculateMatrix() noexcept {
     } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
         CalculateMatrixForSpherical();
     }
+    cameraMatrix_.SetTranslate(cameraTranslate_);
+    cameraMatrix_.SetRotate(cameraRotate_);
+    cameraMatrix_.SetScale(cameraScale_);
+    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
+    projectionMatrix_ = MakePerspectiveFovMatrix(
+        cameraPerspective_.fovY,
+        cameraPerspective_.aspectRatio,
+        cameraPerspective_.nearClip,
+        cameraPerspective_.farClip
+    );
+    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
+    viewportMatrix_ = MakeViewportMatrix(
+        cameraViewport_.left,
+        cameraViewport_.top,
+        cameraViewport_.width,
+        cameraViewport_.height,
+        cameraViewport_.minDepth,
+        cameraViewport_.maxDepth
+    );
 }
 
 void Camera::SetCoordinateSystem(CoordinateSystem cameraType) noexcept {
@@ -121,6 +127,14 @@ void Camera::SetWorldMatrix(const Matrix4x4 &worldMatrix) noexcept {
     worldMatrix_ = worldMatrix;
 }
 
+void Camera::SetCameraPerspective(const CameraPerspective &cameraPerspective) noexcept {
+    cameraPerspective_ = cameraPerspective;
+}
+
+void Camera::SetCameraViewport(const CameraViewport &cameraViewport) noexcept {
+    cameraViewport_ = cameraViewport;
+}
+
 void Camera::SetSphericalCoordinateSystem(const SphericalCoordinateSystem &sphericalCoordinateSystem) noexcept {
     sphericalCoordinateSystem_ = sphericalCoordinateSystem;
 }
@@ -155,25 +169,10 @@ void Camera::CalculateMatrixForDecart() noexcept {
         cameraRotate_.x = pitch;
         cameraRotate_.y = -yaw;
     }
-    cameraMatrix_.SetTranslate(cameraTranslate_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetScale(cameraScale_);
-    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 2048.0f);
-    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
-    viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
 }
 
 void Camera::CalculateMatrixForSpherical() noexcept {
     cameraTranslate_ = sphericalCoordinateSystem_.ToVector3();
-    //viewMatrix_ = MakeViewMatrix(cameraTranslate_, sphericalCoordinateSystem_.origin, Vector3(0.0f, 1.0f, 0.0f));
-    cameraMatrix_.SetTranslate(cameraTranslate_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetScale(cameraScale_);
-    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, static_cast<float>(sWinApp_->GetClientWidth()) / static_cast<float>(sWinApp_->GetClientHeight()), 0.1f, 2048.0f);
-    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
-    viewportMatrix_ = MakeViewportMatrix(0.0f, 0.0f, static_cast<float>(sWinApp_->GetClientWidth()), static_cast<float>(sWinApp_->GetClientHeight()), 0.0f, 1.0f);
 }
 
 void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {

@@ -50,8 +50,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // ウィンドウモード
     WindowMode windowMode = kWindow;
-    // ブレンドモード
-    BlendMode blendMode = kBlendModeNormal;
 
     // フレームレート
     int frameRate = 60;
@@ -97,25 +95,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Object::StatePtr sphereState = sphere.GetStatePtr();
     sphereState.transform->translate.y = 6.0f;
     *sphereState.normalType = kNormalTypeVertex;
-    *sphereState.fillMode = kFillModeWireframe;
     sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
-    sphere.SetRenderer(renderer);
 
     //==================================================
     // ICO球
     //==================================================
 
     Model icoSphere("Resources/ICOSphere", "icoSphere.obj");
-    icoSphere.SetRenderer(renderer);
     icoSphere.GetStatePtr().transform->translate.y = 3.0f;
-    *icoSphere.GetStatePtr().fillMode = kFillModeWireframe;
 
     //==================================================
     // モデル
     //==================================================
 
     Model model("Resources/Player", "player.obj");
-    model.SetRenderer(renderer);
 
     //==================================================
     // 音声
@@ -186,9 +179,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     GridLine gridLineXZ(GridLineType::XZ, 1.0f, 10000);
     GridLine gridLineXY(GridLineType::XY, 1.0f, 10000);
     GridLine gridLineYZ(GridLineType::YZ, 1.0f, 10000);
-    gridLineXZ.SetRenderer(renderer);
-    gridLineXY.SetRenderer(renderer);
-    gridLineYZ.SetRenderer(renderer);
     // XZグリッド描画フラグ
     bool isXZGrid = true;
     // XYグリッド描画フラグ
@@ -202,7 +192,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     int lineCount = 100;
     Lines lines(lineCount);
-    lines.SetRenderer(renderer);
 
     //==================================================
     // スプライン曲線
@@ -297,10 +286,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (ImGui::Button("フレームレートを設定")) {
             myGameEngine->SetFrameRate(frameRate);
         }
-        ImGui::Combo("ブレンドモード", reinterpret_cast<int *>(&blendMode), "ブレンド無し\0通常\0加算\0減算\0乗算\0反転\0");
         ImGui::End();
-        // ブレンドモードの設定
-        renderer->SetBlendMode(blendMode);
 
         ImGui::Begin("入力テスト");
         ImGui::Text("コントローラー トリガー：\n\tLeft %d, Right %d",
@@ -309,20 +295,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             Input::GetXBoxLeftStickX(), Input::GetXBoxLeftStickY(),
             Input::GetXBoxRightStickX(), Input::GetXBoxRightStickY());
         ImGui::Text("コントローラー ボタン：\n\tA %d, B %d, X %d, Y %d, START %d, BACK %d,\n\tLEFT_THUMB %d, RIGHT_THUMB %d\n\tLEFT_SHOULDER %d, RIGHT_SHOULDER %d\n\tUP %d, DOWN %d, LEFT %d, RIGHT %d",
-            Input::IsXBoxButtonDown(XBoxButtonCode::A) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::B) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::X) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::Y) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::START) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::BACK) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT_THUMB) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT_THUMB) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT_SHOULDER) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT_SHOULDER) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::UP) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::DOWN) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::LEFT) ? 1 : 0,
-            Input::IsXBoxButtonDown(XBoxButtonCode::RIGHT) ? 1 : 0);
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::A)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::B)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::X)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::Y)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::START)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::BACK)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::LEFT_THUMB)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::RIGHT_THUMB)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::LEFT_SHOULDER)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::RIGHT_SHOULDER)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::UP)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::DOWN)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::LEFT)) ? 1 : 0,
+            Input::IsXBoxButtonDown(static_cast<int>(XBoxButtonCode::RIGHT)) ? 1 : 0);
         int xboxLeftMotor = Input::GetXBoxVibration(0, Input::LeftRightOption::Left);
         int xboxRightMotor = Input::GetXBoxVibration(0, Input::LeftRightOption::Right);
         ImGui::InputInt("XBox Left Motor", &xboxLeftMotor);
@@ -336,8 +322,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::Text("カメラ位置: (%.2f, %.2f, %.2f)", camera->GetTranslate().x, camera->GetTranslate().y, camera->GetTranslate().z);
         // カメラの回転の表示
         ImGui::Text("カメラの回転: (%.2f, %.2f, %.2f)", camera->GetRotate().x, camera->GetRotate().y, camera->GetRotate().z);
-        // ブレンドモードの表示
-        ImGui::Text("ブレンドモード: %d", static_cast<int>(blendMode));
         // マウスの座標
         ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
         

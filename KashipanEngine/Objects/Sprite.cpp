@@ -24,31 +24,12 @@ void Sprite::SetTexture(const uint32_t textureIndex) {
     LoadTexture(Texture::GetTexture(useTextureIndex_));
 }
 
-void Sprite::Draw() {
-    // 法線を設定
-    for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
-    }
-
-    // 描画共通処理を呼び出す
-    DrawCommon();
-}
-
-void Sprite::Draw(WorldTransform &worldTransform) {
-    // 法線を設定
-    for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
-    }
-    // 描画共通処理を呼び出す
-    DrawCommon(worldTransform);
-}
-
 void Sprite::Initialize() {
     name_ = "Sprite";
 
     Create(4, 6);
     isUseCamera_ = false;
-    material_.lightingType = false;
+    material_.lightingType = 0;
 
     mesh_->indexBufferMap[0] = 0;
     mesh_->indexBufferMap[1] = 1;
@@ -61,6 +42,10 @@ void Sprite::Initialize() {
     mesh_->vertexBufferMap[1].texCoord = { 0.0f, 0.0f };
     mesh_->vertexBufferMap[2].texCoord = { 1.0f, 1.0f };
     mesh_->vertexBufferMap[3].texCoord = { 1.0f, 0.0f };
+
+    for (int i = 0; i < 4; i++) {
+        mesh_->vertexBufferMap[i].normal = { 0.0f, 0.0f, -1.0f };
+    }
 }
 
 void Sprite::LoadTexture(const TextureData &textureData) {

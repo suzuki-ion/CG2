@@ -17,6 +17,7 @@ const KeyConfig::ConfigData &KeyConfig::operator[](const std::string &actionName
 }
 
 void KeyConfig::LoadFromJson(const std::string &filePath) {
+    keyConfigMap_.clear();
     Json jsonData = LoadJsonc(filePath);
 
     for (auto it = jsonData.begin(); it != jsonData.end(); ++it) {
@@ -68,7 +69,7 @@ KeyConfig::ActionValue KeyConfig::GetInputValue(const std::string &actionName) {
 
         for (const auto &binding : configData.keyBindings) {
             if (configData.returnType == "float") {
-                int value = Input::Get<int>(
+                float value = Input::Get<float>(
                     binding.deviceType,
                     binding.actionType,
                     binding.keyCode,
@@ -77,7 +78,7 @@ KeyConfig::ActionValue KeyConfig::GetInputValue(const std::string &actionName) {
                     binding.leftRightOption,
                     binding.threshold
                 );
-                actionValue = std::get<float>(actionValue) + (static_cast<float>(value) * binding.scale);
+                actionValue = std::get<float>(actionValue) + (value * binding.scale);
 
             } else if (configData.returnType == "bool") {
                 bool isPressed = Input::Get<bool>(
@@ -87,7 +88,7 @@ KeyConfig::ActionValue KeyConfig::GetInputValue(const std::string &actionName) {
                     Input::InputTypeOption::Digital,
                     binding.axisType,
                     binding.leftRightOption,
-                    binding.threshold
+                    binding.threshold * static_cast<int>(binding.scale)
                 );
                 if (isPressed) {
                     // いずれかのキーが押されている場合は true を返す

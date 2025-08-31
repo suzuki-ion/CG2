@@ -36,6 +36,7 @@ ID3D12Device *sDevice = nullptr;
 void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineManager *pipeLineManager) {
     sWinApp = winApp;
     sDxCommon = dxCommon;
+    sPipeLineManager = pipeLineManager;
     sCommandList = sDxCommon->GetCommandList();
     sCommandQueue = sDxCommon->GetCommandQueue();
     sDevice = sDxCommon->GetDevice();
@@ -48,8 +49,6 @@ ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_
     screenName_ = screenName;
     screenWidth_ = width;
     screenHeight_ = height;
-    pipelineSet_ = PrimitiveDrawer::CreateGraphicsPipeline(
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, kBlendModeNormal, true);
     CreateTextureResource();
     CreateDepthStencilResource();
     CreateRenderTarget();

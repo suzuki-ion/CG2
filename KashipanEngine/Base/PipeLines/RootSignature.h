@@ -46,12 +46,10 @@ public:
     /// @param rootSignatureName ルートシグネチャ名
     /// @param rootParameters ルートパラメータの配列
     /// @param staticSamplers 静的サンプラーの配列
-    /// @param flags ルートシグネチャフラグ
     void SetRootSignature(
         const std::string &rootSignatureName,
-        const std::vector<D3D12_ROOT_PARAMETER> &rootParameters,
-        const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers = {},
-        D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE
+        const std::vector<D3D12_ROOT_PARAMETER> &rootParameters = {},
+        const std::vector<D3D12_STATIC_SAMPLER_DESC> &staticSamplers = {}
     );
 
     /// @brief ルートシグネチャのバイナリ作成(保持している要素の変更なし)

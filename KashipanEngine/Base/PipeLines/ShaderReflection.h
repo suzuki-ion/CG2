@@ -32,13 +32,13 @@ private:
     /// @brief ルートパラメータの作成
     /// @param shaderReflectionInfo シェーダーのリフレクション情報
     /// @return 作成されたルートパラメータの配列
-    const std::vector<D3D12_ROOT_PARAMETER> &CreateRootParameters(
+    const std::vector<D3D12_ROOT_PARAMETER> CreateRootParameters(
         ID3D12ShaderReflection *shaderReflectionInfo) const;
 
     /// @brief インプットレイアウトの作成
     /// @param shaderReflectionInfo シェーダーのリフレクション情報
     /// @return 作成されたインプットレイアウトの配列
-    const std::vector<D3D12_INPUT_ELEMENT_DESC> &CreateInputLayout(
+    const std::vector<D3D12_INPUT_ELEMENT_DESC> CreateInputLayout(
         ID3D12ShaderReflection *shaderReflectionInfo) const;
 
     // D3D12デバイスへのポインタ

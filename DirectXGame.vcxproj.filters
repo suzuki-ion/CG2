@@ -578,9 +578,6 @@
     <ClInclude Include="KashipanEngine\Common\SceneBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameProgram\GameScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl" />
