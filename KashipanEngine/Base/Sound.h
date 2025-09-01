@@ -12,8 +12,23 @@ public:
 
     /// @brief 音声ファイルを読み込む
     /// @param filePath 音声ファイルのパス
+    /// @param soundName 音声の名前(設定しなかった場合はファイルパスになる)
     /// @return 音声データへのインデックス
-    static int Load(const std::string &filePath);
+    static int Load(const std::string &filePath, const std::string &soundName = "");
+
+    /// @brief Jsonファイルからの音声の一括読み込み
+    /// @param jsonFilePath Jsonファイルのパス
+    static void LoadFromJson(const std::string &jsonFilePath);
+
+    /// @brief 音声データへのインデックスを取得する
+    /// @param filePath 音声ファイルのパス
+    /// @return 音声データへのインデックス。 見つからなかった場合は0を返す
+    static int FindIndex(const std::string &filePath);
+
+    /// @brief 音声データへのインデックスを取得する
+    /// @param soundName 音声の名前
+    /// @return 音声データへのインデックス。 見つからなかった場合は0を返す
+    static int FindIndexByName(const std::string &soundName);
 
     /// @brief 音声データをアンロードする
     /// @param index 音声データのインデックス

@@ -13,6 +13,7 @@
 
 #include "Sound.h"
 #include "Common/Logs.h"
+#include "Common/JsoncLoader.h"
 
 #pragma comment(lib, "xaudio2.lib")
 #pragma comment(lib, "mf.lib")
@@ -30,6 +31,8 @@ namespace {
 
 /// @brief 音声データ
 struct SoundData {
+    /// @brief 音声の名前
+    std::string name;
     /// @brief 波形フォーマット
     WAVEFORMATEX wfex;
     /// @brief バッファの先頭アドレス
@@ -112,7 +115,7 @@ void Sound::Finalize() {
     Log("XAudio2 finalized successfully.", kLogLevelFlagInfo);
 }
 
-int Sound::Load(const std::string &filePath) {
+int Sound::Load(const std::string &filePath, const std::string &soundName) {
     // ファイルの重複読み込みを防止
     if (sSoundData.find(filePath) != sSoundData.end()) {
         Log("Sound already loaded: " + filePath, kLogLevelFlagWarning);
@@ -242,6 +245,18 @@ int Sound::Load(const std::string &filePath) {
     Log(std::format("Load Sound: {} ({} bytes)", filePath, data.bufferSize), kLogLevelFlagInfo);
     // 音声データのインデックスを返す
     return static_cast<int>(sSoundData.size() - 1);
+}
+
+void Sound::LoadFromJson(const std::string &jsonFilePath) {
+    // 未実装
+}
+
+int Sound::FindIndex(const std::string &filePath) {
+    return 0;
+}
+
+int Sound::FindIndexByName(const std::string &soundName) {
+    return 0;
 }
 
 void Sound::Unload(int index) {

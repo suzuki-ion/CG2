@@ -29,8 +29,8 @@ public:
     /// @return テクスチャを読み込んだインデックス
     static uint32_t Load(const std::string &filePath, const std::string &textureName = "");
 
-    /// @brief jsonファイルからのテクスチャの一括読み込み
-    /// @param jsonFilePath jsonファイルのパス
+    /// @brief Jsonファイルからのテクスチャの一括読み込み
+    /// @param jsonFilePath Jsonファイルのパス
     static void LoadFromJson(const std::string &jsonFilePath);
 
     /// @brief テクスチャ管理クラスが管理するテクスチャの追加
