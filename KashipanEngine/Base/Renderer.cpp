@@ -102,8 +102,6 @@ Renderer::~Renderer() {
 }
 
 void Renderer::PreDraw() {
-    dxCommon_->PreDraw();
-    dxCommon_->ClearDepthStencil();
 #ifdef _DEBUG
     imguiManager_->BeginFrame();
 #endif
@@ -175,11 +173,6 @@ void Renderer::PostDraw() {
     DrawCommon(drawAlphaObjects_);
     // 2Dオブジェクトの描画
     DrawCommon(draw2DObjects_);
-
-#ifdef _DEBUG
-    imguiManager_->EndFrame();
-#endif
-    dxCommon_->PostDraw();
 
     // 描画オブジェクトのクリア
     drawObjects_.clear();

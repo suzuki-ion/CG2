@@ -255,6 +255,10 @@ KashipanEngine::Renderer *Engine::GetRenderer() const {
     return sRenderer.get();
 }
 
+KashipanEngine::ImGuiManager *Engine::GetImGuiManager() const {
+    return sImGuiManager.get();
+}
+
 int Engine::ProccessMessage() {
     // ゲーム終了フラグが立ってたら終了
     if (sIsQuitGame) {

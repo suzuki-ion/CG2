@@ -935,7 +935,7 @@ void PipeLineManager::LoadBlendState(const Json &json) {
             targetDesc.LogicOp = kLogicOpMap.at(target["LogicOp"].get<std::string>());
         }
         if (target.contains("RenderTargetWriteMask")) {
-            targetDesc.RenderTargetWriteMask = static_cast<UINT8>(kColorWriteEnableMap.at(target["RenderTargetWriteMask"].get<std::string>()));
+            targetDesc.RenderTargetWriteMask = kColorWriteEnableMap.at(target["RenderTargetWriteMask"].get<std::string>());
         }
         blendDesc.RenderTarget[index] = targetDesc;
         index++;

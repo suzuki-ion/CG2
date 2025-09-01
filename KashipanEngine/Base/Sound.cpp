@@ -234,6 +234,7 @@ int Sound::Load(const std::string &filePath, const std::string &soundName) {
     //==================================================
 
     SoundData data;
+    data.name = (!soundName.empty()) ? soundName : filePath;
     data.wfex = *pFormat;
     data.bufferSize = sizeof(BYTE) * static_cast<unsigned int>(mediaData.size());
     data.pBuffer = new BYTE[mediaData.size()];
@@ -248,14 +249,26 @@ int Sound::Load(const std::string &filePath, const std::string &soundName) {
 }
 
 void Sound::LoadFromJson(const std::string &jsonFilePath) {
-    // 未実装
+    Json soundsJson = LoadJsonc(jsonFilePath);
+    for (auto it = soundsJson["Sounds"].begin(); it != soundsJson["Sounds"].end(); ++it) {
+        Load(it->get<std::string>(), it.key());
+    }
 }
 
 int Sound::FindIndex(const std::string &filePath) {
+    auto it = sSoundData.find(filePath);
+    if (it != sSoundData.end()) {
+        return static_cast<int>(it->index);
+    }
     return 0;
 }
 
 int Sound::FindIndexByName(const std::string &soundName) {
+    for (size_t i = 0; i < sSoundData.size(); ++i) {
+        if (sSoundData[i].value.name == soundName) {
+            return static_cast<int>(i);
+        }
+    }
     return 0;
 }
 

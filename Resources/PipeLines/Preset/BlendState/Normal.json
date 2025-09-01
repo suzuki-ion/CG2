@@ -2,7 +2,7 @@
 	"Name": "Normal",
 	"RenderTargets": [
 		{
-			"RenderTargetWriteMask": "D3D12_COLOR_WRITE_ENABLE_ALL",
+			"RenderTargetWriteMask": "D3D12_COLOR_WRITE_ENABLE_RGB",
 			"BlendOpAlpha": "D3D12_BLEND_OP_ADD",
 			"SrcBlendAlpha": "D3D12_BLEND_ONE",
 			"DestBlendAlpha": "D3D12_BLEND_ZERO",

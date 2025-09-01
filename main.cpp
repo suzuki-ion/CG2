@@ -43,6 +43,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
     // レンダラーへのポインタ
     Renderer *renderer = myGameEngine->GetRenderer();
+    // ImGuiManagerクラスへのポインタ
+    ImGuiManager *imguiManager = myGameEngine->GetImGuiManager();
 
     // テクスチャを読み込む
     uint32_t textures[2];
@@ -255,7 +257,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             continue;
         }
         screenBuffer.PreDraw();
-        screenBuffer.PostDraw();
         renderer->PreDraw();
         Input::Update();
 
@@ -455,11 +456,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         uiGroup.Draw();
         // 文字の描画
         text.Draw();
-
         // スクリーンバッファの描画
         screenBuffer.DrawToImGui();
-        
+
         renderer->PostDraw();
+        screenBuffer.PostDraw();
+
+        dxCommon->PreDraw();
+        dxCommon->ClearDepthStencil();
+#ifdef _DEBUG
+        imguiManager->EndFrame();
+#endif
+        dxCommon->PostDraw();
+
         myGameEngine->EndFrame();
 
         // ESCで終了

@@ -88,8 +88,6 @@ void ScreenBuffer::PreDraw() {
     sCommandList->OMSetRenderTargets(1, &rtvCPUHandle_, false, &dsvCPUHandle_);
     sCommandList->ClearRenderTargetView(rtvCPUHandle_, clearValue_.Color, 0, nullptr);
     sCommandList->ClearDepthStencilView(dsvCPUHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-
 }
 
 void ScreenBuffer::PostDraw() {
@@ -118,15 +116,16 @@ void ScreenBuffer::DrawToImGui() {
         targetHeight = availableSize.y;
         targetWidth = targetHeight * imageAspect;
     }
-
+    
     //--------- 画像描画位置計算 ---------//
     
     ImVec2 offset;
     offset.x = (availableSize.x - targetWidth) * 0.5f;
     offset.y = (availableSize.y - targetHeight) * 0.5f;
 
-    // カーソル位置を調整
-    ImGui::SetCursorPos(offset);
+    // 現在のカーソル位置を取得してオフセットを加算
+    ImVec2 currentPos = ImGui::GetCursorPos();
+    ImGui::SetCursorPos(ImVec2(currentPos.x + offset.x, currentPos.y + offset.y));
     
     //--------- 描画 ---------//
 
@@ -181,7 +180,7 @@ void ScreenBuffer::CreateTextureResource() {
         &heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &resourceDesc,
-        D3D12_RESOURCE_STATE_COMMON,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
         &clearValue_,
         IID_PPV_ARGS(resource_.GetAddressOf())
     );

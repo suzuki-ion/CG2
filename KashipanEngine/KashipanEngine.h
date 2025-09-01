@@ -14,6 +14,7 @@ namespace KashipanEngine {
 class WinApp;
 class DirectXCommon;
 class Renderer;
+class ImGuiManager;
 
 } // namespace KashipanEngine
 
@@ -60,6 +61,10 @@ public:
     /// @brief レンダラーのポインタ取得
     /// @return レンダラーへのポインタ
     KashipanEngine::Renderer *GetRenderer() const;
+
+    /// @brief ImGuiManagerクラスのポインタ取得
+    /// @return ImGuiManagerクラスのポインタ
+    KashipanEngine::ImGuiManager *GetImGuiManager() const;
 
     /// @brief メッセージ処理
     /// @return メッセージ処理結果。-1の場合は終了
