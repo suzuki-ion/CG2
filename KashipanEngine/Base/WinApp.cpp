@@ -172,6 +172,8 @@ void WinApp::SetWindowMode(WindowMode mode) {
         );
         windowMode_ = kWindow;
     }
+
+    isSizing_ = true;
 }
 
 int WinApp::ProccessMessage() {
@@ -204,6 +206,22 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
         case WM_DESTROY:
             // OSに対して。アプリの終了を伝える
             PostQuitMessage(0);
+            return 0;
+
+        case WM_DPICHANGED:
+            if (winApp == nullptr) {
+                break;
+            }
+            // DPIによるウィンドウサイズの変更を行わないようにする
+            SetWindowPos(
+                hwnd,
+                NULL,
+                0,
+                0,
+                winApp->GetClientWidth(),
+                winApp->GetClientHeight(),
+                SWP_NOZORDER | SWP_NOMOVE
+            );
             return 0;
 
         case WM_SIZING:

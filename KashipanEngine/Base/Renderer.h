@@ -165,11 +165,6 @@ private:
     Matrix4x4 projectionMatrix2D_ = {};
     /// @brief 2D描画用のWVP行列
     Matrix4x4 wvpMatrix2D_ = {};
-
-    /// @brief ビューポートの設定
-    D3D12_VIEWPORT viewport_ = {};
-    /// @brief シザー矩形の設定
-    D3D12_RECT scissorRect_ = {};
 };
 
 } // namespace KashipanEngine

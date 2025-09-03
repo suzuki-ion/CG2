@@ -118,28 +118,9 @@ void Renderer::PreDraw() {
         0.0f,
         100.0f
     );
-
-    // ビューポートの設定
-    viewport_.Width = static_cast<FLOAT>(winApp_->GetClientWidth());
-    viewport_.Height = static_cast<FLOAT>(winApp_->GetClientHeight());
-    viewport_.TopLeftX = 0;
-    viewport_.TopLeftY = 0;
-    viewport_.MinDepth = 0.0f;
-    viewport_.MaxDepth = 1.0f;
-
-    // シザー矩形の設定
-    scissorRect_.left = 0;
-    scissorRect_.right = static_cast<LONG>(winApp_->GetClientWidth());
-    scissorRect_.top = 0;
-    scissorRect_.bottom = static_cast<LONG>(winApp_->GetClientHeight());
-
     static ID3D12DescriptorHeap *descriptorHeaps[] = { SRV::GetDescriptorHeap() };
     dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
-    // コマンドを積む
-    dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);         // ビューポートを設定
-    dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);   // シザー矩形を設定
-    
     // デバッグカメラが有効ならデバッグカメラの処理
     if (isUseDebugCamera_) {
         sDebugCamera->MoveToMouse(0.1f, 0.01f, 0.1f);
@@ -279,33 +260,16 @@ void Renderer::DrawCommon(ObjectState *objectState) {
 void Renderer::DrawLine(LineState *lineState) {
     pipeLineManager_->SetCommandListPipeLine(lineState->pipeLineName);
 
-    // Cameraがnullptrの場合は2D描画
-    if (lineState->isUseCamera == false) {
-        wvpMatrix2D_ = (viewMatrix2D_ * projectionMatrix2D_);
-        lineState->transformationMatrixMap->wvp = wvpMatrix2D_;
-        Matrix4x4 viewportInverse;
-        viewportInverse = MakeViewportMatrix(
-            viewport_.Width,
-            viewport_.Height,
-            viewport_.TopLeftX,
-            viewport_.TopLeftY,
-            viewport_.MinDepth,
-            viewport_.MaxDepth
-        ).Inverse();
-        lineState->transformationMatrixMap->viewportInverse = viewportInverse;
-
+    if (isUseDebugCamera_) {
+        sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
+        sDebugCamera->CalculateMatrix();
+        lineState->transformationMatrixMap->wvp = sDebugCamera->GetWVPMatrix();
+        lineState->transformationMatrixMap->viewportInverse = sDebugCamera->GetViewportMatrix();
     } else {
-        if (isUseDebugCamera_) {
-            sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
-            sDebugCamera->CalculateMatrix();
-            lineState->transformationMatrixMap->wvp = sDebugCamera->GetWVPMatrix();
-            lineState->transformationMatrixMap->viewportInverse = sDebugCamera->GetViewportMatrix();
-        } else {
-            sCameraPtr->SetWorldMatrix(Matrix4x4::Identity());
-            sCameraPtr->CalculateMatrix();
-            lineState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
-            lineState->transformationMatrixMap->viewportInverse = sCameraPtr->GetViewportMatrix().Inverse();
-        }
+        sCameraPtr->SetWorldMatrix(Matrix4x4::Identity());
+        sCameraPtr->CalculateMatrix();
+        lineState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
+        lineState->transformationMatrixMap->viewportInverse = sCameraPtr->GetViewportMatrix().Inverse();
     }
 
     // TransformationMatrix用のCBufferの場所を指定

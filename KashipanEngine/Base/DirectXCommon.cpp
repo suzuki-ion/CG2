@@ -51,6 +51,7 @@ DirectXCommon::DirectXCommon(bool enableDebugLayer, WinApp *winApp) {
     InitializeCommandAllocator();   // コマンドアロケータ初期化
     InitializeCommandList();        // コマンドリスト初期化
     InitializeSwapChain();          // スワップチェイン初期化
+    InitializeViewportAndScissorRect(); // ビューポートとシザー矩形の初期化
     InitializeRTV();                // RTVの初期化
     InitializeDSV();                // DSVの初期化
     InitializeSwapChainResources(); // スワップチェインから取得したリソース初期化
@@ -88,6 +89,10 @@ void DirectXCommon::PreDraw() {
 
     // レンダーターゲットのクリア
     ClearRenderTarget();
+
+    // ビューポートとシザー矩形の設定
+    commandList_->RSSetViewports(1, &viewport_);
+    commandList_->RSSetScissorRects(1, &scissorRect_);
 }
 
 void DirectXCommon::PostDraw() {
@@ -183,6 +188,8 @@ void DirectXCommon::Resize() {
     if (FAILED(hr)) assert(SUCCEEDED(hr));
     // スワップチェインからのリソースを再生成
     InitializeSwapChainResources();
+    // ビューポートとシザー矩形の設定
+    InitializeViewportAndScissorRect();
     // DSVの初期化
     DSV::Initialize(winApp_, this);
     // RTVハンドルの初期化
@@ -458,6 +465,20 @@ void DirectXCommon::InitializeSwapChain() {
 
     // 初期化完了のログを出力
     Log("Complete Initialize SwapChain.");
+}
+
+void DirectXCommon::InitializeViewportAndScissorRect() {
+    viewport_.TopLeftX = 0.0f;
+    viewport_.TopLeftY = 0.0f;
+    viewport_.Width = static_cast<float>(winApp_->GetClientWidth());
+    viewport_.Height = static_cast<float>(winApp_->GetClientHeight());
+    viewport_.MinDepth = 0.0f;
+    viewport_.MaxDepth = 1.0f;
+
+    scissorRect_.left = 0;
+    scissorRect_.top = 0;
+    scissorRect_.right = static_cast<LONG>(winApp_->GetClientWidth());
+    scissorRect_.bottom = static_cast<LONG>(winApp_->GetClientHeight());
 }
 
 void DirectXCommon::InitializeRTV() {

@@ -120,6 +120,10 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
     /// @brief スワップチェインから取得したリソース
     Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources_[2];
+    /// @brief スワップチェイン用のビューポート
+    D3D12_VIEWPORT viewport_;
+    /// @brief スワップチェイン用のシザー矩形
+    D3D12_RECT scissorRect_;
 
     //--------- レンダーターゲット ---------//
 
@@ -170,6 +174,8 @@ private:
 
     /// @brief スワップチェイン初期化
     void InitializeSwapChain();
+    /// @brief ビューポートとシザー矩形の初期化
+    void InitializeViewportAndScissorRect();
     /// @brief RTVの初期化
     void InitializeRTV();
     /// @brief DSVの初期化

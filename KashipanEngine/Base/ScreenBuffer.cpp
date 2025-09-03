@@ -53,6 +53,19 @@ ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_
     screenName_ = screenName;
     screenWidth_ = width;
     screenHeight_ = height;
+
+    viewport_.TopLeftX = 0.0f;
+    viewport_.TopLeftY = 0.0f;
+    viewport_.Width = static_cast<float>(screenWidth_);
+    viewport_.Height = static_cast<float>(screenHeight_);
+    viewport_.MinDepth = 0.0f;
+    viewport_.MaxDepth = 1.0f;
+
+    scissorRect_.left = 0;
+    scissorRect_.top = 0;
+    scissorRect_.right = static_cast<LONG>(screenWidth_);
+    scissorRect_.bottom = static_cast<LONG>(screenHeight_);
+
     CreateTextureResource();
     CreateDepthStencilResource();
     CreateRenderTarget();
@@ -88,6 +101,10 @@ void ScreenBuffer::PreDraw() {
     sCommandList->OMSetRenderTargets(1, &rtvCPUHandle_, false, &dsvCPUHandle_);
     sCommandList->ClearRenderTargetView(rtvCPUHandle_, clearValue_.Color, 0, nullptr);
     sCommandList->ClearDepthStencilView(dsvCPUHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+    // ビューポートとシザー矩形の設定
+    sCommandList->RSSetViewports(1, &viewport_);
+    sCommandList->RSSetScissorRects(1, &scissorRect_);
 }
 
 void ScreenBuffer::PostDraw() {

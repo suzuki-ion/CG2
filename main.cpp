@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // WinAppクラスへのポインタ
     WinApp *winApp = myGameEngine->GetWinApp();
-    winApp->SetSizeChangeMode(SizeChangeMode::kNormal);
+    winApp->SetSizeChangeMode(SizeChangeMode::kNone);
     // DirectXCommonクラスへのポインタ
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
     // レンダラーへのポインタ
@@ -48,7 +48,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // テクスチャを読み込む
     uint32_t textures[2];
-    textures[0] = Texture::Load("Resources/uvChecker.png");
+    textures[0] = Texture::Load("Resources/uvChecker2.png");
+    textures[1] = Texture::Load("Resources/testPlayer2.png");
 
     // ウィンドウモード
     WindowMode windowMode = kWindow;
@@ -154,6 +155,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     uiGroup.AddChild(&button2);
 
     //==================================================
+    // スプライト
+    //==================================================
+
+    Sprite sprite("Resources/testPlayer.png");
+
+    //==================================================
     // アニメーション用変数
     //==================================================
 
@@ -256,7 +263,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
-        screenBuffer.PreDraw();
+        dxCommon->PreDraw();
+        dxCommon->ClearDepthStencil();
         renderer->PreDraw();
         Input::Update();
 
@@ -399,6 +407,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             uiGroup.SetUIElement("color", color);
         }
 
+        // スプライト
+        if (ImGui::TreeNode("スプライト")) {
+            ImGui::DragFloat3("Sprite Translate", &sprite.GetStatePtr().transform->translate.x, 1.0f);
+            ImGui::DragFloat3("Sprite Rotate", &sprite.GetStatePtr().transform->rotate.x, 0.01f);
+            ImGui::DragFloat2("Sprite Scale", &sprite.GetStatePtr().transform->scale.x, 0.01f);
+            ImGui::DragFloat4("Sprite Color", &sprite.GetStatePtr().material->color.x, 1.0f, 0.0f, 255.0f);
+            ImGui::InputInt("Sprite TextureIndex", sprite.GetStatePtr().useTextureIndex);
+            ImGui::TreePop();
+        }
+
         // テキスト
         if (ImGui::TreeNode("テキスト")) {
             ImGui::InputTextMultiline("テキスト入力", reinterpret_cast<char *>(textBuffer), IM_ARRAYSIZE(textBuffer),
@@ -454,16 +472,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         model.Draw();
         // ボタンの描画
         uiGroup.Draw();
+        // スプライトの描画
+        sprite.Draw();
         // 文字の描画
         text.Draw();
         // スクリーンバッファの描画
         screenBuffer.DrawToImGui();
 
         renderer->PostDraw();
-        screenBuffer.PostDraw();
-
-        dxCommon->PreDraw();
-        dxCommon->ClearDepthStencil();
 #ifdef _DEBUG
         imguiManager->EndFrame();
 #endif

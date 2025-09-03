@@ -89,6 +89,11 @@ private:
     /// @brief スクリーンの縦幅
     uint32_t screenHeight_ = 0;
 
+    /// @brief ビューポート
+    D3D12_VIEWPORT viewport_ = {};
+    /// @brief シザー矩形
+    D3D12_RECT scissorRect_ = {};
+
     /// @brief 描画用リソース
     Microsoft::WRL::ComPtr<ID3D12Resource> resource_;
     /// @brief 深度バッファ用リソース
