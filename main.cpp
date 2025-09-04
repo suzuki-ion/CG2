@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // WinAppクラスへのポインタ
     WinApp *winApp = myGameEngine->GetWinApp();
-    winApp->SetSizeChangeMode(SizeChangeMode::kNone);
+    winApp->SetSizeChangeMode(SizeChangeMode::kNormal);
     // DirectXCommonクラスへのポインタ
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
     // レンダラーへのポインタ
@@ -263,8 +263,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
-        dxCommon->PreDraw();
-        dxCommon->ClearDepthStencil();
+        screenBuffer.PreDraw();
         renderer->PreDraw();
         Input::Update();
 
@@ -480,6 +479,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         screenBuffer.DrawToImGui();
 
         renderer->PostDraw();
+        screenBuffer.PostDraw();
+
+        dxCommon->PreDraw();
+        dxCommon->ClearDepthStencil();
 #ifdef _DEBUG
         imguiManager->EndFrame();
 #endif
