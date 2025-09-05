@@ -66,6 +66,10 @@ ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_
     scissorRect_.right = static_cast<LONG>(screenWidth_);
     scissorRect_.bottom = static_cast<LONG>(screenHeight_);
 
+    rtvCPUHandle_ = RTV::GetCPUDescriptorHandle();
+    srvCPUHandle_ = SRV::GetCPUDescriptorHandle();
+    srvGPUHandle_ = SRV::GetGPUDescriptorHandle();
+    dsvCPUHandle_ = DSV::GetCPUDescriptorHandle();
     CreateTextureResource();
     CreateDepthStencilResource();
     CreateRenderTarget();
@@ -80,7 +84,47 @@ ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_
     textureData.srvHandleGPU = srvGPUHandle_;
     textureData.width = screenWidth_;
     textureData.height = screenHeight_;
-    Texture::AddData(textureData);
+    textureIndex_ = Texture::AddData(textureData);
+}
+
+void ScreenBuffer::Resize(uint32_t width, uint32_t height) {
+    if (width == screenWidth_ && height == screenHeight_) {
+        // サイズが変わっていなければ何もしない
+        return;
+    }
+    screenWidth_ = width;
+    screenHeight_ = height;
+    viewport_.TopLeftX = 0.0f;
+    viewport_.TopLeftY = 0.0f;
+    viewport_.Width = static_cast<float>(screenWidth_);
+    viewport_.Height = static_cast<float>(screenHeight_);
+    viewport_.MinDepth = 0.0f;
+    viewport_.MaxDepth = 1.0f;
+    scissorRect_.left = 0;
+    scissorRect_.top = 0;
+    scissorRect_.right = static_cast<LONG>(screenWidth_);
+    scissorRect_.bottom = static_cast<LONG>(screenHeight_);
+
+    // リソースの解放
+    resource_.Reset();
+    depthStencilResource_.Reset();
+    
+    // 再作成
+    CreateTextureResource();
+    CreateDepthStencilResource();
+    CreateRenderTarget();
+    CreateShaderResource();
+    CreateDepthStencil();
+    
+    // テクスチャ管理クラスに変更後のデータを登録
+    TextureData textureData;
+    textureData.name = screenName_;
+    textureData.resource = resource_.Get();
+    textureData.srvHandleCPU = srvCPUHandle_;
+    textureData.srvHandleGPU = srvGPUHandle_;
+    textureData.width = screenWidth_;
+    textureData.height = screenHeight_;
+    Texture::ChangeData(textureData, textureIndex_);
 }
 
 uint32_t ScreenBuffer::GetTextureIndex() const {
@@ -259,7 +303,6 @@ void ScreenBuffer::CreateRenderTarget() {
     rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
     rtvDesc.Texture2D.MipSlice = 0;
     rtvDesc.Texture2D.PlaneSlice = 0;
-    rtvCPUHandle_ = RTV::GetCPUDescriptorHandle();
     sDevice->CreateRenderTargetView(resource_.Get(), &rtvDesc, rtvCPUHandle_);
 }
 
@@ -269,8 +312,6 @@ void ScreenBuffer::CreateShaderResource() {
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
-    srvCPUHandle_ = SRV::GetCPUDescriptorHandle();
-    srvGPUHandle_ = SRV::GetGPUDescriptorHandle();
     sDevice->CreateShaderResourceView(resource_.Get(), &srvDesc, srvCPUHandle_);
 }
 
@@ -278,7 +319,6 @@ void ScreenBuffer::CreateDepthStencil() {
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
     dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-    dsvCPUHandle_ = DSV::GetCPUDescriptorHandle();
     sDevice->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvCPUHandle_);
 }
 

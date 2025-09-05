@@ -482,7 +482,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         screenBuffer.PostDraw();
 
         dxCommon->PreDraw();
-        dxCommon->ClearDepthStencil();
 #ifdef _DEBUG
         imguiManager->EndFrame();
 #endif

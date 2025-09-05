@@ -47,6 +47,9 @@ public:
     /// @return true:サイズ変更された false:サイズ変更されていない
     bool IsSizing() { return isSizing_; }
 
+    /// @brief ウィンドウがサイズ変更されたかどうかをfalseにする
+    void SizingDisable() { isSizing_ = false; }
+
     /// @brief サイズ変更モードの設定
     /// @param mode サイズ変更モード
     void SetSizeChangeMode(SizeChangeMode mode);

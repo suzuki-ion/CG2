@@ -38,6 +38,11 @@ public:
     /// @return 追加したテクスチャのインデックス
     static uint32_t AddData(const TextureData &textureData);
 
+    /// @brief テクスチャデータの変更
+    /// @param textureData 変更するテクスチャデータ
+    /// @param index 変更するテクスチャのインデックス
+    static void ChangeData(const TextureData &textureData, uint32_t index);
+
     /// @brief テクスチャのインデックスの取得
     /// @param filePath テクスチャのファイルパス
     /// @return テクスチャのインデックス。 見つからなかった場合は0を返す

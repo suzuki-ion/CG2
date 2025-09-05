@@ -267,6 +267,17 @@ uint32_t Texture::AddData(const TextureData &textureData) {
     return sTextureMap[textureData.name].value.index;
 }
 
+void Texture::ChangeData(const TextureData &textureData, uint32_t index) {
+    // インデックスが範囲外の場合は何もしない
+    if (index >= sTextureMap.size()) {
+        Log("TextureData index out of range.", kLogLevelFlagWarning);
+        return;
+    }
+    // テクスチャデータを変更
+    sTextureMap[index] = textureData;
+    sTextureMap[index].value.index = index;
+}
+
 int32_t Texture::FindIndex(const std::string &filePath) {
     // ファイルパスが存在しない場合は0を返す
     if (sTextureMap.find(filePath) == sTextureMap.end()) {

@@ -177,7 +177,6 @@ void WinApp::SetWindowMode(WindowMode mode) {
 }
 
 int WinApp::ProccessMessage() {
-    isSizing_ = false;
     if (msg_.message == WM_QUIT) {
         LogNewLine();
         Log("Window Quit.");

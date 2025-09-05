@@ -129,7 +129,7 @@ void Renderer::PreDraw() {
 
 void Renderer::PostDraw() {
     // 描画オブジェクトをパイプライン名でソート
-    //std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
+    std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
     //std::sort(drawAlphaObjects_.begin(), drawAlphaObjects_.end(), ComparePipelineNameObject);
     //std::sort(draw2DObjects_.begin(), draw2DObjects_.end(), ComparePipelineNameObject);
     //std::sort(drawLines_.begin(), drawLines_.end(), ComparePipelineNameLine);

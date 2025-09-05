@@ -37,6 +37,11 @@ public:
         renderer_ = renderer;
     }
 
+    /// @brief サイズ変更
+    /// @param width スクリーンの横幅
+    /// @param height スクリーンの縦幅
+    void Resize(uint32_t width, uint32_t height);
+
     /// @brief スクリーンの名前を取得
     /// @return スクリーンの名前
     const std::string &GetScreenName() const {
@@ -93,6 +98,9 @@ private:
     D3D12_VIEWPORT viewport_ = {};
     /// @brief シザー矩形
     D3D12_RECT scissorRect_ = {};
+
+    /// @brief スクリーンのテクスチャのインデックス
+    uint32_t textureIndex_ = 0;
 
     /// @brief 描画用リソース
     Microsoft::WRL::ComPtr<ID3D12Resource> resource_;

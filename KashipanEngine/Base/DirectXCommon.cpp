@@ -87,8 +87,10 @@ void DirectXCommon::PreDraw() {
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
     SetBarrier(barrier);
 
-    // レンダーターゲットのクリア
-    ClearRenderTarget();
+    // 画面クリア
+    commandList_->OMSetRenderTargets(1, &rtvHandle_[backBufferIndex], false, &dsvHandle_);
+    commandList_->ClearRenderTargetView(rtvHandle_[backBufferIndex], clearColor_, 0, nullptr);
+    commandList_->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     // ビューポートとシザー矩形の設定
     commandList_->RSSetViewports(1, &viewport_);
@@ -121,10 +123,7 @@ void DirectXCommon::ClearRenderTarget() {
     // 画面クリア処理
     //==================================================
 
-    // 描画先のRTVを設定
-    commandList_->OMSetRenderTargets(1, &rtvHandle_[backBufferIndex], false, &dsvHandle_);
-    // 指定した色で画面全体をクリア
-    commandList_->ClearRenderTargetView(rtvHandle_[backBufferIndex], clearColor_, 0, nullptr);
+    
 }
 
 void DirectXCommon::ClearDepthStencil() {
