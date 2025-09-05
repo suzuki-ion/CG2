@@ -173,7 +173,9 @@ void WinApp::SetWindowMode(WindowMode mode) {
         windowMode_ = kWindow;
     }
 
+#ifdef _DEBUG
     isSizing_ = true;
+#endif
 }
 
 int WinApp::ProccessMessage() {

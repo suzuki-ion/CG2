@@ -5,7 +5,9 @@
 
 #include "Input.h"
 #include "Base/WinApp.h"
+#include "Base/ScreenBuffer.h"
 #include "Common/Logs.h"
+#include "Math/Vector2.h"
 
 #pragma comment(lib, "xinput.lib")
 
@@ -15,6 +17,9 @@ namespace {
 
 /// @brief WinAppへのポインタ
 WinApp *sWinApp = nullptr;
+/// @brief メインのスクリーンへのポインタ
+ScreenBuffer *sMainScreen = nullptr;
+
 /// @brief 初期化済みフラグ
 bool sIsInitialized = false;
 
@@ -316,6 +321,10 @@ std::unordered_map<int, XBoxButtonCode> sXBoxButtonCodeMap = {
 };
 
 } // namespace
+
+void Input::SetMainScreen(ScreenBuffer *screen) {
+    sMainScreen = screen;
+}
 
 void Input::Initialize(WinApp *winApp) {
     // 初期化済みフラグをチェック
@@ -677,34 +686,94 @@ int Input::GetMousePos(CurrentOption currentOption, AxisOption axisOption, Value
 }
 
 int Input::GetMouseX() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        Vector2 leftTop = sMainScreen->GetCurrentLeftTopPos();
+        return static_cast<int>((sMousePos.x - leftTop.x) / scale.x);
+    }
+#endif
     return static_cast<int>(sMousePos.x);
 }
 
 int Input::GetMouseY() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        Vector2 leftTop = sMainScreen->GetCurrentLeftTopPos();
+        return static_cast<int>((sMousePos.y - leftTop.y) / scale.y);
+    }
+#endif
     return static_cast<int>(sMousePos.y);
 }
 
 int Input::GetMouseDeltaX() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率を考慮してマウス座標の差分を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        return static_cast<int>(sMouseState.lX * scale.x);
+    }
+#endif
     return static_cast<int>(sMouseState.lX);
 }
 
 int Input::GetMouseDeltaY() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率を考慮してマウス座標の差分を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        return static_cast<int>(sMouseState.lY * scale.y);
+    }
+#endif
     return static_cast<int>(sMouseState.lY);
 }
 
 int Input::GetPreMouseX() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        Vector2 leftTop = sMainScreen->GetCurrentLeftTopPos();
+        return static_cast<int>((sPreMousePos.x - leftTop.x) * scale.x);
+    }
+#endif
     return static_cast<int>(sPreMousePos.x);
 }
 
 int Input::GetPreMouseY() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        Vector2 leftTop = sMainScreen->GetCurrentLeftTopPos();
+        return static_cast<int>((sPreMousePos.y - leftTop.y) * scale.y);
+    }
+#endif
     return static_cast<int>(sPreMousePos.y);
 }
 
 int Input::GetPreMouseDeltaX() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率を考慮してマウス座標の差分を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        return static_cast<int>(sPreMouseState.lX * scale.x);
+    }
+#endif
     return static_cast<int>(sPreMouseState.lX);
 }
 
 int Input::GetPreMouseDeltaY() {
+#ifdef _DEBUG
+    if (sMainScreen) {
+        // スクリーンの拡大率を考慮してマウス座標の差分を補正
+        Vector2 scale = sMainScreen->GetCurrentScale();
+        return static_cast<int>(sPreMouseState.lY * scale.y);
+    }
+#endif
     return static_cast<int>(sPreMouseState.lY);
 }
 

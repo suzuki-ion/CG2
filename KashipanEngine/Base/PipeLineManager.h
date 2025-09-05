@@ -50,6 +50,10 @@ public:
     /// @brief コマンドリストにパイプラインを設定
     /// @param pipeLineName 設定するパイプラインの名前
     void SetCommandListPipeLine(const std::string &pipeLineName);
+    /// @brief 現在設定してるパイプラインをリセット
+    void ResetCurrentPipeLine() {
+        currentPipeLineName_.clear();
+    }
 
 private:
     /// @brief プリセットの読み込み

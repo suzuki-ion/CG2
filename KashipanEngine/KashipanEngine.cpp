@@ -38,6 +38,7 @@
 #include "Objects/Object.h"
 #include "Objects/Model.h"
 #include "Objects/Lines.h"
+#include "Objects/Sprite.h"
 #include "KashipanEngine.h"
 
 using namespace KashipanEngine;
@@ -59,6 +60,11 @@ std::unique_ptr<DirectXCommon> sDxCommon;
 std::unique_ptr<ImGuiManager> sImGuiManager;
 std::unique_ptr<Renderer> sRenderer;
 std::unique_ptr<PipeLineManager> sPipeLineManager;
+
+// メインのスクリーンバッファ
+std::unique_ptr<ScreenBuffer> sMainScreenBuffer;
+// メインのスクリーンバッファ用のスプライト
+std::unique_ptr<Sprite> sMainScreenSprite;
 
 // フレーム時間計算用変数
 int sFrameRate = 60;
@@ -140,6 +146,10 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
     // スクリーンバッファ初期化
     ScreenBuffer::Initialize(sWinApp.get(), sDxCommon.get(), sPipeLineManager.get());
+    sMainScreenBuffer = std::make_unique<ScreenBuffer>("MainScreen", static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+    auto screenIndex = KashipanEngine::Texture::FindIndex("MainScreen");
+    sMainScreenSprite = std::make_unique<Sprite>(static_cast<uint32_t>(screenIndex));
+    Input::SetMainScreen(sMainScreenBuffer.get());
 
     // シーンの初期化
     SceneBase::Initialize(this);
@@ -159,6 +169,8 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
 Engine::~Engine() {
     LogInsertPartition("\n================= Engine Finalize ================\n");
+    // 各クラスの終了処理
+    sMainScreenBuffer.reset();
     sPipeLineManager.reset();
     sRenderer.reset();
     Sound::Finalize();
@@ -212,12 +224,32 @@ bool Engine::BeginGameLoop() {
     if (sDeltaTime > 1.0f / static_cast<float>(sFrameRate)) {
         sLastTime = sNowTime.QuadPart;
         sCountFps = static_cast<unsigned int>(1.0f / sDeltaTime);
+        
+        sMainScreenBuffer->PreDraw();
+#ifdef _DEBUG
+        sImGuiManager->BeginFrame();
+#endif
+        sRenderer->PreDraw();
+        Input::Update();
         return true;
     }
     return false;
 }
 
 void Engine::EndFrame() {
+    sRenderer->PostDraw();
+    sMainScreenBuffer->PostDraw();
+
+    sDxCommon->PreDraw();
+#ifdef _DEBUG
+    sMainScreenBuffer->DrawToImGui();
+    sImGuiManager->EndFrame();
+#else
+    sRenderer->PreDraw();
+    sMainScreenSprite->Draw();
+    sRenderer->PostDraw();
+#endif
+    sDxCommon->PostDraw();
 }
 
 void Engine::QuitGame() {

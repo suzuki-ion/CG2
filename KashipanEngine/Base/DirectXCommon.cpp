@@ -117,7 +117,7 @@ void DirectXCommon::PostDraw() {
 
 void DirectXCommon::ClearRenderTarget() {
     // これから書き込むバックバッファのindexを取得
-    UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+    //UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 
     //==================================================
     // 画面クリア処理

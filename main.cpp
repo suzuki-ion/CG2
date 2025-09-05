@@ -43,8 +43,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
     // レンダラーへのポインタ
     Renderer *renderer = myGameEngine->GetRenderer();
-    // ImGuiManagerクラスへのポインタ
-    ImGuiManager *imguiManager = myGameEngine->GetImGuiManager();
 
     // テクスチャを読み込む
     uint32_t textures[2];
@@ -263,9 +261,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (myGameEngine->BeginGameLoop() == false) {
             continue;
         }
-        screenBuffer.PreDraw();
-        renderer->PreDraw();
-        Input::Update();
 
         //==================================================
         // 更新処理
@@ -429,6 +424,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 #else
+        static_cast<void>(isXZGrid);
+        static_cast<void>(isXYGrid);
+        static_cast<void>(isYZGrid);
         static_cast<void>(isLoop);
         static_cast<void>(pitch);
         static_cast<void>(volume);
@@ -456,12 +454,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         renderer->SetLight(&directionalLight);
 
         // グリッド線の描画
-        if (isXZGrid) gridLineXZ.Draw();
-        if (isXYGrid) gridLineXY.Draw();
-        if (isYZGrid) gridLineYZ.Draw();
+        //if (isXZGrid) gridLineXZ.Draw();
+        //if (isXYGrid) gridLineXY.Draw();
+        //if (isYZGrid) gridLineYZ.Draw();
 
         // 線の描画
-        lines.Draw();
+        //lines.Draw();
 
         // 球体の描画
         sphere.Draw();
@@ -475,20 +473,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         sprite.Draw();
         // 文字の描画
         text.Draw();
-        // スクリーンバッファの描画
-        screenBuffer.DrawToImGui();
-
-        renderer->PostDraw();
-        screenBuffer.PostDraw();
-
-        dxCommon->PreDraw();
-#ifdef _DEBUG
-        imguiManager->EndFrame();
-#endif
-        dxCommon->PostDraw();
 
         myGameEngine->EndFrame();
-
         // ESCで終了
         if (Input::IsKeyTrigger(DIK_ESCAPE)) {
             break;

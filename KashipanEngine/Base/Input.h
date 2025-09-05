@@ -7,6 +7,7 @@ namespace KashipanEngine{
 
 // 前方宣言
 class WinApp;
+class ScreenBuffer;
 
 // 入力デバイスの種類
 enum class InputDeviceType {
@@ -40,6 +41,8 @@ enum class XBoxButtonCode {
 /// @brief 入力管理クラス
 class Input {
 public:
+    static void SetMainScreen(ScreenBuffer *screen);
+
     Input() = delete;
     Input(const Input &) = delete;
     Input(Input &&) = delete;

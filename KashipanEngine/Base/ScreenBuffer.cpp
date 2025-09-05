@@ -43,10 +43,6 @@ void ScreenBuffer::Initialize(WinApp *winApp, DirectXCommon *dxCommon, PipeLineM
     isInitialized = true;
 }
 
-ScreenBuffer *ScreenBuffer::GetScreenBuffer(const std::string &screenName) {
-    return nullptr;
-}
-
 ScreenBuffer::ScreenBuffer(const std::string screenName, uint32_t width, uint32_t height) {
     assert(isInitialized);
 
@@ -164,6 +160,14 @@ void ScreenBuffer::PostDraw() {
 void ScreenBuffer::DrawToImGui() {
 #ifdef _DEBUG
     ImGui::Begin(screenName_.c_str());
+    
+    // ウィンドウの位置情報を事前に取得
+    ImVec2 windowPos = ImGui::GetWindowPos();
+    ImVec2 windowSize = ImGui::GetWindowSize();
+    ImVec2 contentRegionMin = ImGui::GetWindowContentRegionMin();
+    ImVec2 contentRegionMax = ImGui::GetWindowContentRegionMax();
+    
+    // コンテンツ領域のサイズを計算
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
 
     //--------- 画像描画サイズ計算 ---------//
@@ -184,15 +188,32 @@ void ScreenBuffer::DrawToImGui() {
     offset.x = (availableSize.x - targetWidth) * 0.5f;
     offset.y = (availableSize.y - targetHeight) * 0.5f;
 
-    // 現在のカーソル位置を取得してオフセットを加算
-    ImVec2 currentPos = ImGui::GetCursorPos();
-    ImGui::SetCursorPos(ImVec2(currentPos.x + offset.x, currentPos.y + offset.y));
+    // 描画前のカーソル位置を保存
+    ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+    
+    // カーソル位置を中央揃えのために調整
+    ImGui::SetCursorPos(ImVec2(contentRegionMin.x + offset.x, contentRegionMin.y + offset.y));
     
     //--------- 描画 ---------//
 
     ImTextureID screenBufferTextureID = static_cast<ImTextureID>(srvGPUHandle_.ptr);
-    ImGui::Image(screenBufferTextureID,
-        ImVec2(targetWidth, targetHeight));
+    ImGui::Image(screenBufferTextureID, ImVec2(targetWidth, targetHeight));
+    
+    //--------- スケールと左上座標の更新 ---------//
+
+    // スケールの計算
+    currentScale_.x = targetWidth / static_cast<float>(screenWidth_);
+    currentScale_.y = targetHeight / static_cast<float>(screenHeight_);
+    
+    // ウィンドウ上での絶対座標を正確に計算
+    // GetCursorScreenPos()を使用してスクリーン座標で画像の実際の描画位置を取得
+    ImVec2 imageScreenPos = ImVec2(
+        windowPos.x + contentRegionMin.x + offset.x,
+        windowPos.y + contentRegionMin.y + offset.y
+    );
+    
+    currentLeftTopPos_.x = imageScreenPos.x;
+    currentLeftTopPos_.y = imageScreenPos.y;
     
     ImGui::End();
 #endif

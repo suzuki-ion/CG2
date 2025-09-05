@@ -102,10 +102,6 @@ Renderer::~Renderer() {
 }
 
 void Renderer::PreDraw() {
-#ifdef _DEBUG
-    imguiManager_->BeginFrame();
-#endif
-
     // 平行光源をリセット
     directionalLight_ = nullptr;
 
@@ -113,8 +109,10 @@ void Renderer::PreDraw() {
     projectionMatrix2D_ = MakeOrthographicMatrix(
         0.0f,
         0.0f,
-        static_cast<float>(winApp_->GetClientWidth()),
-        static_cast<float>(winApp_->GetClientHeight()),
+        //static_cast<float>(winApp_->GetClientWidth()),
+        //static_cast<float>(winApp_->GetClientHeight()),
+        1920.0f,
+        1080.0f,
         0.0f,
         100.0f
     );
@@ -129,7 +127,7 @@ void Renderer::PreDraw() {
 
 void Renderer::PostDraw() {
     // 描画オブジェクトをパイプライン名でソート
-    std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
+    //std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
     //std::sort(drawAlphaObjects_.begin(), drawAlphaObjects_.end(), ComparePipelineNameObject);
     //std::sort(draw2DObjects_.begin(), draw2DObjects_.end(), ComparePipelineNameObject);
     //std::sort(drawLines_.begin(), drawLines_.end(), ComparePipelineNameLine);
@@ -144,6 +142,7 @@ void Renderer::PostDraw() {
         DrawLine(&line);
     }
 
+    pipeLineManager_->ResetCurrentPipeLine();
     pipeLineManager_->SetCommandListPipeLine("Object3d.Solid.BlendNormal");
 
     // 平行光源の設定
