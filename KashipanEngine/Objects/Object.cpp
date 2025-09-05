@@ -76,7 +76,7 @@ void Object::DrawCommon() {
     objectState.useTextureIndex = useTextureIndex_;
     objectState.pipeLineName = pipeLineName_;
     objectState.isUseCamera = isUseCamera_;
-    bool isSemitransparent = (material_.color.w < 255.0f);
+    bool isSemitransparent = (material_.color.w < 1.0f);
     renderer_->DrawSet(objectState, isUseCamera_, isSemitransparent);
 }
 

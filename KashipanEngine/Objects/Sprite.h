@@ -15,7 +15,9 @@ public:
     [[nodiscard]] StatePtr GetStatePtr() override {
         return { mesh_.get(), &transform_, &uvTransform_, &material_, &useTextureIndex_, &normalType_, &pipeLineName_ };
     }
-    
+
+    void SetIsUseCamera(bool isUseCamera) override;
+
     /// @brief テクスチャ設定用関数
     /// @param filePath テクスチャのファイルパス
     void SetTexture(const std::string &filePath);

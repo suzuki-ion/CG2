@@ -51,6 +51,12 @@ public:
         pipeLineName_ = pipelineName;
     }
 
+    /// @brief カメラ使用設定
+    /// @param isUseCamera カメラを使用するならtrue、使用しないならfalse
+    virtual void SetIsUseCamera(bool isUseCamera) {
+        isUseCamera_ = isUseCamera;
+    }
+
     /// @brief オブジェクトの名前の取得
     /// @return オブジェクトの名前
     const std::string &GetName() {

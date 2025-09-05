@@ -14,6 +14,18 @@ Sprite::Sprite(const uint32_t textureIndex) {
     SetTexture(textureIndex);
 }
 
+void Sprite::SetIsUseCamera(bool isUseCamera) {
+    if (isUseCamera_ == isUseCamera) {
+        return;
+    }
+
+    // カメラに合わせて頂点を反転
+    for (int i = 0; i < 4; i++) {
+        mesh_->vertexBufferMap[i].position.y *= -1.0f;
+    }
+    isUseCamera_ = isUseCamera;
+}
+
 void Sprite::SetTexture(const std::string &filePath) {
     useTextureIndex_ = Texture::Load(filePath);
     LoadTexture(Texture::GetTexture(filePath));
@@ -64,22 +76,22 @@ void Sprite::Initialize() {
 void Sprite::AdjustVertexPosX(float newPivotX) {
     // 座標を一度原点に戻す
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.x -= width_ * pivot_.x;
+        mesh_->vertexBufferMap[i].position.x += width_ * pivot_.x;
     }
     // 新しいピボットで座標を調整
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.x += width_ * newPivotX;
+        mesh_->vertexBufferMap[i].position.x -= width_ * newPivotX;
     }
 }
 
 void Sprite::AdjustVertexPosY(float newPivotY) {
     // 座標を一度原点に戻す
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.y -= height_ * pivot_.y;
+        mesh_->vertexBufferMap[i].position.y += height_ * pivot_.y;
     }
     // 新しいピボットで座標を調整
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.y += height_ * newPivotY;
+        mesh_->vertexBufferMap[i].position.y -= height_ * newPivotY;
     }
 }
 

@@ -191,6 +191,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameProgram\GameScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />
@@ -209,6 +210,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
     <ClInclude Include="KashipanEngine\Base\SceneManager.h" />
+    <ClInclude Include="KashipanEngine\Common\CameraOrthographic.h" />
     <ClInclude Include="KashipanEngine\Common\CameraPerspective.h" />
     <ClInclude Include="KashipanEngine\Common\CameraViewport.h" />
     <ClInclude Include="KashipanEngine\Common\Descriptors\UAV.h" />

@@ -1,6 +1,7 @@
 #pragma once
 #include "Common/CameraPerspective.h"
 #include "Common/CameraViewport.h"
+#include "Common/CameraOrthographic.h"
 #include "AffineMatrix.h"
 #include "SphericalCoordinateSystem.h"
 
@@ -12,6 +13,10 @@ public:
         kDecart,
         kSpherical,
     };
+    enum class Dimension {
+        k2D,
+        k3D,
+    };
 
     Camera();
     Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept;
@@ -22,6 +27,10 @@ public:
     /// @brief カメラの座標系を設定する
     /// @param coordinateSystem 座標系
     void SetCoordinateSystem(CoordinateSystem coordinateSystem) noexcept;
+
+    /// @brief カメラの次元を設定する
+    /// @param dimension 次元
+    void SetDimension(Dimension dimension) noexcept;
 
     /// @brief カメラの行列を設定する
     /// @param cameraTranslate 平行移動
@@ -52,6 +61,10 @@ public:
     /// @brief カメラのビューポートを設定する
     /// @param cameraViewport カメラのビューポート
     void SetCameraViewport(const CameraViewport &cameraViewport) noexcept;
+
+    /// @brief カメラのオーソグラフィックを設定する
+    /// @param cameraOrthographic カメラのオーソグラフィック
+    void SetCameraOrthographic(const CameraOrthographic &cameraOrthographic) noexcept;
 
     /// @brief 球面座標系を設定する
     /// @param sphericalCoordinateSystem 球面座標系
@@ -146,6 +159,10 @@ public:
     }
 
 private:
+    /// @brief カメラの行列を計算する(2D)
+    void CalculateMatrix2D() noexcept;
+    /// @brief カメラの行列を計算する(3D)
+    void CalculateMatrix3D() noexcept;
     /// @brief カメラの行列を計算する(デカルト座標系)
     void CalculateMatrixForDecart() noexcept;
     /// @brief カメラの行列を計算する(球面座標系)
@@ -163,7 +180,8 @@ private:
     /// @param scaleSpeed 拡大縮小速度
     void MoveToMouseForSpherical(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept;
 
-    CoordinateSystem coordinateSystem_;
+    CoordinateSystem coordinateSystem_ = CoordinateSystem::kDecart;
+    Dimension dimension_ = Dimension::k3D;
     Vector3 *targetPos_;
     
     Vector3 cameraScale_;
@@ -172,6 +190,7 @@ private:
 
     CameraPerspective cameraPerspective_;
     CameraViewport cameraViewport_;
+    CameraOrthographic cameraOrthographic_;
 
     AffineMatrix cameraMatrix_;
     Matrix4x4 worldMatrix_;

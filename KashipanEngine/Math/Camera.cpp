@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "RenderingPipeline.h"
 #include "Vector2.h"
+#include "Matrix3x3.h"
 #include "Base/Input.h"
 #include "Common/Logs.h"
 
@@ -43,7 +44,6 @@ Vector3 CalcCameraUp(const Vector3 &rotation) {
 } // namespace
 
 Camera::Camera() {
-    coordinateSystem_ = CoordinateSystem::kDecart;
     cameraScale_ = { 1.0f, 1.0f, 1.0f };
     cameraRotate_ = { 0.0f, 0.0f, 0.0f };
     cameraTranslate_ = { 0.0f, 0.0f, 0.0f };
@@ -54,7 +54,6 @@ Camera::Camera() {
 }
 
 Camera::Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept {
-    coordinateSystem_ = CoordinateSystem::kDecart;
     cameraScale_ = cameraScale;
     cameraRotate_ = cameraRotate;
     cameraTranslate_ = cameraTranslate;
@@ -65,30 +64,11 @@ Camera::Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, cons
 }
 
 void Camera::CalculateMatrix() noexcept {
-    if (coordinateSystem_ == CoordinateSystem::kDecart) {
-        CalculateMatrixForDecart();
-    } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
-        CalculateMatrixForSpherical();
+    if (dimension_ == Dimension::k2D) {
+        CalculateMatrix2D();
+    } else if (dimension_ == Dimension::k3D) {
+        CalculateMatrix3D();
     }
-    cameraMatrix_.SetTranslate(cameraTranslate_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetScale(cameraScale_);
-    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
-    projectionMatrix_ = MakePerspectiveFovMatrix(
-        cameraPerspective_.fovY,
-        cameraPerspective_.aspectRatio,
-        cameraPerspective_.nearClip,
-        cameraPerspective_.farClip
-    );
-    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
-    viewportMatrix_ = MakeViewportMatrix(
-        cameraViewport_.left,
-        cameraViewport_.top,
-        cameraViewport_.width,
-        cameraViewport_.height,
-        cameraViewport_.minDepth,
-        cameraViewport_.maxDepth
-    );
 }
 
 void Camera::SetCoordinateSystem(CoordinateSystem cameraType) noexcept {
@@ -97,6 +77,10 @@ void Camera::SetCoordinateSystem(CoordinateSystem cameraType) noexcept {
     if (coordinateSystem_ == CoordinateSystem::kSpherical) {
         sphericalCoordinateSystem_.ToSpherical(cameraTranslate_);
     }
+}
+
+void Camera::SetDimension(Dimension dimension) noexcept {
+    dimension_ = dimension;
 }
 
 void Camera::SetCamera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, const Vector3 &cameraScale) noexcept {
@@ -135,6 +119,10 @@ void Camera::SetCameraViewport(const CameraViewport &cameraViewport) noexcept {
     cameraViewport_ = cameraViewport;
 }
 
+void Camera::SetCameraOrthographic(const CameraOrthographic &cameraOrthographic) noexcept {
+    cameraOrthographic_ = cameraOrthographic;
+}
+
 void Camera::SetSphericalCoordinateSystem(const SphericalCoordinateSystem &sphericalCoordinateSystem) noexcept {
     sphericalCoordinateSystem_ = sphericalCoordinateSystem;
 }
@@ -157,6 +145,62 @@ void Camera::Target(Vector3 *targetPos) noexcept {
         return;
     }
     targetPos_ = targetPos;
+}
+
+void Camera::CalculateMatrix2D() noexcept {
+    static Matrix4x4 translateMatrix;
+    static Matrix4x4 rotateMatrix;
+    static Matrix4x4 scaleMatrix;
+
+    translateMatrix.MakeTranslate(Vector3(cameraTranslate_.x, cameraTranslate_.y, 1.0f));
+    rotateMatrix.MakeRotateZ(cameraRotate_.z);
+    scaleMatrix.MakeScale(Vector3(cameraScale_.x, cameraScale_.y, 1.0f));
+    viewMatrix_ = translateMatrix.Inverse() * rotateMatrix.Inverse() * scaleMatrix.Inverse();
+
+    projectionMatrix_ = MakeOrthographicMatrix(
+        cameraOrthographic_.left,
+        cameraOrthographic_.top,
+        cameraOrthographic_.right,
+        cameraOrthographic_.bottom,
+        cameraOrthographic_.nearClip,
+        cameraOrthographic_.farClip
+    );
+    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
+    viewportMatrix_ = MakeViewportMatrix(
+        cameraViewport_.left,
+        cameraViewport_.top,
+        cameraViewport_.width,
+        cameraViewport_.height,
+        cameraViewport_.minDepth,
+        cameraViewport_.maxDepth
+    );
+}
+
+void Camera::CalculateMatrix3D() noexcept {
+    if (coordinateSystem_ == CoordinateSystem::kDecart) {
+        CalculateMatrixForDecart();
+    } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
+        CalculateMatrixForSpherical();
+    }
+    cameraMatrix_.SetTranslate(cameraTranslate_);
+    cameraMatrix_.SetRotate(cameraRotate_);
+    cameraMatrix_.SetScale(cameraScale_);
+    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
+    projectionMatrix_ = MakePerspectiveFovMatrix(
+        cameraPerspective_.fovY,
+        cameraPerspective_.aspectRatio,
+        cameraPerspective_.nearClip,
+        cameraPerspective_.farClip
+    );
+    wvpMatrix_ = worldMatrix_ * viewMatrix_ * projectionMatrix_;
+    viewportMatrix_ = MakeViewportMatrix(
+        cameraViewport_.left,
+        cameraViewport_.top,
+        cameraViewport_.width,
+        cameraViewport_.height,
+        cameraViewport_.minDepth,
+        cameraViewport_.maxDepth
+    );
 }
 
 void Camera::CalculateMatrixForDecart() noexcept {
