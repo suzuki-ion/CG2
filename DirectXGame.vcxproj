@@ -61,7 +61,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)GameProgram;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -91,7 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)GameProgram;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -113,6 +113,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameProgram\BaseAnimation.cpp" />
+    <ClCompile Include="GameProgram\GameScene.cpp" />
+    <ClCompile Include="GameProgram\GameScene\BaseEntity.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Bullets\BaseBullet.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Bullets\NormalBullet.cpp" />
+    <ClCompile Include="GameProgram\GameScene\CollisionManager.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Enemies\EnemyNormal.cpp" />
+    <ClCompile Include="GameProgram\GameScene\HUD\PlayerHealthIcons.cpp" />
+    <ClCompile Include="GameProgram\GameScene\HUD\WaveDisplay.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Particle\BaseParticle.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Particle\DeathParticle.cpp" />
+    <ClCompile Include="GameProgram\GameScene\Player.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeIn.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeOut.cpp" />
     <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
@@ -191,7 +205,27 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameProgram\BaseAnimation.h" />
     <ClInclude Include="GameProgram\GameScene.h" />
+    <ClInclude Include="GameProgram\GameScene\BaseEntity.h" />
+    <ClInclude Include="GameProgram\GameScene\Bullets\BaseBullet.h" />
+    <ClInclude Include="GameProgram\GameScene\Bullets\NormalBullet.h" />
+    <ClInclude Include="GameProgram\GameScene\Collider.h" />
+    <ClInclude Include="GameProgram\GameScene\CollisionConfig.h" />
+    <ClInclude Include="GameProgram\GameScene\CollisionManager.h" />
+    <ClInclude Include="GameProgram\GameScene\Enemies\EnemyNormal.h" />
+    <ClInclude Include="GameProgram\GameScene\Enemies\EnemyType.h" />
+    <ClInclude Include="GameProgram\GameScene\HUD\PlayerHealthIcons.h" />
+    <ClInclude Include="GameProgram\GameScene\HUD\WaveDisplay.h" />
+    <ClInclude Include="GameProgram\GameScene\Particle\BaseParticle.h" />
+    <ClInclude Include="GameProgram\GameScene\Particle\DeathParticle.h" />
+    <ClInclude Include="GameProgram\GameScene\Particle\ParticleBlock.h" />
+    <ClInclude Include="GameProgram\GameScene\Particle\ParticlePanel.h" />
+    <ClInclude Include="GameProgram\GameScene\Player.h" />
+    <ClInclude Include="GameProgram\GameScene\ResultParameters.h" />
+    <ClInclude Include="GameProgram\GameScene\StatusParameters.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeIn.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeOut.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />

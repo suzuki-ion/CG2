@@ -8,6 +8,8 @@ namespace KashipanEngine {
 struct TextureData {
     /// @brief テクスチャの名前
     std::string name;
+    /// @brief テクスチャのファイルパス
+    std::string filePath;
     /// @brief テクスチャが読み込まれたインデックス
     uint32_t index = 0;
     /// @brief テクスチャリソース

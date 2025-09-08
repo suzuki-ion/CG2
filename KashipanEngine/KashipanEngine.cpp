@@ -28,6 +28,7 @@
 #include "Base/ScreenBuffer.h"
 #include "Base/PipeLines/PipeLines.h"
 #include "Base/PipeLineManager.h"
+#include "Base/SceneManager.h"
 #include "2d/ImGuiManager.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Vector4.h"
@@ -157,6 +158,19 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // 乱数の初期化
     InitializeRandom();
 
+    // もし Resources/Textures.json があったら読み込む
+    if (std::filesystem::exists(projectDir / "Resources" / "Textures.json")) {
+        Texture::LoadFromJson((projectDir / "Resources" / "Textures.json").string());
+    } else {
+        Log("Not found Resources/Textures.json");
+    }
+    // もし Resources/Sounds.json があったら読み込む
+    if (std::filesystem::exists(projectDir / "Resources" / "Sounds.json")) {
+        Sound::LoadFromJson((projectDir / "Resources" / "Sounds.json").string());
+    } else {
+        Log("Not found Resources/Sounds.json");
+    }
+
     // フレーム時間の初期化
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
@@ -170,6 +184,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 Engine::~Engine() {
     LogInsertPartition("\n================= Engine Finalize ================\n");
     // 各クラスの終了処理
+    SceneManager::ClearScenes();
     sMainScreenBuffer.reset();
     sPipeLineManager.reset();
     sRenderer.reset();

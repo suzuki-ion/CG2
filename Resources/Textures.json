@@ -1,0 +1,79 @@
+﻿{
+	"Textures": {
+		//==================================================
+		// デスクトップ背景
+		//==================================================
+
+		"DesktopBackgroundTitle": "Resources/Textures/desktopBackgroundTitle.png",
+		"DesktopBackgroundGame": "Resources/Textures/desktopBackgroundGame.png",
+
+		//==================================================
+		// アイコン
+		//==================================================
+
+		"IconTest": "Resources/Textures/Icons/test.png",
+		"IconHealing": "Resources/Textures/Icons/healing.png",
+		"IconShotgun": "Resources/Textures/Icons/shotgun.png",
+		"IconPenetration": "Resources/Textures/penetration.png",
+		"IconRandom": "Resources/Textures/Icons/random.png",
+
+		//==================================================
+		// ウィンドウ
+		//==================================================
+
+		"WindowTest": "Resources/Textures/Windows/test.png",
+		"WindowHealing": "Resources/Textures/Windows/healing.png",
+		"WindowShotgun": "Resources/Textures/Windows/shotgun.png",
+		"WindowPenetration": "Resources/Textures/Windows/penetration.png",
+
+		//==================================================
+		// 弾
+		//==================================================
+
+		"BulletNormal": "Resources/Textures/Bullets/normal.png",
+		"BulletShotgun": "Resources/Textures/Bullets/shotgun.png",
+		"BulletPenetration": "Resources/Textures/Bullets/penetration.png",
+
+		//==================================================
+		// その他
+		//==================================================
+
+		"Reticle": "Resources/Textures/reticle.png",
+		"Turret": "Resources/Textures/Turret.png",
+		"Cursor": "Resources/Textures/cursor.png",
+
+		//==================================================
+		// プレイヤー
+		//==================================================
+
+		"PlayerNormal0": "Resources/Textures/Player/Normal/0.png",
+		"PlayerNormal1": "Resources/Textures/Player/Normal/1.png",
+		"PlayerNormal2": "Resources/Textures/Player/Normal/2.png",
+		"PlayerNormal3": "Resources/Textures/Player/Normal/3.png",
+		"PlayerNormal4": "Resources/Textures/Player/Normal/4.png",
+
+		"PlayerMoveFront0": "Resources/Textures/Player/MoveFront/0.png",
+		"PlayerMoveFront1": "Resources/Textures/Player/MoveFront/1.png",
+
+		"PlayerMoveBack0": "Resources/Textures/Player/MoveBack/0.png",
+		"PlayerMoveBack1": "Resources/Textures/Player/MoveBack/1.png",
+
+		//==================================================
+		// 敵
+		//==================================================
+
+		"EnemyNormal0": "Resources/Textures/Enemies/Normal/0.png",
+		"EnemyNormal1": "Resources/Textures/Enemies/Normal/1.png",
+		"EnemyNormal2": "Resources/Textures/Enemies/Normal/2.png",
+		"EnemyNormal3": "Resources/Textures/Enemies/Normal/3.png",
+		"EnemyNormal4": "Resources/Textures/Enemies/Normal/4.png",
+		"EnemyNormal5": "Resources/Textures/Enemies/Normal/5.png",
+		"EnemyNormal6": "Resources/Textures/Enemies/Normal/6.png",
+
+		//==================================================
+		// ボス
+		//==================================================
+
+		"BossNormal0": "Resources/Textures/Boss/Normal/0.png"
+	}
+}

@@ -172,12 +172,32 @@ uint32_t Texture::Load(const std::string &filePath, const std::string &textureNa
         return 0;
     }
 
-    // 読み込む前に同じ名前のテクスチャがあるか確認
-    if (sTextureMap.find(filePath) != sTextureMap.end()) {
-        Log(std::format("Texture already loaded: {}", filePath), kLogLevelFlagWarning);
-        return sTextureMap[filePath].value.index;
+    std::string actualTextureName;
+    if (textureName.empty()) {
+        actualTextureName = filePath;
+        Log(std::format("Texture name is not set. Use file path as texture name: '{}'", actualTextureName), kLogLevelFlagWarning);
+    } else {
+        actualTextureName = textureName;
     }
-    Log(std::format("Texture loading: {}", filePath), kLogLevelFlagInfo);
+    // 読み込む前に同じ名前のテクスチャがあるか確認
+    if (sTextureMap.find(actualTextureName) != sTextureMap.end()) {
+        Log(std::format("Texture name '{}' is already exists.", actualTextureName), kLogLevelFlagWarning);
+        return sTextureMap[actualTextureName].value.index;
+    }
+    Log(std::format("Texture loading. Path: {}, Name: '{}'", filePath, actualTextureName), kLogLevelFlagInfo);
+    // 既に同じファイルパスのテクスチャがあるか確認
+    for (const auto &textureData : sTextureMap) {
+        if (textureData.value.filePath != filePath) {
+            continue;
+        }
+        Log(std::format("Texture file '{}' is already loaded. Use the existing texture data.", filePath), kLogLevelFlagWarning);
+        // 同じファイルパスのテクスチャがあれば、そのテクスチャデータをコピーして登録
+        TextureData newTextureData = textureData.value;
+        newTextureData.name = actualTextureName;
+        newTextureData.index = static_cast<uint32_t>(sTextureMap.size());
+        sTextureMap[actualTextureName] = newTextureData;
+        return sTextureMap[actualTextureName].value.index;
+    }
 
     // テクスチャファイルを読み込んで扱えるようにする
     DirectX::ScratchImage mipImages = LoadTexture(filePath);
@@ -186,7 +206,8 @@ uint32_t Texture::Load(const std::string &filePath, const std::string &textureNa
 
     // テクスチャデータを作成
     TextureData texture = {
-        (!textureName.empty()) ? textureName : filePath,
+        actualTextureName,
+        filePath,
         static_cast<uint32_t>(sTextureMap.size()),
         nullptr,
         nullptr,
@@ -197,14 +218,14 @@ uint32_t Texture::Load(const std::string &filePath, const std::string &textureNa
         static_cast<uint32_t>(metadata.width),
         static_cast<uint32_t>(metadata.height)
     };
-    sTextureMap[filePath] = texture;
+    sTextureMap[actualTextureName] = texture;
 
     // テクスチャリソースを作成
     CreateTextureResource(metadata);
 
     // テクスチャリソースをアップロード
-    sTextureMap[filePath].value.intermediateResource = UploadTextureData(
-        sTextureMap[filePath].value.resource.Get(),
+    sTextureMap[actualTextureName].value.intermediateResource = UploadTextureData(
+        sTextureMap[actualTextureName].value.resource.Get(),
         mipImages
     );
 
@@ -220,31 +241,32 @@ uint32_t Texture::Load(const std::string &filePath, const std::string &textureNa
 
     // SRVの生成
     sDxCommon->GetDevice()->CreateShaderResourceView(
-        sTextureMap[filePath].value.resource.Get(),
+        sTextureMap[actualTextureName].value.resource.Get(),
         &srvDesc,
-        sTextureMap[filePath].value.srvHandleCPU
+        sTextureMap[actualTextureName].value.srvHandleCPU
     );
 
     // Barrierを元に戻す
     D3D12_RESOURCE_BARRIER barrier{};
     barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = sTextureMap[filePath].value.resource.Get();
+    barrier.Transition.pResource = sTextureMap[actualTextureName].value.resource.Get();
     barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
     barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
     sDxCommon->SetBarrier(barrier);
 
     // 読み込んだテクスチャとそのインデックスをログに出力
-    LogSimple(std::format("Complete Load Texture: {} ({}x{}) index: {}",
+    LogSimple(std::format("Complete Load Texture. Path: {}, Name: '{}', Size: {}x{}, Index: {}",
         filePath,
-        sTextureMap[filePath].value.width,
-        sTextureMap[filePath].value.height,
-        static_cast<uint32_t>(sTextureMap[filePath].value.index)
+        actualTextureName,
+        sTextureMap[actualTextureName].value.width,
+        sTextureMap[actualTextureName].value.height,
+        static_cast<uint32_t>(sTextureMap[actualTextureName].value.index)
     ), kLogLevelFlagInfo);
 
     // テクスチャのインデックスを返す
-    return sTextureMap[filePath].value.index;
+    return sTextureMap[actualTextureName].value.index;
 }
 
 void Texture::LoadFromJson(const std::string &jsonFilePath) {
@@ -278,13 +300,13 @@ void Texture::ChangeData(const TextureData &textureData, uint32_t index) {
     sTextureMap[index].value.index = index;
 }
 
-int32_t Texture::FindIndex(const std::string &filePath) {
+int32_t Texture::FindIndex(const std::string &textureName) {
     // ファイルパスが存在しない場合は0を返す
-    if (sTextureMap.find(filePath) == sTextureMap.end()) {
+    if (sTextureMap.find(textureName) == sTextureMap.end()) {
         return 0;
     }
     // テクスチャのインデックスを返す
-    return static_cast<int32_t>(sTextureMap[filePath].value.index);
+    return static_cast<int32_t>(sTextureMap[textureName].value.index);
 }
 
 const TextureData &Texture::GetTexture(uint32_t index) {
@@ -297,14 +319,14 @@ const TextureData &Texture::GetTexture(uint32_t index) {
     return sTextureMap[index];
 }
 
-const TextureData &Texture::GetTexture(const std::string &filePath) {
+const TextureData &Texture::GetTexture(const std::string &textureName) {
     // ファイルパスが存在しない場合はデフォルトのテクスチャを返す
-    if (sTextureMap.find(filePath) == sTextureMap.end()) {
-        Log(std::format("TextureData not found: {}", filePath), kLogLevelFlagWarning);
+    if (sTextureMap.find(textureName) == sTextureMap.end()) {
+        Log(std::format("TextureData not found: {}", textureName), kLogLevelFlagWarning);
         return sTextureMap[0];
     }
     // テクスチャデータを返す
-    return sTextureMap[filePath];
+    return sTextureMap[textureName];
 }
 
 } // namespace KashipanEngine

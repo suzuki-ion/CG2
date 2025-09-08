@@ -44,9 +44,9 @@ public:
     static void ChangeData(const TextureData &textureData, uint32_t index);
 
     /// @brief テクスチャのインデックスの取得
-    /// @param filePath テクスチャのファイルパス
+    /// @param textureName テクスチャの名前
     /// @return テクスチャのインデックス。 見つからなかった場合は0を返す
-    static int32_t FindIndex(const std::string &filePath);
+    static int32_t FindIndex(const std::string &textureName);
 
     /// @brief テクスチャデータの取得
     /// @param index テクスチャのインデックス
@@ -54,9 +54,9 @@ public:
     static [[nodiscard]] const TextureData &GetTexture(uint32_t index);
 
     /// @brief テクスチャデータの取得
-    /// @param filePath テクスチャのファイルパス
+    /// @param textureName テクスチャの名前
     /// @return テクスチャデータ
-    static [[nodiscard]] const TextureData &GetTexture(const std::string &filePath);
+    static [[nodiscard]] const TextureData &GetTexture(const std::string &textureName);
 };
 
 } // namespace KashipanEngine

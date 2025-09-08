@@ -1,0 +1,11 @@
+﻿{
+	"Sounds": {
+		"GameSceneBGM": "Resources/Sounds/bgm.mp3",
+		"DamageSE": "Resources/Sounds/damage.wav",
+		"HitSE": "Resources/Sounds/hit.wav",
+		"KillSE": "Resources/Sounds/kill.mp3",
+		"ShootSE": "Resources/Sounds/shoot.mp3",
+		"WindowMoveSE": "Resources/Sounds/windowMove.wav",
+		"WindowOpenSE": "Resources/Sounds/windowOpen.mp3"
+	}
+}
