@@ -1,9 +1,9 @@
-#include "DirectXCommon.h"
+#include "Base/DirectXCommon.h"
 #include "Common/JsoncLoader.h"
 #include "Common/DirectoryLoader.h"
 #include "Common/Logs.h"
-#include "PipeLines/EnumMaps.h"
-#include "PipeLines/DefineMaps.h"
+#include "Base/PipeLines/EnumMaps.h"
+#include "Base/PipeLines/DefineMaps.h"
 #include "PipeLineManager.h"
 
 namespace KashipanEngine {

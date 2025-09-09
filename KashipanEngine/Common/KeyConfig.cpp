@@ -1,5 +1,5 @@
-#include "JsoncLoader.h"
-#include "KeyConfig/DefineMaps.h"
+#include "Common/JsoncLoader.h"
+#include "Common/KeyConfig/DefineMaps.h"
 #include "KeyConfig.h"
 
 namespace KashipanEngine {

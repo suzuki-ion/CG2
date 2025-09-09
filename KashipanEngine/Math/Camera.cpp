@@ -1,8 +1,8 @@
 #define NOMINMAX
 
 #include "Camera.h"
-#include "RenderingPipeline.h"
-#include "Vector2.h"
+#include "Math/RenderingPipeline.h"
+#include "Math/Vector2.h"
 #include "Base/Input.h"
 #include "Common/Logs.h"
 

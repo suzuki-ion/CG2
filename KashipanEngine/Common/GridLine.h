@@ -1,11 +1,11 @@
 #pragma once
 #include <d3d12.h>
 #include <memory>
-#include "PipeLineSet.h"
-#include "VertexDataLine.h"
-#include "LineOption.h"
-#include "Mesh.h"
-#include "TransformationMatrix.h"
+#include "Common/PipeLineSet.h"
+#include "Common/VertexDataLine.h"
+#include "Common/LineOption.h"
+#include "Common/Mesh.h"
+#include "Common/TransformationMatrix.h"
 
 namespace KashipanEngine {
 

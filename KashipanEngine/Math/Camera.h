@@ -1,8 +1,8 @@
 #pragma once
 #include "Common/CameraPerspective.h"
 #include "Common/CameraViewport.h"
-#include "AffineMatrix.h"
-#include "SphericalCoordinateSystem.h"
+#include "Math/AffineMatrix.h"
+#include "Math/SphericalCoordinateSystem.h"
 
 namespace KashipanEngine {
 

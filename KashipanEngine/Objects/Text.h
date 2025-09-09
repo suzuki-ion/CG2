@@ -1,5 +1,5 @@
 #pragma once
-#include "Object.h"
+#include "Objects/Object.h"
 #include "Font/FontLoader.h"
 
 namespace KashipanEngine {

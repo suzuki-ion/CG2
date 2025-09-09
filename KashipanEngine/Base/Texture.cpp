@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "DirectXCommon.h"
+#include "Base/DirectXCommon.h"
 #include "2d/ImGuiManager.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Common/Logs.h"

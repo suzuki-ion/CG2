@@ -1,8 +1,8 @@
 #include <cassert>
 #include <imgui.h>
-#include "WinApp.h"
-#include "DirectXCommon.h"
-#include "Texture.h"
+#include "Base/WinApp.h"
+#include "Base/DirectXCommon.h"
+#include "Base/Texture.h"
 #include "3d/PrimitiveDrawer.h"
 #include "Common/Logs.h"
 #include "Common/Descriptors/RTV.h"

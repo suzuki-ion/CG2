@@ -2,10 +2,10 @@
 #include <algorithm>
 
 #include "Renderer.h"
-#include "WinApp.h"
-#include "DirectXCommon.h"
-#include "Texture.h"
-#include "PipeLineManager.h"
+#include "Base/WinApp.h"
+#include "Base/DirectXCommon.h"
+#include "Base/Texture.h"
+#include "Base/PipeLineManager.h"
 #include "2d/ImGuiManager.h"
 
 #include "Math/Camera.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "Object.h"
+#include "Objects/Object.h"
 #include "Math/AffineMatrix.h"
 
 namespace KashipanEngine {

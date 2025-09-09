@@ -1,5 +1,5 @@
 #include "ValueBar.h"
-#include "../Component/InputDetector.h"
+#include "2d/UI/Component/InputDetector.h"
 
 namespace KashipanEngine {
 

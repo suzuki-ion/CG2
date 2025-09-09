@@ -1,7 +1,7 @@
 #pragma once
 #include <json.hpp>
-#include "PipeLines/PipeLines.h"
-#include "PipeLines/ShaderReflection.h"
+#include "Base/PipeLines/PipeLines.h"
+#include "Base/PipeLines/ShaderReflection.h"
 #include "Common/PipeLineSet.h"
 
 namespace KashipanEngine {

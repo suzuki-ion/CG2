@@ -1,5 +1,5 @@
 #include "Matrix3x3.h"
-#include "Vector2.h"
+#include "Math/Vector2.h"
 
 namespace KashipanEngine {
 

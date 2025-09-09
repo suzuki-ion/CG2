@@ -1,8 +1,8 @@
 #include "Vector3.h"
-#include "Vector2.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
-#include "MathObjects/Lines.h"
+#include "Math/Vector2.h"
+#include "Math/Vector4.h"
+#include "Math/Matrix4x4.h"
+#include "Math/MathObjects/Lines.h"
 #include <cassert>
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <Common/TextureData.h>
-#include "Object.h"
+#include "Objects/Object.h"
 
 namespace KashipanEngine {
 

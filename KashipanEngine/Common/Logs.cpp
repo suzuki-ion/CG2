@@ -2,8 +2,8 @@
 #include <filesystem>
 #include <fstream>
 #include "Logs.h"
-#include "TimeGet.h"
-#include "ConvertString.h"
+#include "Common/TimeGet.h"
+#include "Common/ConvertString.h"
 
 namespace KashipanEngine {
 

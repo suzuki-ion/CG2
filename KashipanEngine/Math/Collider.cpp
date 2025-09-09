@@ -1,5 +1,5 @@
 #include "Collider.h"
-#include "Vector3.h"
+#include "Math/Vector3.h"
 #include "Math/MathObjects/Sphere.h"
 #include "Math/MathObjects/Lines.h"
 #include "Math/MathObjects/Plane.h"

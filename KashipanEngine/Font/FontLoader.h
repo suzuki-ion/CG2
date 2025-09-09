@@ -1,5 +1,5 @@
 #pragma once
-#include "FontStructs.h"
+#include "Font/FontStructs.h"
 
 namespace KashipanEngine {
 
