@@ -1,0 +1,20 @@
+﻿{
+	// パイプラインがあるフォルダのパス
+	"PipeLineFolder": "Resources/PipeLines",
+	// パイプラインの各要素のプリセットフォルダをここで指定
+	"PresetFolders": {
+		"RootSignature": "Resources/PipeLines/Preset/RootSignature",
+		"RootParameter": "Resources/PipeLines/Preset/RootParameter",
+		"DescriptorRange": "Resources/PipeLines/Preset/DescriptorRange",
+		"RootConstants": "Resources/PipeLines/Preset/RootConstants",
+		"RootDescriptor": "Resources/PipeLines/Preset/RootDescriptor",
+		"Sampler": "Resources/PipeLines/Preset/Sampler",
+		"InputLayout": "Resources/PipeLines/Preset/InputLayout",
+		"RasterizerState": "Resources/PipeLines/Preset/RasterizerState",
+		"BlendState": "Resources/PipeLines/Preset/BlendState",
+		"Shader": "Resources/PipeLines/Preset/Shader",
+		"DepthStencilState": "Resources/PipeLines/Preset/DepthStencilState",
+		"GraphicsPipelineState": "Resources/PipeLines/Preset/GraphicsPipelineState",
+		"ComputePipelineState": "Resources/PipeLines/Preset/ComputePipelineState"
+	}
+}

@@ -1,0 +1,27 @@
+﻿{
+	"PipeLineType": "Render",
+	"Name": "Object3d.Solid.BlendExclusion",
+	"Shader": {
+		"Vertex": {
+			"UsePreset": "Object3d.VS"
+		},
+		"Pixel": {
+			"UsePreset": "Object3d.PS"
+		}
+	},
+	"RootSignature": {
+		"UsePreset": "Object3d"
+	},
+	"RasterizerState": {
+		"UsePreset": "Solid"
+	},
+	"BlendState": {
+		"UsePreset": "Exclusion"
+	},
+	"DepthStencilState": {
+		"UsePreset": "DepthEnable"
+	},
+	"PipelineState": {
+		"UsePreset": "Default"
+	}
+}

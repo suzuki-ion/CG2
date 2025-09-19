@@ -1,0 +1,15 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// ラスタライザステートの設定
+	"FillMode": "D3D12_FILL_MODE_SOLID",
+	"CullMode": "D3D12_CULL_MODE_BACK",
+	"FrontCounterClockwise": false,
+	"DepthBias": 0,
+	"DepthBiasClamp": 0.0,
+	"SlopeScaledDepthBias": 0.0,
+	"DepthClipEnable": true,
+	"MultisampleEnable": false,
+	"AntialiasedLineEnable": false,
+	"ForcedSampleCount": 0
+}

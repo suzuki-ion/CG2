@@ -1,0 +1,72 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// ルートシグネチャの設定
+	"Flags": "D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT",
+	// ルートパラメータをここで設定することが可能
+	// 設定の詳細はRootParameterのexampleを参照
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL",
+				"Descriptor": {
+					"RegisterSpace": 0,
+					"RegisterIndex": 0
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_PIXEL",
+				"DescriptorTable": {
+					"Ranges": [
+						{
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_SRV",
+							"NumDescriptors": 1,
+							"BaseShaderRegister": 0,
+							"RegisterSpace": 0,
+							"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+						},
+						{
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_UAV",
+							"NumDescriptors": 2,
+							"BaseShaderRegister": 1,
+							"RegisterSpace": 0,
+							"OffsetInDescriptorsFromTableStart": 4294967295
+						}
+					]
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+				"Constants": {
+					"RegisterIndex": 1,
+					"RegisterSpace": 0,
+					"Num32BitValues": 4
+				}
+			}
+		]
+	},
+	// サンプラーの設定をここで行うことも可能
+	// 設定の詳細はSamplerのexampleを参照
+	"Sampler": {
+		"Samplers": [
+			{
+				"Filter": "D3D12_FILTER_MIN_MAG_MIP_LINEAR",
+				"AddressU": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"AddressV": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"AddressW": "D3D12_TEXTURE_ADDRESS_MODE_WRAP",
+				"MipLODBias": 0.0,
+				"MaxAnisotropy": 1,
+				"ComparisonFunc": "D3D12_COMPARISON_FUNC_NEVER",
+				"BorderColor": "D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK",
+				"MinLOD": 0.0,
+				"MaxLOD": "D3D12_FLOAT32_MAX",
+				"ShaderRegister": 0,
+				"RegisterSpace": 0,
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL"
+			}
+		]
+	}
+}
