@@ -1,6 +1,7 @@
 #include <cmath>
 #include <algorithm>
 
+#include "KashipanEngine.h"
 #include "Renderer.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
@@ -177,6 +178,18 @@ void Renderer::PostDraw() {
     DrawCommon(draw2DObjects_);
 
 #ifdef _DEBUG
+    // デバッグ用
+    ImGui::Begin("Debug Info");
+    // FPSの表示
+    ImGui::Text("FPS: %d", Engine::GetFPS());
+    // 描画オブジェクト数の表示
+    ImGui::Text("Draw Object Count:");
+    ImGui::Text("  Opaque: %d", static_cast<int>(drawObjects_.size()));
+    ImGui::Text("  Alpha: %d", static_cast<int>(drawAlphaObjects_.size()));
+    ImGui::Text("  2D: %d", static_cast<int>(draw2DObjects_.size()));
+    ImGui::Text("  Line: %d", static_cast<int>(drawLines_.size()));
+    ImGui::End();
+
     imguiManager_->EndFrame();
 #endif
     dxCommon_->PostDraw();
