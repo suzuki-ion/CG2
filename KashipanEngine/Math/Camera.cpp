@@ -1,7 +1,6 @@
 #define NOMINMAX
 
 #include "Camera.h"
-#include "RenderingPipeline.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
 #include "Base/Input.h"
@@ -47,9 +46,9 @@ Camera::Camera() {
     cameraScale_ = { 1.0f, 1.0f, 1.0f };
     cameraRotate_ = { 0.0f, 0.0f, 0.0f };
     cameraTranslate_ = { 0.0f, 0.0f, 0.0f };
-    cameraMatrix_.SetScale(cameraScale_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetTranslate(cameraTranslate_);
+    cameraSRTMatrix_.SetScale(cameraScale_);
+    cameraSRTMatrix_.SetRotate(cameraRotate_);
+    cameraSRTMatrix_.SetTranslate(cameraTranslate_);
     worldMatrix_.MakeAffine({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
 }
 
@@ -57,9 +56,9 @@ Camera::Camera(const Vector3 &cameraTranslate, const Vector3 &cameraRotate, cons
     cameraScale_ = cameraScale;
     cameraRotate_ = cameraRotate;
     cameraTranslate_ = cameraTranslate;
-    cameraMatrix_.SetScale(cameraScale);
-    cameraMatrix_.SetRotate(cameraRotate);
-    cameraMatrix_.SetTranslate(cameraTranslate);
+    cameraSRTMatrix_.SetScale(cameraScale);
+    cameraSRTMatrix_.SetRotate(cameraRotate);
+    cameraSRTMatrix_.SetTranslate(cameraTranslate);
     worldMatrix_.MakeAffine({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
 }
 
@@ -87,24 +86,24 @@ void Camera::SetCamera(const Vector3 &cameraTranslate, const Vector3 &cameraRota
     cameraTranslate_ = cameraTranslate;
     cameraRotate_ = cameraRotate;
     cameraScale_ = cameraScale;
-    cameraMatrix_.SetTranslate(cameraTranslate);
-    cameraMatrix_.SetRotate(cameraRotate);
-    cameraMatrix_.SetScale(cameraScale);
+    cameraSRTMatrix_.SetTranslate(cameraTranslate);
+    cameraSRTMatrix_.SetRotate(cameraRotate);
+    cameraSRTMatrix_.SetScale(cameraScale);
 }
 
 void Camera::SetTranslate(const Vector3 &cameraTranslate) noexcept {
     cameraTranslate_ = cameraTranslate;
-    cameraMatrix_.SetTranslate(cameraTranslate);
+    cameraSRTMatrix_.SetTranslate(cameraTranslate);
 }
 
 void Camera::SetRotate(const Vector3 &cameraRotate) noexcept {
     cameraRotate_ = cameraRotate;
-    cameraMatrix_.SetRotate(cameraRotate);
+    cameraSRTMatrix_.SetRotate(cameraRotate);
 }
 
 void Camera::SetScale(const Vector3 &cameraScale) noexcept {
     cameraScale_ = cameraScale;
-    cameraMatrix_.SetScale(cameraScale);
+    cameraSRTMatrix_.SetScale(cameraScale);
 }
 
 void Camera::SetWorldMatrix(const Matrix4x4 &worldMatrix) noexcept {
@@ -157,7 +156,7 @@ void Camera::CalculateMatrix2D() noexcept {
     scaleMatrix.MakeScale(Vector3(cameraScale_.x, cameraScale_.y, 1.0f));
     viewMatrix_ = translateMatrix.Inverse() * rotateMatrix.Inverse() * scaleMatrix.Inverse();
 
-    projectionMatrix_ = MakeOrthographicMatrix(
+    projectionMatrix_ = Matrix4x4::MakeOrthographicMatrix(
         cameraOrthographic_.left,
         cameraOrthographic_.top,
         cameraOrthographic_.right,
@@ -182,10 +181,10 @@ void Camera::CalculateMatrix3D() noexcept {
     } else if (coordinateSystem_ == CoordinateSystem::kSpherical) {
         CalculateMatrixForSpherical();
     }
-    cameraMatrix_.SetTranslate(cameraTranslate_);
-    cameraMatrix_.SetRotate(cameraRotate_);
-    cameraMatrix_.SetScale(cameraScale_);
-    viewMatrix_ = cameraMatrix_.InverseTranslate() * cameraMatrix_.InverseRotate() * cameraMatrix_.InverseScale();
+    cameraSRTMatrix_.SetTranslate(cameraTranslate_);
+    cameraSRTMatrix_.SetRotate(cameraRotate_);
+    cameraSRTMatrix_.SetScale(cameraScale_);
+    viewMatrix_ = cameraSRTMatrix_.InverseTranslate() * cameraSRTMatrix_.InverseRotate() * cameraSRTMatrix_.InverseScale();
     projectionMatrix_ = MakePerspectiveFovMatrix(
         cameraPerspective_.fovY,
         cameraPerspective_.aspectRatio,

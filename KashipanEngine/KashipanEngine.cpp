@@ -19,6 +19,7 @@
 #include "Common/Random.h"
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
+#include "Graphics/IGPUResource.h"
 #include "Base/Texture.h"
 #include "Base/CrashHandler.h"
 #include "Base/ResourceLeakChecker.h"
@@ -110,6 +111,9 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
     // DirectX初期化
     sDxCommon = std::make_unique<DirectXCommon>(enableDebugLayer, sWinApp.get());
+
+    // IGPUResource初期化（DirectXDeviceを使用）
+    IGPUResource::InitializeCommon(sDxCommon->GetDirectXDevice());
 
     // InputManager初期化
     Input::Initialize(sWinApp.get());

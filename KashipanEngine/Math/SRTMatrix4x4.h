@@ -4,16 +4,16 @@
 
 namespace KashipanEngine {
 
-class AffineMatrix4x4 {
+class SRTMatrix4x4 {
 public:
-    AffineMatrix4x4() noexcept = default;
-    AffineMatrix4x4(const Matrix4x4 &scale, const Matrix4x4 &rotate, const Matrix4x4 &translate) noexcept;
-    AffineMatrix4x4(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) noexcept;
-    AffineMatrix4x4(const AffineMatrix &affine) noexcept;
+    SRTMatrix4x4() noexcept = default;
+    SRTMatrix4x4(const Matrix4x4 &scale, const Matrix4x4 &rotate, const Matrix4x4 &translate) noexcept;
+    SRTMatrix4x4(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate) noexcept;
+    SRTMatrix4x4(const SRTMatrix4x4 &affine) noexcept;
 
-    AffineMatrix &operator=(const AffineMatrix &affine) noexcept;
-    AffineMatrix &operator*=(const AffineMatrix &affine) noexcept;
-    AffineMatrix &operator*=(const Matrix4x4 &mat) noexcept;
+    SRTMatrix4x4 &operator=(const SRTMatrix4x4 &affine) noexcept;
+    SRTMatrix4x4 &operator*=(const SRTMatrix4x4 &affine) noexcept;
+    SRTMatrix4x4 &operator*=(const Matrix4x4 &mat) noexcept;
 
     /// @brief 拡大縮小行列、回転行列、平行移動行列を設定する
     /// @param scale 拡大縮小ベクトル

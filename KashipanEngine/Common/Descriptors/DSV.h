@@ -2,12 +2,14 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <source_location>
+#include <cstdint>
 
 namespace KashipanEngine {
 
 // 前方宣言
 class WinApp;
 class DirectXCommon;
+class DirectXDevice;
 
 /*
 シングルトンでどこからでもアクセスできてしまうため、
@@ -22,12 +24,32 @@ public:
     DSV &operator=(const DSV &) = delete;
     DSV &operator=(const DSV &&) = delete;
 
-    /// @brief 初期化処理
+    /// @brief 初期化処理（DirectXCommon版）
     /// @param winApp WinAppインスタンスへのポインタ
     /// @param dxCommon DirectXCommonインスタンスへのポインタ
     static void Initialize(
         WinApp *winApp,
         DirectXCommon *dxCommon,
+        const std::source_location &location = std::source_location::current()
+    );
+
+    /// @brief 初期化処理（DirectXDevice版）
+    /// @param winApp WinAppインスタンスへのポインタ
+    /// @param dxDevice DirectXDeviceインスタンスへのポインタ
+    static void Initialize(
+        WinApp *winApp,
+        DirectXDevice *dxDevice,
+        const std::source_location &location = std::source_location::current()
+    );
+
+    /// @brief 初期化処理（サイズ指定版）
+    /// @param width 幅
+    /// @param height 高さ
+    /// @param dxDevice DirectXDeviceインスタンスへのポインタ
+    static void Initialize(
+        int32_t width,
+        int32_t height,
+        DirectXDevice *dxDevice,
         const std::source_location &location = std::source_location::current()
     );
 
@@ -90,6 +112,8 @@ private:
     static bool isInitialized_;
     /// @brief DirectXCommonインスタンス
     static DirectXCommon *dxCommon_;
+    /// @brief DirectXDeviceインスタンス
+    static DirectXDevice *dxDevice_;
 
     /// @brief ディスクリプタの数
     static const int numDescriptors_ = 8;

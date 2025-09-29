@@ -1,8 +1,8 @@
 #pragma once
-#include "Common/CameraPerspective.h"
-#include "Common/CameraViewport.h"
-#include "Common/CameraOrthographic.h"
-#include "Math/AffineMatrix.h"
+#include "Math/CameraStructs/CameraPerspective.h"
+#include "Math/CameraStructs/CameraViewport.h"
+#include "Math/CameraStructs/CameraOrthographic.h"
+#include "Math/SRTMatrix4x4.h"
 #include "Math/SphericalCoordinateSystem.h"
 
 namespace KashipanEngine {
@@ -128,10 +128,10 @@ public:
         return cameraViewport_;
     }
 
-    /// @brief カメラ行列を取得する
-    /// @return カメラ行列
-    [[nodiscard]] const AffineMatrix &GetCameraMatrix() const noexcept {
-        return cameraMatrix_;
+    /// @brief カメラのSRT行列を取得する
+    /// @return カメラのSRT行列
+    [[nodiscard]] const SRTMatrix4x4 &GetCameraMatrix() const noexcept {
+        return cameraSRTMatrix_;
     }
 
     /// @brief ビュー行列を取得する
@@ -192,7 +192,7 @@ private:
     CameraViewport cameraViewport_;
     CameraOrthographic cameraOrthographic_;
 
-    AffineMatrix cameraMatrix_;
+    SRTMatrix4x4 cameraSRTMatrix_;
     Matrix4x4 worldMatrix_;
     Matrix4x4 viewMatrix_;
     Matrix4x4 projectionMatrix_;

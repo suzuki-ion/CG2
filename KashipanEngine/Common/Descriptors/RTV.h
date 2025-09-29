@@ -7,6 +7,7 @@ namespace KashipanEngine {
 
 // 前方宣言
 class DirectXCommon;
+class DirectXDevice;
 
 /*
 シングルトンでどこからでもアクセスできてしまうため、
@@ -21,11 +22,17 @@ public:
     RTV &operator=(const RTV &) = delete;
     RTV &operator=(const RTV &&) = delete;
 
-    /// @brief 初期化処理
-    /// @param winApp WinAppインスタンスへのポインタ
+    /// @brief 初期化処理（DirectXCommon版）
     /// @param dxCommon DirectXCommonインスタンスへのポインタ
     static void Initialize(
         DirectXCommon *dxCommon,
+        const std::source_location &location = std::source_location::current()
+    );
+
+    /// @brief 初期化処理（DirectXDevice版）
+    /// @param dxDevice DirectXDeviceインスタンスへのポインタ
+    static void Initialize(
+        DirectXDevice *dxDevice,
         const std::source_location &location = std::source_location::current()
     );
 
@@ -88,6 +95,8 @@ private:
     static bool isInitialized_;
     /// @brief DirectXCommonインスタンス
     static DirectXCommon *dxCommon_;
+    /// @brief DirectXDeviceインスタンス
+    static DirectXDevice *dxDevice_;
 
     /// @brief ディスクリプタヒープの数
     static const uint32_t numDescriptors_ = 8;
