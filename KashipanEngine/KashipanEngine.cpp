@@ -149,6 +149,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     sMainScreenBuffer = std::make_unique<ScreenBuffer>("MainScreen", static_cast<uint32_t>(width), static_cast<uint32_t>(height));
     auto screenIndex = KashipanEngine::Texture::FindIndex("MainScreen");
     sMainScreenSprite = std::make_unique<Sprite>(static_cast<uint32_t>(screenIndex));
+    sMainScreenSprite->GetStatePtr().transform->translate = { width / 2.0f, height / 2.0f, 0.0f };
     Input::SetMainScreen(sMainScreenBuffer.get());
 
     // シーンの初期化
@@ -237,6 +238,7 @@ bool Engine::BeginGameLoop() {
 }
 
 void Engine::EndFrame() {
+    DirectionalLight *light = sRenderer->GetLight();
     sRenderer->PostDraw();
     sMainScreenBuffer->PostDraw();
 
@@ -246,6 +248,7 @@ void Engine::EndFrame() {
     sImGuiManager->EndFrame();
 #else
     sRenderer->PreDraw();
+    sRenderer->SetLight(light);
     sMainScreenSprite->Draw();
     sRenderer->PostDraw();
 #endif

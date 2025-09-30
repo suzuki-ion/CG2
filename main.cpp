@@ -454,12 +454,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         renderer->SetLight(&directionalLight);
 
         // グリッド線の描画
-        //if (isXZGrid) gridLineXZ.Draw();
-        //if (isXYGrid) gridLineXY.Draw();
-        //if (isYZGrid) gridLineYZ.Draw();
+        if (isXZGrid) gridLineXZ.Draw();
+        if (isXYGrid) gridLineXY.Draw();
+        if (isYZGrid) gridLineYZ.Draw();
 
         // 線の描画
-        //lines.Draw();
+        lines.Draw();
 
         // 球体の描画
         sphere.Draw();

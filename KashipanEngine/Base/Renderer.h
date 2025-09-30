@@ -113,6 +113,12 @@ public:
         directionalLight_ = light;
     }
 
+    /// @brief 設定されている平行光源へのポインタの取得
+    /// @return 平行光源へのポインタ
+    DirectionalLight *GetLight() const {
+        return directionalLight_;
+    }
+
     /// @brief 描画する線情報の設定
     /// @param lineState 描画する線情報へのポインタ
     void DrawSetLine(LineState &lineState);
