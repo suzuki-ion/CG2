@@ -238,7 +238,6 @@ bool Engine::BeginGameLoop() {
 }
 
 void Engine::EndFrame() {
-    DirectionalLight *light = sRenderer->GetLight();
     sRenderer->PostDraw();
     sMainScreenBuffer->PostDraw();
 
@@ -247,6 +246,7 @@ void Engine::EndFrame() {
     sMainScreenBuffer->DrawToImGui();
     sImGuiManager->EndFrame();
 #else
+    DirectionalLight *light = sRenderer->GetLight();
     sRenderer->PreDraw();
     sRenderer->SetLight(light);
     sMainScreenSprite->Draw();

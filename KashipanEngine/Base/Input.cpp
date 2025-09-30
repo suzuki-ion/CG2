@@ -436,8 +436,8 @@ void Input::Update() {
         // コントローラーが接続されていない場合は状態をクリア
         if (dw == ERROR_DEVICE_NOT_CONNECTED) {
             ZeroMemory(&sControllerState[i], sizeof(XINPUT_STATE));
-            continue;
             sControllerConnected[i] = false;
+            continue;
         }
 
         // スティックの値がデッドゾーン以下の場合は0に設定

@@ -11,9 +11,6 @@ const KeyConfig::ConfigData &KeyConfig::operator[](const std::string &actionName
         return it->second; // キーが見つかった場合はその値を返す
     }
     throw std::out_of_range("Action name not found in key config map.");
-    // コンパイラの警告避け
-    static ConfigData emptyConfig;
-    return emptyConfig;
 }
 
 void KeyConfig::LoadFromJson(const std::string &filePath) {
@@ -100,8 +97,6 @@ KeyConfig::ActionValue KeyConfig::GetInputValue(const std::string &actionName) {
     }
 
     throw std::out_of_range("Action name not found in key config map.");
-    // コンパイラの警告避け
-    return ActionValue{};
 }
 
 const KeyConfig::ConfigData &KeyConfig::GetKeyConfig(const std::string &actionName) const {
@@ -110,9 +105,6 @@ const KeyConfig::ConfigData &KeyConfig::GetKeyConfig(const std::string &actionNa
         return it->second;
     }
     throw std::out_of_range("Action name not found in key config map.");
-    // コンパイラの警告避け
-    static ConfigData emptyConfig;
-    return emptyConfig;
 }
 
 KeyConfig::KeyBinding KeyConfig::GetKeyboardKeyBinding(const Json &jsonData) const {
@@ -244,7 +236,6 @@ Input::DownStateOption KeyConfig::GetActionType(const std::string &actionTypeStr
     } else {
         throw std::invalid_argument("Unknown action type: " + actionTypeStr);
     }
-    return Input::DownStateOption::Down; // コンパイラの警告避け
 }
 
 Input::AxisOption KeyConfig::GetAxisType(const std::string &axisTypeStr) const {
