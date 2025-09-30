@@ -1,7 +1,9 @@
 #include <KashipanEngine.h>
 #include <memory>
 #include <fstream>
+#if DEBUG_BUILD || DEVELOP_BUILD
 #include <imgui.h>
+#endif
 
 #include "Base/WinApp.h"
 #include "Base/DirectXCommon.h"
@@ -282,7 +284,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             winApp->SetWindowMode(windowMode);
         }
 
-#ifdef _DEBUG
+#if !RELEASE_BUILD
         ImGuiManager::Begin("KashipanEngine");
         // FPSの表示
         ImGui::Text("FPS: %d", myGameEngine->GetFPS());

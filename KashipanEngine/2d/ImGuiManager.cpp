@@ -1,3 +1,5 @@
+#if DEBUG_BUILD || DEVELOP_BUILD
+
 #include "ImGuiManager.h"
 #include "Common/Logs.h"
 #include "Base/WinApp.h"
@@ -23,9 +25,6 @@ ImGuiManager::ImGuiManager(WinApp *winApp, DirectXCommon *dxCommon) {
     // 引数をメンバ変数に格納
     winApp_ = winApp;
     dxCommon_ = dxCommon;
-
-    // srvDescriptorHeapの初期化
-    SRV::Initialize(dxCommon_);
 
     // ImGuiの初期化
     IMGUI_CHECKVERSION();
@@ -131,3 +130,5 @@ void ImGuiManager::Reinitialize() {
 }
 
 } // namespace KashipanEngine
+
+#endif

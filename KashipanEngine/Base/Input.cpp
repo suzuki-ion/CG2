@@ -686,7 +686,7 @@ int Input::GetMousePos(CurrentOption currentOption, AxisOption axisOption, Value
 }
 
 int Input::GetMouseX() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -698,7 +698,7 @@ int Input::GetMouseX() {
 }
 
 int Input::GetMouseY() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -710,7 +710,7 @@ int Input::GetMouseY() {
 }
 
 int Input::GetMouseDeltaX() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率を考慮してマウス座標の差分を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -721,7 +721,7 @@ int Input::GetMouseDeltaX() {
 }
 
 int Input::GetMouseDeltaY() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率を考慮してマウス座標の差分を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -732,7 +732,7 @@ int Input::GetMouseDeltaY() {
 }
 
 int Input::GetPreMouseX() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -744,7 +744,7 @@ int Input::GetPreMouseX() {
 }
 
 int Input::GetPreMouseY() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率と左上座標を考慮してマウス座標を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -756,7 +756,7 @@ int Input::GetPreMouseY() {
 }
 
 int Input::GetPreMouseDeltaX() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率を考慮してマウス座標の差分を補正
         Vector2 scale = sMainScreen->GetCurrentScale();
@@ -767,7 +767,7 @@ int Input::GetPreMouseDeltaX() {
 }
 
 int Input::GetPreMouseDeltaY() {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     if (sMainScreen) {
         // スクリーンの拡大率を考慮してマウス座標の差分を補正
         Vector2 scale = sMainScreen->GetCurrentScale();

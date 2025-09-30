@@ -64,7 +64,7 @@ public:
     /// @param outWindowPos ImGuiウィンドウの位置
     /// @param outContentMin コンテンツ領域の最小座標
     void GetDebugInfo(Vector2& outImageSize, Vector2& outWindowPos, Vector2& outContentMin) const {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
         outImageSize.x = static_cast<float>(screenWidth_) * currentScale_.x;
         outImageSize.y = static_cast<float>(screenHeight_) * currentScale_.y;
         outWindowPos = currentLeftTopPos_;
@@ -83,7 +83,7 @@ public:
     /// @param outBufferY バッファ上のY座標（出力）
     /// @return 変換が成功したかどうか
     bool ScreenToBuffer(int screenX, int screenY, int& outBufferX, int& outBufferY) const {
-#ifdef _DEBUG
+#if !RELEASE_BUILD
         // スクリーン座標がバッファの描画領域内にあるかチェック
         float relativeX = screenX - currentLeftTopPos_.x;
         float relativeY = screenY - currentLeftTopPos_.y;

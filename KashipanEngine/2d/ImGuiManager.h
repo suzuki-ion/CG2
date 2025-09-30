@@ -1,4 +1,6 @@
 #pragma once
+#if DEBUG_BUILD || DEVELOP_BUILD
+
 #include <d3d12.h>
 #include <imgui.h>
 #include <wrl.h>
@@ -37,3 +39,5 @@ private:
 };
 
 } // namespace KashipanEngine
+
+#endif

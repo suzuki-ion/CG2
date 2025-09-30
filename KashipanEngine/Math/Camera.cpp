@@ -6,7 +6,9 @@
 #include "Base/Input.h"
 #include "Common/Logs.h"
 
+#if DEBUG_BUILD || DEVELOP_BUILD
 #include <imgui.h>
+#endif
 #include <cmath>
 #include <algorithm>
 #include <numbers>
@@ -140,10 +142,12 @@ void Camera::SetSphericalCoordinateSystem(const SphericalCoordinateSystem &spher
 }
 
 void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
+#if DEBUG_BUILD || DEVELOP_BUILD
     // ImGuiウィンドウを触ってるときは操作しない
     if (ImGui::IsAnyItemActive()) {
         return;
     }
+#endif
 
     if (coordinateSystem_ == CoordinateSystem::kDecart) {
         MoveToMouseForDecart(translateSpeed, rotateSpeed, scaleSpeed);

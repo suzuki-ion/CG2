@@ -55,10 +55,12 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Log("dxCommon is null.", kLogLevelFlagError);
         assert(false);
     }
+#if DEBUG_BUILD || DEVELOP_BUILD
     if (!imguiManager) {
         Log("imguiManager is null.", kLogLevelFlagError);
         assert(false);
     }
+#endif
     // 各クラスへのポインタを設定
     winApp_ = winApp;
     dxCommon_ = dxCommon;

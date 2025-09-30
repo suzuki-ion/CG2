@@ -8,7 +8,7 @@
 namespace KashipanEngine {
 
 // ログはデバッグ時のみ出力する
-#ifdef _DEBUG
+#if !RELEASE_BUILD
 namespace {
 
 // ログ出力用のストリーム
@@ -126,7 +126,7 @@ void InitializeLog(const std::string &filePath, const std::string &projectDir,
     }
 
     // ビルドがDebugかReleaseかを出力
-#ifdef _DEBUG
+#if !RELEASE_BUILD
     sLogStream << "Build Type: [DEBUG]" << std::endl;
 #else
     sLogStream << "Build Type: [RELEASE]" << std::endl;

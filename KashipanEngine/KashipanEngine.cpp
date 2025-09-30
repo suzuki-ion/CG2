@@ -28,7 +28,9 @@
 #include "Base/ScreenBuffer.h"
 #include "Base/PipeLines/PipeLines.h"
 #include "Base/PipeLineManager.h"
+#if DEBUG_BUILD || DEVELOP_BUILD
 #include "2d/ImGuiManager.h"
+#endif
 #include "3d/PrimitiveDrawer.h"
 #include "Math/Vector4.h"
 #include "Math/Matrix4x4.h"
@@ -57,7 +59,9 @@ D3DResourceLeakChecker leakCheck_;
 // 各エンジン用クラスのグローバル変数
 std::unique_ptr<WinApp> sWinApp;
 std::unique_ptr<DirectXCommon> sDxCommon;
+#if DEBUG_BUILD || DEVELOP_BUILD
 std::unique_ptr<ImGuiManager> sImGuiManager;
+#endif
 std::unique_ptr<Renderer> sRenderer;
 std::unique_ptr<PipeLineManager> sPipeLineManager;
 
@@ -123,8 +127,13 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // 音声初期化
     Sound::Initialize();
 
+    // srvDescriptorHeapの初期化
+    SRV::Initialize(sDxCommon.get());
+
+#if DEBUG_BUILD || DEVELOP_BUILD
     // ImGui初期化
     sImGuiManager = std::make_unique<ImGuiManager>(sWinApp.get(), sDxCommon.get());
+#endif
 
     // テクスチャ管理クラス初期化
     Texture::Initialize(sDxCommon.get());
@@ -136,7 +145,11 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     sPipeLineManager = std::make_unique<PipeLineManager>(sDxCommon.get());
 
     // 描画用クラス初期化
+#if DEBUG_BUILD || DEVELOP_BUILD
     sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), sImGuiManager.get(), sPipeLineManager.get());
+#else
+    sRenderer = std::make_unique<Renderer>(sWinApp.get(), sDxCommon.get(), nullptr, sPipeLineManager.get());
+#endif
 
     // オブジェクト初期化
     Object::Initialize(this);
@@ -176,7 +189,9 @@ Engine::~Engine() {
     sRenderer.reset();
     Sound::Finalize();
     Texture::Finalize();
+#if DEBUG_BUILD || DEVELOP_BUILD
     sImGuiManager.reset();
+#endif
     sDxCommon.reset();
     sWinApp.reset();
     // DescriptorHeapの解放
@@ -227,7 +242,7 @@ bool Engine::BeginGameLoop() {
         sCountFps = static_cast<unsigned int>(1.0f / sDeltaTime);
         
         sMainScreenBuffer->PreDraw();
-#ifdef _DEBUG
+#if !RELEASE_BUILD
         sImGuiManager->BeginFrame();
 #endif
         sRenderer->PreDraw();
@@ -242,15 +257,15 @@ void Engine::EndFrame() {
     sMainScreenBuffer->PostDraw();
 
     sDxCommon->PreDraw();
-#ifdef _DEBUG
-    sMainScreenBuffer->DrawToImGui();
-    sImGuiManager->EndFrame();
-#else
+#if RELEASE_BUILD
     DirectionalLight *light = sRenderer->GetLight();
     sRenderer->PreDraw();
     sRenderer->SetLight(light);
     sMainScreenSprite->Draw();
     sRenderer->PostDraw();
+#else
+    sMainScreenBuffer->DrawToImGui();
+    sImGuiManager->EndFrame();
 #endif
     sDxCommon->PostDraw();
 }
@@ -292,7 +307,11 @@ KashipanEngine::Renderer *Engine::GetRenderer() const {
 }
 
 KashipanEngine::ImGuiManager *Engine::GetImGuiManager() const {
+#if DEBUG_BUILD || DEVELOP_BUILD
     return sImGuiManager.get();
+#else
+    return nullptr;
+#endif
 }
 
 int Engine::ProccessMessage() {

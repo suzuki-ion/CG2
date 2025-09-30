@@ -38,7 +38,7 @@ DirectXCommon::DirectXCommon(bool enableDebugLayer, WinApp *winApp) {
         }
     }
 #else
-    // リリースビルドの場合は何もしない
+    // デバッグビルドでない場合は何もしない
     static_cast<void>(enableDebugLayer);
 #endif
 
