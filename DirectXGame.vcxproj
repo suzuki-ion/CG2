@@ -168,6 +168,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameProgram\BaseAnimation.cpp" />
+    <ClCompile Include="GameProgram\GameScene\UI\PauseMenu.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\CloseRectToCenterY.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeIn.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeOut.cpp" />
+    <ClCompile Include="GameProgram\SceneChangeAnimation\OpenRectToCenterY.cpp" />
+    <ClCompile Include="GameProgram\Scene\GameScene.cpp" />
     <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
@@ -249,9 +256,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameProgram\BaseAnimation.h" />
+    <ClInclude Include="GameProgram\GameScene\UI\PauseMenu.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\CloseRectToCenterY.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeIn.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeOut.h" />
+    <ClInclude Include="GameProgram\SceneChangeAnimation\OpenRectToCenterY.h" />
     <ClInclude Include="GameProgram\Scene\GameScene.h" />
-    <ClInclude Include="GameProgram\Scene\ResultScene.h" />
-    <ClInclude Include="GameProgram\Scene\TitleScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />

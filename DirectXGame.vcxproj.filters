@@ -243,6 +243,27 @@
     <ClCompile Include="KashipanEngine\Objects\Cube.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="GameProgram\BaseAnimation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\Scene\GameScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\SceneChangeAnimation\CloseRectToCenterY.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeIn.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\SceneChangeAnimation\FadeOut.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\SceneChangeAnimation\OpenRectToCenterY.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProgram\GameScene\UI\PauseMenu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KashipanEngine\Common\ConvertString.h">
@@ -596,10 +617,22 @@
     <ClInclude Include="GameProgram\Scene\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameProgram\Scene\TitleScene.h">
+    <ClInclude Include="GameProgram\BaseAnimation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameProgram\Scene\ResultScene.h">
+    <ClInclude Include="GameProgram\SceneChangeAnimation\CloseRectToCenterY.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeIn.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProgram\SceneChangeAnimation\FadeOut.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProgram\SceneChangeAnimation\OpenRectToCenterY.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProgram\GameScene\UI\PauseMenu.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
