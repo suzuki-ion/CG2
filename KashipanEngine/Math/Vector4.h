@@ -58,4 +58,7 @@ inline constexpr const Vector4 operator/(const Vector4 &vector1, const Vector4 &
     return Vector4(vector1.x / vector2.x, vector1.y / vector2.y, vector1.z / vector2.z, vector1.w / vector2.w);
 }
 
+using float4 = Vector4;
+using float32_t4 = Vector4;
+
 } // namespace KashipanEngine
