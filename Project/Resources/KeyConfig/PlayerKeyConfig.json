@@ -1,5 +1,5 @@
 ﻿{
-	"MoveHorizontal": {
+	"MoveX": {
 		"InputType": "Analog",
 		"Bindings": [
 			{
@@ -22,7 +22,7 @@
 			}
 		]
 	},
-	"MoveVertical": {
+	"MoveZ": {
 		"InputType": "Analog",
 		"Bindings": [
 			{
@@ -45,73 +45,32 @@
 			}
 		]
 	},
-	"BulletFire": {
-		"InputType": "Digital",
+	"MoveY": {
+		"InputType": "Analog",
 		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "LeftShift",
+				"Event": "Down",
+				"Scale": -1.0
+			},
 			{
 				"Device": "Keyboard",
 				"Input": "Space",
-				"Event": "Down"
-			},
-			{
-				"Device": "Keyboard",
-				"Input": "Enter",
-				"Event": "Down"
+				"Event": "Down",
+				"Scale": 1.0
 			},
 			{
 				"Device": "Controller",
-				"Input": "ButtonA",
-				"Event": "Down"
-			}
-		]
-	},
-	"BulletChangePrev": {
-		"InputType": "Digital",
-		"Bindings": [
-			{
-				"Device": "Keyboard",
-				"Input": "Q",
-				"Event": "Trigger"
-			},
-{
-				"Device": "Keyboard",
-				"Input": "LeftArrow",
-				"Event": "Trigger"
+				"Input": "B",
+				"Event": "Down",
+				"Scale": 1.0
 			},
 			{
 				"Device": "Controller",
-				"Input": "Left",
-				"Event": "Trigger"
-			},
-			{
-				"Device": "Controller",
-				"Input": "LeftShoulder",
-				"Event": "Trigger"
-			}
-		]
-	},
-	"BulletChangeNext": {
-		"InputType": "Digital",
-		"Bindings": [
-			{
-				"Device": "Keyboard",
-				"Input": "E",
-				"Event": "Trigger"
-			},
-			{
-				"Device": "Keyboard",
-				"Input": "RightArrow",
-				"Event": "Trigger"
-			},
-			{
-				"Device": "Controller",
-				"Input": "Right",
-				"Event": "Trigger"
-			},
-			{
-				"Device": "Controller",
-				"Input": "RightShoulder",
-				"Event": "Trigger"
+				"Input": "A",
+				"Event": "Down",
+				"Scale": -1.0
 			}
 		]
 	}

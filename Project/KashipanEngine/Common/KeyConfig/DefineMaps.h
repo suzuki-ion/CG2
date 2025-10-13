@@ -219,12 +219,32 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { "O", DIK_O },
     { "P", DIK_P },
     { "LBracket", DIK_LBRACKET },
+    { "LeftBracket", DIK_LBRACKET },
+    { "BracketLeft", DIK_LBRACKET },
+    { "BracketL", DIK_LBRACKET },
     { "[", DIK_LBRACKET },
     { "RBracket", DIK_RBRACKET },
+    { "RightBracket", DIK_RBRACKET },
+    { "BracketRight", DIK_RBRACKET },
+    { "BracketR", DIK_RBRACKET },
     { "]", DIK_RBRACKET },
     { "Return", DIK_RETURN },
     { "Enter", DIK_RETURN },
+    
+    // Left Control variations
     { "LControl", DIK_LCONTROL },
+    { "LCtrl", DIK_LCONTROL },
+    { "LeftControl", DIK_LCONTROL },
+    { "ControlL", DIK_LCONTROL },
+    { "CtrlL", DIK_LCONTROL },
+    { "Control", DIK_LCONTROL },
+    { "Ctrl", DIK_LCONTROL },
+    { "ControlLeft", DIK_LCONTROL },
+    { "CtrlLeft", DIK_LCONTROL },
+    { "LCtrlKey", DIK_LCONTROL },
+    { "LeftCtrl", DIK_LCONTROL },
+    { "LeftControlKey", DIK_LCONTROL },
+    
     { "A", DIK_A },
     { "S", DIK_S },
     { "D", DIK_D },
@@ -240,7 +260,16 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { "'", DIK_APOSTROPHE },
     { "Grave", DIK_GRAVE },
     { "`", DIK_GRAVE },
+    
+    // Left Shift variations
     { "LShift", DIK_LSHIFT },
+    { "LeftShift", DIK_LSHIFT },
+    { "Shift", DIK_LSHIFT },
+    { "ShiftL", DIK_LSHIFT },
+    { "ShiftLeft", DIK_LSHIFT },
+    { "LShiftKey", DIK_LSHIFT },
+    { "LeftShiftKey", DIK_LSHIFT },
+    
     { "Backslash", DIK_BACKSLASH },
     { "\\", DIK_BACKSLASH },
     { "Z", DIK_Z },
@@ -256,11 +285,34 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { ".", DIK_PERIOD },
     { "Slash", DIK_SLASH },
     { "/", DIK_SLASH },
+    
+    // Right Shift variations
     { "RShift", DIK_RSHIFT },
+    { "RightShift", DIK_RSHIFT },
+    { "ShiftR", DIK_RSHIFT },
+    { "ShiftRight", DIK_RSHIFT },
+    { "RShiftKey", DIK_RSHIFT },
+    { "RightShiftKey", DIK_RSHIFT },
+    
     { "Multiply", DIK_MULTIPLY },
     { "*", DIK_MULTIPLY },
+    
+    // Left Menu/Alt variations
     { "LMenu", DIK_LMENU },
+    { "LeftMenu", DIK_LMENU },
     { "LAlt", DIK_LMENU },
+    { "LeftAlt", DIK_LMENU },
+    { "Alt", DIK_LMENU },
+    { "MenuL", DIK_LMENU },
+    { "MenuLeft", DIK_LMENU },
+    { "AltL", DIK_LMENU },
+    { "AltLeft", DIK_LMENU },
+    { "LAltKey", DIK_LMENU },
+    { "LeftAltKey", DIK_LMENU },
+    { "LeftOption", DIK_LMENU },
+    { "OptionL", DIK_LMENU },
+    { "OptionLeft", DIK_LMENU },
+    
     { "Space", DIK_SPACE },
     { "Capital", DIK_CAPITAL },
     { "F1", DIK_F1 },
@@ -316,7 +368,19 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { "Unlabeled", DIK_UNLABELED },
     { "Nexttrack", DIK_NEXTTRACK },
     { "NumpadEnter", DIK_NUMPADENTER },
+    
+    // Right Control variations
     { "RControl", DIK_RCONTROL },
+    { "RightControl", DIK_RCONTROL },
+    { "RCtrl", DIK_RCONTROL },
+    { "ControlR", DIK_RCONTROL },
+    { "CtrlR", DIK_RCONTROL },
+    { "ControlRight", DIK_RCONTROL },
+    { "CtrlRight", DIK_RCONTROL },
+    { "RCtrlKey", DIK_RCONTROL },
+    { "RightCtrl", DIK_RCONTROL },
+    { "RightControlKey", DIK_RCONTROL },
+    
     { "Mute", DIK_MUTE },
     { "Calculator", DIK_CALCULATOR },
     { "PlayPause", DIK_PLAYPAUSE },
@@ -327,21 +391,92 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { "NumpadComma", DIK_NUMPADCOMMA },
     { "Divide", DIK_DIVIDE },
     { "Sysrq", DIK_SYSRQ },
+    
+    // Right Menu/Alt variations
     { "RMenu", DIK_RMENU },
     { "RAlt", DIK_RMENU },
+    { "RightMenu", DIK_RMENU },
+    { "RightAlt", DIK_RMENU },
+    { "MenuR", DIK_RMENU },
+    { "MenuRight", DIK_RMENU },
+    { "AltR", DIK_RMENU },
+    { "AltRight", DIK_RMENU },
+    { "RAltKey", DIK_RMENU },
+    { "RightAltKey", DIK_RMENU },
+    { "AltGr", DIK_RMENU },
+    { "RightOption", DIK_RMENU },
+    { "OptionR", DIK_RMENU },
+    { "OptionRight", DIK_RMENU },
+    
     { "Pause", DIK_PAUSE },
     { "Home", DIK_HOME },
+    
+    // Up Arrow variations
     { "Up", DIK_UP },
+    { "UpArrow", DIK_UP },
+    { "ArrowUp", DIK_UP },
+    { "ArrowU", DIK_UP },
+    
     { "Prior", DIK_PRIOR },
+    
+    // Left Arrow variations  
     { "Left", DIK_LEFT },
+    { "LeftArrow", DIK_LEFT },
+    { "ArrowLeft", DIK_LEFT },
+    { "ArrowL", DIK_LEFT },
+    
+    // Right Arrow variations
     { "Right", DIK_RIGHT },
+    { "RightArrow", DIK_RIGHT },
+    { "ArrowRight", DIK_RIGHT },
+    { "ArrowR", DIK_RIGHT },
+    
     { "End", DIK_END },
+    
+    // Down Arrow variations
     { "Down", DIK_DOWN },
+    { "DownArrow", DIK_DOWN },
+    { "ArrowDown", DIK_DOWN },
+    { "ArrowD", DIK_DOWN },
+    
     { "Next", DIK_NEXT },
     { "Insert", DIK_INSERT },
     { "Delete", DIK_DELETE },
+    
+    // Left Windows variations
     { "LWin", DIK_LWIN },
+    { "LeftWin", DIK_LWIN },
+    { "LeftWindows", DIK_LWIN },
+    { "WinL", DIK_LWIN },
+    { "WinLeft", DIK_LWIN },
+    { "WindowsL", DIK_LWIN },
+    { "WindowsLeft", DIK_LWIN },
+    { "LeftMeta", DIK_LWIN },
+    { "MetaL", DIK_LWIN },
+    { "MetaLeft", DIK_LWIN },
+    { "LeftSuper", DIK_LWIN },
+    { "SuperL", DIK_LWIN },
+    { "SuperLeft", DIK_LWIN },
+    { "LWinKey", DIK_LWIN },
+    { "LeftWinKey", DIK_LWIN },
+    
+    // Right Windows variations
     { "RWin", DIK_RWIN },
+    { "RightWin", DIK_RWIN },
+    { "RightWindows", DIK_RWIN },
+    { "WinR", DIK_RWIN },
+    { "WinRight", DIK_RWIN },
+    { "WindowsR", DIK_RWIN },
+    { "WindowsRight", DIK_RWIN },
+    { "RightMeta", DIK_RWIN },
+    { "MetaR", DIK_RWIN },
+    { "MetaRight", DIK_RWIN },
+    { "RightSuper", DIK_RWIN },
+    { "SuperR", DIK_RWIN },
+    { "SuperRight", DIK_RWIN },
+    { "RWinKey", DIK_RWIN },
+    { "RightWinKey", DIK_RWIN },
+    
     { "Apps", DIK_APPS },
     { "Power", DIK_POWER },
     { "Sleep", DIK_SLEEP },
@@ -357,19 +492,31 @@ const std::unordered_map<std::string, int> kKeyboardKeyMap = {
     { "MediaSelect", DIK_MEDIASELECT },
     { "BackSpace", DIK_BACKSPACE },
     { "NumpadStar", DIK_NUMPADSTAR },
+    
+    // Left Alt (alternative to LMenu) variations
     { "Lalt", DIK_LALT },
+    { "LeftAlt", DIK_LALT },
+    { "AltL", DIK_LALT },
+    { "AltLeft", DIK_LALT },
+    { "LAltKey", DIK_LALT },
+    { "LeftAltKey", DIK_LALT },
+    
     { "Capslock", DIK_CAPSLOCK },
     { "Caps", DIK_CAPSLOCK },
     { "NumpadMinus", DIK_NUMPADMINUS },
     { "NumpadPlus", DIK_NUMPADPLUS },
     { "NumpadPeriod", DIK_NUMPADPERIOD },
     { "NumpadSlash", DIK_NUMPADSLASH },
+    
+    // Right Alt (alternative to RMenu) variations
     { "Ralt", DIK_RALT },
-    { "UpArrow", DIK_UPARROW },
+    { "RightAlt", DIK_RALT },
+    { "AltR", DIK_RALT },
+    { "AltRight", DIK_RALT },
+    { "RAltKey", DIK_RALT },
+    { "RightAltKey", DIK_RALT },
+    
     { "Pgup", DIK_PGUP },
-    { "LeftArrow", DIK_LEFTARROW },
-    { "RightArrow", DIK_RIGHTARROW },
-    { "DownArrow", DIK_DOWNARROW },
     { "Pgdn", DIK_PGDN },
     { "Circumflex", DIK_CIRCUMFLEX },
     { "^", DIK_CIRCUMFLEX },

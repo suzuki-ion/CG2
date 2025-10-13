@@ -188,12 +188,12 @@ KeyConfig::KeyBinding KeyConfig::GetControllerKeyBinding(const Json &jsonData) c
     } else if (input == "LeftTrigger") {
         keyBindingData.keyCode = -1;
         keyBindingData.leftRightOption = Input::LeftRightOption::Left;
-        keyBindingData.axisType = GetAxisType(jsonData["Axis"].get<std::string>());
+        keyBindingData.axisType = Input::AxisOption::Z;
     
     } else if (input == "RightTrigger") {
         keyBindingData.keyCode = -1;
         keyBindingData.leftRightOption = Input::LeftRightOption::Right;
-        keyBindingData.axisType = GetAxisType(jsonData["Axis"].get<std::string>());
+        keyBindingData.axisType = Input::AxisOption::Z;
     
     } else {
         auto itMap = kXInputButtonMap.find(input);

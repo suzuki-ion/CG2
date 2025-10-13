@@ -91,95 +91,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     };
 
     //==================================================
-    // 球体
+    // キーコンフィグ
     //==================================================
 
-    Sphere sphere(64);
-    Object::StatePtr sphereState = sphere.GetStatePtr();
-    sphereState.transform->translate.y = 6.0f;
-    *sphereState.normalType = kNormalTypeVertex;
-    sphereState.material->color = { 64.0f, 64.0f, 64.0f, 255.0f, };
-
-    //==================================================
-    // ICO球
-    //==================================================
-
-    Model icoSphere("Resources/ICOSphere", "icoSphere.obj");
-    icoSphere.GetStatePtr().transform->translate.y = 3.0f;
+    KeyConfig keyConfig;
+    keyConfig.LoadFromJson("Resources/KeyConfig/PlayerKeyConfig.json");
 
     //==================================================
     // モデル
     //==================================================
 
-    Model model("Resources/Player", "player.obj");
-
-    //==================================================
-    // 音声
-    //==================================================
-
-    int soundIndex = Sound::Load("C:\\Windows\\Media\\chord.wav");
-    float volume = 1.0f;
-    float pitch = 0.0f;
-    bool isLoop = false;
-
-    //==================================================
-    // ボタン
-    //==================================================
-
-    // ボタン1
-    Button button1("TestButton1", renderer);
-    button1.SetUIElement<int>(
-        "textureIndex",
-        Texture::Load("Resources/tmpButton.png")
-    );
-    button1.SetUIElement("pos", Vector2(32.0f, 64.0f));
-    
-    // ボタン2
-    Button button2("TestButton2", renderer);
-    button2.SetUIElement<int>(
-        "textureIndex",
-        Texture::Load("Resources/tmpButton.png")
-    );
-    button2.SetUIElement("pos", Vector2(352.0f, 64.0f));
-
-    //==================================================
-    // UIグループ
-    //==================================================
-
-    UIGroup uiGroup("TestUIGroup", renderer);
-    uiGroup.SetUIElement<int>(
-        "textureIndex",
-        Texture::Load("Resources/tmpUIGroup.png")
-    );
-    uiGroup.AddChild(&button1);
-    uiGroup.AddChild(&button2);
-
-    //==================================================
-    // スプライト
-    //==================================================
-
-    Sprite sprite("Resources/testPlayer.png");
-
-    //==================================================
-    // アニメーション用変数
-    //==================================================
-
-    KeyFrameAnimation keyFrameAnimation;
-    KeyFrameElementData keyFrameElementData;
-
-    keyFrameElementData.keyFrames.push_back({ 0.0f, -2.0f, Ease::InOutSine });
-    keyFrameElementData.keyFrames.push_back({ 1.0f, +2.0f, Ease::InOutSine });
-    keyFrameElementData.keyFrames.push_back({ 2.0f, -2.0f, Ease::InOutSine });
-    keyFrameAnimation.SetKeyFrameElementData(KeyFrameElementType::kPositionX, keyFrameElementData);
-    keyFrameElementData.keyFrames.clear();
-    keyFrameElementData.keyFrames.push_back({ 0.0f, +0.0f, Ease::OutSine });
-    keyFrameElementData.keyFrames.push_back({ 0.5f, +2.0f, Ease::InOutSine });
-    keyFrameElementData.keyFrames.push_back({ 1.5f, -2.0f, Ease::InSine });
-    keyFrameElementData.keyFrames.push_back({ 2.0f, +0.0f, Ease::OutSine });
-    keyFrameAnimation.SetKeyFrameElementData(KeyFrameElementType::kPositionZ, keyFrameElementData);
-
-    keyFrameAnimation.SetLoop(true);
-    keyFrameAnimation.Play();
+    Model model("Resources/nahida", "nahida.obj");
 
     //==================================================
     // グリッド線
@@ -197,65 +119,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool isXYGrid = false;
     // YZグリッド描画フラグ
     bool isYZGrid = false;
-
-    //==================================================
-    // 線
-    //==================================================
-
-    int lineCount = 100;
-    Lines lines(lineCount);
-
-    //==================================================
-    // スプライン曲線
-    //==================================================
-
-    std::vector<Vector3> points = {
-        { 0.0f, 0.0f, 0.0f },
-        { 10.0f, 10.0f, 0.0f },
-        { 10.0f, 15.0f, 0.0f },
-        { 20.0f, 15.0f, 0.0f },
-        { 20.0f, 0.0f, 0.0f },
-        { 30.0f, 0.0f, 0.0f }
-    };
-    float elapsedT = 1.0f / static_cast<float>(lineCount);
-    // 線に適応
-    auto linesStatePtr = lines.GetStatePtr();
-    for (size_t i = 0; i <= lineCount; i++) {
-        float t = elapsedT * static_cast<float>(i);
-        Vector3 pos = Vector3::CatmullRomPosition(points, t);
-        linesStatePtr.vertexData[i].pos = Vector4(pos);
-    }
-
-    std::ofstream file("test.obj");
-    // 頂点座標 (v)
-    for (int i = 0; i <= lineCount; ++i) {
-        const Vector3 &v = Vector3(linesStatePtr.vertexData[i].pos);
-        file << "v " << v.x << " " << v.y << " " << v.z << "\n";
-    }
-    file.close();
-
-    //==================================================
-    // テキスト
-    //==================================================
-
-    Text text(1024);
-    text.SetFont("Resources/Font/test.fnt");
-    char8_t textBuffer[1024] = u8"テストテキスト1";
-    text.SetText(textBuffer);
-
-    //==================================================
-    // スクリーンバッファ
-    //==================================================
-
-    ScreenBuffer screenBuffer("TestScreen", 1920, 1080);
-    screenBuffer.SetRenderer(renderer);
-
-    //==================================================
-    // キーコンフィグ
-    //==================================================
-
-    KeyConfig keyConfig;
-    keyConfig.LoadFromJson("Resources/KeyConfig/example.json");
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -334,10 +197,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
         
         // キーコンフィグのテスト用表示
-        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveHorizontal").actionName.c_str());
-        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveHorizontal")));
-        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("Jump").actionName.c_str());
-        ImGui::Text("GetInputValue: %d", std::get<bool>(keyConfig.GetInputValue("Jump")));
+        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveX").actionName.c_str());
+        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveX")));
+        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveY").actionName.c_str());
+        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveY")));
+        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveZ").actionName.c_str());
+        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveZ")));
 
         // デバッグカメラの有効化
         if (ImGui::Checkbox("デバッグカメラ有効化", &isUseDebugCamera)) {
@@ -354,74 +219,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 背景色
         ImGui::DragFloat4("背景色", &clearColor.x, 1.0f, 0.0f, 255.0f);
 
-        // 音声
-        if (ImGui::TreeNode("音声")) {
-            ImGui::DragFloat("音量", &volume, 0.01f, 0.0f, 1.0f);
-            ImGui::DragFloat("ピッチ", &pitch, 0.01f, -24.0f, 24.0f);
-            ImGui::Checkbox("ループ再生", &isLoop);
-            if (ImGui::Button("再生")) {
-                Sound::Play(soundIndex, volume, pitch, isLoop);
-            }
-            if (ImGui::Button("停止")) {
-                Sound::Stop(soundIndex);
-            }
-            ImGui::TreePop();
-        }
-
         // 平行光源
         if (ImGui::TreeNode("平行光源")) {
             ImGui::DragFloat3("DirectionalLight Direction", &directionalLight.direction.x, 0.01f);
             ImGui::DragFloat4("DirectionalLight Color", &directionalLight.color.x, 1.0f, 0.0f, 255.0f);
             ImGui::DragFloat("DirectionalLight Intensity", &directionalLight.intensity, 0.01f);
             ImGui::TreePop();
-        }
-
-        // 球体
-        if (ImGui::TreeNode("球体")) {
-            ImGui::DragFloat3("Sphere Translate", &sphereState.transform->translate.x, 0.01f);
-            ImGui::DragFloat3("Sphere Rotate", &sphereState.transform->rotate.x, 0.01f);
-            ImGui::DragFloat3("Sphere Scale", &sphereState.transform->scale.x, 0.01f);
-            ImGui::DragFloat4("Sphere MaterialColor", &sphereState.material->color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::InputInt("Sphere TextureIndex", sphereState.useTextureIndex);
-            ImGui::TreePop();
-        }
-
-        // UIグループ
-        if (ImGui::TreeNode("UIグループ")) {
-            Vector2 pos = uiGroup.GetUIElement<Vector2>("pos");
-            Vector2 scale = uiGroup.GetUIElement<Vector2>("scale");
-            float degree = uiGroup.GetUIElement<float>("degree");
-            Vector4 color = uiGroup.GetUIElement<Vector4>("color");
-            ImGui::DragFloat2("UIGroup Translate", &pos.x, 1.0f);
-            ImGui::DragFloat2("UIGroup Scale", &scale.x, 0.01f, 0.0f, 100.0f);
-            ImGui::DragFloat("UIGroup Degree", &degree, 0.1f);
-            ImGui::DragFloat4("UIGroup Color", &color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::TreePop();
-            uiGroup.SetUIElement("pos", pos);
-            uiGroup.SetUIElement("scale", scale);
-            uiGroup.SetUIElement("degree", degree);
-            uiGroup.SetUIElement("color", color);
-        }
-
-        // スプライト
-        if (ImGui::TreeNode("スプライト")) {
-            ImGui::DragFloat3("Sprite Translate", &sprite.GetStatePtr().transform->translate.x, 1.0f);
-            ImGui::DragFloat3("Sprite Rotate", &sprite.GetStatePtr().transform->rotate.x, 0.01f);
-            ImGui::DragFloat2("Sprite Scale", &sprite.GetStatePtr().transform->scale.x, 0.01f);
-            ImGui::DragFloat4("Sprite Color", &sprite.GetStatePtr().material->color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::InputInt("Sprite TextureIndex", sprite.GetStatePtr().useTextureIndex);
-            ImGui::TreePop();
-        }
-
-        // テキスト
-        if (ImGui::TreeNode("テキスト")) {
-            ImGui::InputTextMultiline("テキスト入力", reinterpret_cast<char *>(textBuffer), IM_ARRAYSIZE(textBuffer),
-                ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16.0f));
-            if (ImGui::IsItemDeactivatedAfterEdit()) {
-                text.SetText(textBuffer);
-            }
-            ImGui::TreePop();
-            text.SetText(textBuffer);
         }
 
         ImGui::End();
@@ -435,16 +238,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         static_cast<void>(soundIndex);
 #endif
 
-        keyFrameAnimation.Update();
-        icoSphere.GetStatePtr().transform->rotate.x += myGameEngine->GetDeltaTime();
-        icoSphere.GetStatePtr().transform->rotate.y += myGameEngine->GetDeltaTime();
-        icoSphere.GetStatePtr().transform->rotate.z += myGameEngine->GetDeltaTime();
-        icoSphere.GetStatePtr().transform->translate.x =
-            keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionX);
-        icoSphere.GetStatePtr().transform->translate.z =
-            keyFrameAnimation.GetCurrentKeyFrameValue(KeyFrameElementType::kPositionZ);
-
-        uiGroup.Update();
+        // モデルの移動
+        if (std::get<float>(keyConfig.GetInputValue("MoveX")) != 0.0f) {
+            auto statePtr = model.GetStatePtr();
+            statePtr.transform->translate.x += std::get<float>(keyConfig.GetInputValue("MoveX")) * Engine::GetDeltaTime() * 10.0f;
+        }
+        if (std::get<float>(keyConfig.GetInputValue("MoveY"))) {
+            auto statePtr = model.GetStatePtr();
+            statePtr.transform->translate.y += std::get<float>(keyConfig.GetInputValue("MoveY")) * Engine::GetDeltaTime() * 10.0f;
+        }
+        if (std::get<float>(keyConfig.GetInputValue("MoveZ"))) {
+            auto statePtr = model.GetStatePtr();
+            statePtr.transform->translate.z += std::get<float>(keyConfig.GetInputValue("MoveZ")) * Engine::GetDeltaTime() * 10.0f;
+        }
 
         //==================================================
         // 描画処理
@@ -460,21 +266,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         if (isXYGrid) gridLineXY.Draw();
         if (isYZGrid) gridLineYZ.Draw();
 
-        // 線の描画
-        lines.Draw();
-
-        // 球体の描画
-        sphere.Draw();
-        // ICO球の描画
-        icoSphere.Draw();
         // モデルの描画
         model.Draw();
-        // ボタンの描画
-        uiGroup.Draw();
-        // スプライトの描画
-        sprite.Draw();
-        // 文字の描画
-        text.Draw();
 
         myGameEngine->EndFrame();
         // ESCで終了
