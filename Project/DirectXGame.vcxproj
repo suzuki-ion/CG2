@@ -60,18 +60,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PublicIncludeDirectories>
     </PublicIncludeDirectories>
-    <IncludePath>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
+    <IncludePath>$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <PublicIncludeDirectories />
-    <IncludePath>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
+    <IncludePath>$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
+    <IncludePath>$(ProjectDir)Externals\imgui;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\Common;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Externals\utf8;$(ProjectDir)MyStd;$(ProjectDir)KashipanEngine</IncludePath>
     <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -85,7 +85,6 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -115,7 +114,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
@@ -149,7 +147,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <OpenMPSupport>false</OpenMPSupport>
       <Optimization>Disabled</Optimization>
