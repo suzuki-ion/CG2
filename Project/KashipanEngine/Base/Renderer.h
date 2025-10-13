@@ -1,0 +1,176 @@
+#pragma once
+#include <array>
+#include <vector>
+#include <memory>
+
+#include "Common/PipeLineSet.h"
+#include "Common/TransformationMatrix.h"
+#include "Common/VertexDataLine.h"
+#include "Common/LineOption.h"
+#include "3d/PrimitiveDrawer.h"
+#include "Math/Matrix4x4.h"
+
+namespace KashipanEngine {
+
+// 前方宣言
+class WinApp;
+class DirectXCommon;
+class ImGuiManager;
+class Camera;
+class PipeLineManager;
+
+struct DirectionalLight;
+
+enum DrawType {
+    kDrawTypeNormal,
+    kDrawTypeShadowMap,
+};
+
+/// @brief 描画用クラス
+class Renderer {
+public:
+    /// @brief オブジェクト情報
+    struct ObjectState {
+        /// @brief メッシュへのポインタ
+        Mesh<VertexData> *mesh = nullptr;
+        /// @brief マテリアル用のリソースへのポインタ
+        ID3D12Resource *materialResource = nullptr;
+        /// @brief transformationMatrix用のリソースへのポインタ
+        ID3D12Resource *transformationMatrixResource = nullptr;
+        /// @brief transformationMatrixマップ
+        TransformationMatrix *transformationMatrixMap = nullptr;
+        /// @brief ワールド行列
+        Matrix4x4 *worldMatrix = nullptr;
+
+        /// @brief 頂点数
+        UINT vertexCount = 0;
+        /// @brief インデックス数
+        UINT indexCount = 0;
+        /// @brief テクスチャのインデックス
+        int useTextureIndex = -1;
+        /// @brief 使用するレンダリングパイプライン名
+        std::string pipeLineName = "Object3d.Solid.BlendNormal";
+        /// @brief カメラを使用するかどうか
+        bool isUseCamera = false;
+    };
+
+    /// @brief ライン情報
+    struct LineState {
+        /// @brief メッシュへのポインタ
+        Mesh<VertexDataLine> *mesh = nullptr;
+        /// @brief transformationMatrix用のリソースへのポインタ
+        ID3D12Resource *transformationMatrixResource = nullptr;
+        /// @brief transformationMatrixマップ
+        TransformationMatrix *transformationMatrixMap = nullptr;
+        /// @brief lineOption用のリソースへのポインタ
+        ID3D12Resource *lineOptionResource = nullptr;
+        /// @brief lineOptionマップ
+        LineOption *lineOptionMap = nullptr;
+
+        /// @brief 頂点数
+        UINT vertexCount = 0;
+        /// @brief インデックス数
+        UINT indexCount = 0;
+        /// @brief 使用するレンダリングパイプライン名
+        std::string pipeLineName = "Line.Normal";
+        /// @brief カメラを使用するかどうか
+        bool isUseCamera = false;
+    };
+
+    /// @brief コンストラクタ
+    /// @param winApp WinAppインスタンス
+    /// @param dxCommon DirectXCommonインスタンス
+    /// @param primitiveRenderer PrimitiveDrawerインスタンス
+    /// @param imguiManager ImGuiManagerインスタンス
+    /// @param pipeLineManager PipeLineManagerインスタンス
+    Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiManager, PipeLineManager *pipeLineManager);
+
+    /// @brief デストラクタ
+    ~Renderer();
+
+    /// @brief 描画前処理
+    void PreDraw();
+
+    /// @brief 描画後処理
+    void PostDraw();
+
+    /// @brief デバッグカメラの切り替え
+    void ToggleDebugCamera();
+
+    /// @brief デバッグカメラが有効かどうか
+    /// @return 有効ならtrue、無効ならfalse
+    bool IsUseDebugCamera() const {
+        return isUseDebugCamera_;
+    }
+
+    /// @brief カメラの設定
+    /// @param camera カメラへのポインタ
+    void SetCamera(Camera *camera);
+
+    /// @brief 平行光源の設定
+    /// @param light 平行光源へのポインタ
+    void SetLight(DirectionalLight *light) {
+        directionalLight_ = light;
+    }
+
+    /// @brief 設定されている平行光源へのポインタの取得
+    /// @return 平行光源へのポインタ
+    DirectionalLight *GetLight() const {
+        return directionalLight_;
+    }
+
+    /// @brief 描画する線情報の設定
+    /// @param lineState 描画する線情報へのポインタ
+    void DrawSetLine(LineState &lineState);
+
+    /// @brief 描画するオブジェクト情報の設定
+    /// @param object 描画するオブジェクト情報へのポインタ
+    /// @param isUseCamera カメラを使用しているかどうか
+    /// @param isSemitransparent 半透明オブジェクトかどうか
+    void DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent);
+
+private:
+    /// @brief 平行光源の設定
+    /// @param light 平行光源へのポインタ
+    void SetLightBuffer(DirectionalLight *light);
+
+    /// @brief 共通の描画処理
+    void DrawCommon(std::vector<ObjectState> &objectStates);
+
+    /// @brief 共通の描画処理
+    void DrawCommon(ObjectState *objectState);
+
+    /// @brief グリッド線の描画処理
+    void DrawLine(LineState *lineState);
+
+    /// @brief WinAppインスタンス
+    WinApp *winApp_ = nullptr;
+    /// @brief DirectXCommonインスタンス
+    DirectXCommon *dxCommon_ = nullptr;
+    /// @brief ImGuiManagerインスタンス
+    ImGuiManager *imguiManager_ = nullptr;
+    /// @brief PipeLineManagerインスタンス
+    PipeLineManager *pipeLineManager_ = nullptr;
+
+    /// @brief デバッグカメラ使用フラグ
+    bool isUseDebugCamera_ = false;
+    /// @brief 平行光源へのポインタ
+    DirectionalLight *directionalLight_ = nullptr;
+    /// @brief 描画する線
+    std::vector<LineState> drawLines_;
+    /// @brief 描画するオブジェクト
+    std::vector<ObjectState> drawObjects_;
+    /// @brief 描画する半透明オブジェクト
+    std::vector<ObjectState> drawAlphaObjects_;
+    /// @brief 描画する2Dオブジェクト
+    std::vector<ObjectState> draw2DObjects_;
+
+    /// @brief 2D描画用のビュー行列
+    Matrix4x4 viewMatrix2D_ = {};
+    /// @brief 2D描画用のプロジェクション行列
+    Matrix4x4 projectionMatrix2D_ = {};
+    /// @brief 2D描画用のWVP行列
+    Matrix4x4 wvpMatrix2D_ = {};
+};
+
+} // namespace KashipanEngine

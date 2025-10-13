@@ -1,9 +1,0 @@
-﻿{
-	"Textures": {
-		"uvChacker": "Resources/uvChacker.png",
-		"white1x1": "Resources/white1x1.png"
-	},
-	"Models": {
-		"nahida": "Resources/nahida/nahida.obj"
-	}
-}

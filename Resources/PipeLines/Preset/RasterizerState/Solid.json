@@ -1,6 +1,0 @@
-﻿{
-	"Name": "Solid",
-	"CullMode": "D3D12_CULL_MODE_BACK",
-	"FillMode": "D3D12_FILL_MODE_SOLID",
-	"AntialiasedLineEnable": true
-}

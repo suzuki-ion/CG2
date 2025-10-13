@@ -1,0 +1,69 @@
+﻿{
+	"MoveHorizontal": {
+		"InputType": "Analog",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "A",
+				"Event": "Down",
+				// スケールは基本的に-1.0（左方向）と1.0（右方向）のみ
+				// 符号のみ適応。1.0以外の値は基本無視
+				"Scale": -1.0
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "D",
+				"Event": "Down",
+				"Scale": 1.0
+			},
+			{
+				"Device": "Controller",
+				"Input": "LeftStick",
+				"Axis": "X",
+				"Event": "Down",
+				"Scale": 1.0
+			}
+		]
+	},
+
+	"Jump": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "Space",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "A",
+				"Event": "Trigger"
+			},
+			{
+				// もしコントローラーのアナログ入力をトリガーにしたい場合の例
+				"Device": "Controller",
+				"Input": "LeftStick",
+				"Axis": "Y",
+				"DeadZone": 4096,
+				"Event": "Trigger",
+				// ここのスケールを-1.0にすると、スティックを下に倒したときを判定する
+				"Scale": 1.0
+			},
+			{
+				"Device": "Mouse",
+				"Input": "LeftClick",
+				"Event": "Trigger"
+			},
+			{
+				// もしマウスのアナログ入力をトリガーにしたい場合の例
+				"Device": "Mouse",
+				"Input": "Cursor",
+				"Axis": "Y",
+				"DeadZone": 64,
+				"Event": "Trigger",
+				// ここのスケールを1.0にすると、マウスを下に動かしたときを判定する(スクリーン座標系)
+				"Scale": -1.0
+			}
+		]
+	}
+}

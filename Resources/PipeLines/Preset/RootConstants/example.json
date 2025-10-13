@@ -1,8 +1,0 @@
-﻿{
-	// プリセットの識別用の名前
-	"Name": "example",
-	// ルートコンスタントの設定
-	"ShaderRegister": 0,
-	"RegisterSpace": 0,
-	"Num32BitValues": 4
-}

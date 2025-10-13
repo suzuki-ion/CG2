@@ -1,0 +1,69 @@
+﻿{
+	// プリセットの識別用の名前
+	"Name": "example",
+	// シェーダーの種類
+	// "Vertex": 頂点シェーダー
+	// "Pixel": ピクセルシェーダー
+	// "Geometry": ジオメトリシェーダー
+	// "Hull": ハルシェーダー
+	// "Domain": ドメインシェーダー
+	// "Compute": コンピュートシェーダー
+	"Type": "Vertex",
+	// シェーダーのファイルパス
+	// プロジェクトのルートディレクトリからの相対パスで指定
+	"Path": "Resources/PipeLines/Preset/Shader/example/Vertex.hlsl",
+	// シェーダーのターゲットプロファイル
+	"TargetProfile": "vs_6_0",
+	// シェーダーリフレクションを使用する際は以下の項目を記述する
+	/* "isReflection": true */
+	// ルートパラメーターを自動生成できる。インプットレイアウトはシェーダーリフレクションでは取得できないため手動で設定する必要がある
+
+	// シェーダーリフレクションを使用しない場合、ルートパラメーターは手動で設定
+	"RootParameter": {
+		// 設定の詳細はRootParameterのexampleを参照
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL",
+				"Descriptor": {
+					"RegisterSpace": 0,
+					"RegisterIndex": 0
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+				"Constants": {
+					"RegisterIndex": 1,
+					"RegisterSpace": 0,
+					"Num32BitValues": 4
+				}
+			}
+		]
+	},
+
+	// 頂点シェーダーの場合はインプットレイアウトの設定が可能
+	"InputLayout": {
+		// 設定の詳細はInputLayoutのexampleを参照
+		"Elements": [
+			{
+				"SemanticName": "POSITION",
+				"SemanticIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32A32_FLOAT",
+				"InputSlot": 0,
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT",
+				"InputSlotClass": "D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA",
+				"InstanceDataStepRate": 0
+			},
+			{
+				"SemanticName": "NORMAL",
+				"SemanticIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32_FLOAT",
+				"InputSlot": 0,
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT",
+				"InputSlotClass": "D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA",
+				"InstanceDataStepRate": 0
+			}
+		]
+	}
+}

@@ -1,6 +1,0 @@
-﻿{
-	"Name": "DepthDisable",
-	"DepthEnable": false,
-	"DepthWriteMask": "D3D12_DEPTH_WRITE_MASK_ZERO",
-	"DepthFunc": "D3D12_COMPARISON_FUNC_ALWAYS"
-}

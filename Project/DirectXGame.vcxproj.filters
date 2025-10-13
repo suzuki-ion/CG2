@@ -1,0 +1,690 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Filters reflect the actual folder hierarchy -->
+  <ItemGroup>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{5a4a6b2b-2a1f-4b8b-9b2c-10a2c3b5a6d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\imgui">
+      <UniqueIdentifier>{8b1a9c37-3c7a-4f60-9a8a-40e73e3f7c2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine">
+      <UniqueIdentifier>{0e3c6a2b-8d4f-4a1b-9c2d-5e7f8a9b0c1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\2d">
+      <UniqueIdentifier>{2a4c6e8f-1b3d-5f7a-9c0e-2d4f6a8b0c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\2d\UI">
+      <UniqueIdentifier>{3b5d7f9a-2c4e-6a8b-0d1f-3e5c7a9b2d4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\2d\UI\Component">
+      <UniqueIdentifier>{4c6e8a0b-3d5f-7a9c-1e2f-4a6c8e0b3d5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\2d\UI\GUI">
+      <UniqueIdentifier>{5d7f9b1c-4e6a-8c0d-2f3a-5b7d9f1c4e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\3d">
+      <UniqueIdentifier>{6e8f0c2d-5f7a-9b1c-3e4a-6d8f0a2b5c7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Base">
+      <UniqueIdentifier>{7f90123a-6b8c-4d5e-9f10-2a3b4c5d6e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Base\PipeLines">
+      <UniqueIdentifier>{8123a45b-6c7d-8e9f-0a1b-2c3d4e5f6071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Common">
+      <UniqueIdentifier>{9a0b1c2d-3e4f-5061-7283-94a5b6c7d8e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Common\Descriptors">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-4708-9a0b-1c2d3e4f5a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Common\KeyConfig">
+      <UniqueIdentifier>{b2c3d4e5-f607-4819-a0b1-c2d3e4f5a6b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Font">
+      <UniqueIdentifier>{c3d4e5f6-0718-492a-b0c1-d2e3f4a5b6c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Math">
+      <UniqueIdentifier>{d4e5f607-1829-4a3b-c0d1-e2f3a4b5c6d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Math\MathObjects">
+      <UniqueIdentifier>{e5f60718-293a-4b5c-d0e1-f2a3b4c5d6e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Math\Physics">
+      <UniqueIdentifier>{f6071829-3a4b-5c6d-e0f1-a2b3c4d5e6f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Objects">
+      <UniqueIdentifier>{0718293a-4b5c-6d7e-f0a1-b2c3d4e5f607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KashipanEngine\Shader">
+      <UniqueIdentifier>{18293a4b-5c6d-7e8f-0a1b-2c3d4e5f6071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyStd">
+      <UniqueIdentifier>{293a4b5c-6d7e-8f90-a1b2-c3d4e5f60718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{0a4fa5a3-71e2-41d7-bf2c-8a62accb4334}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <!-- Source files (ClCompile) -->
+  <ItemGroup>
+    <ClCompile Include="KashipanEngine\Common\ConvertString.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\DirectXCommon.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\WinApp.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\3d\PrimitiveDrawer.cpp">
+      <Filter>KashipanEngine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\CrashHandler.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\TimeGet.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Matrix4x4.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Vector3.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\RenderingPipeline.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\ImGuiManager.cpp">
+      <Filter>KashipanEngine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\ConvertColor.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\Renderer.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Logs.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\ResourceLeakChecker.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\AffineMatrix.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Camera.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Descriptors\DSV.cpp">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Descriptors\RTV.cpp">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Descriptors\SRV.cpp">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\Input.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Tetrahedron.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Model.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\Sound.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Object.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\BillBoard.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Plane.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Sphere.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Triangle.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Sprite.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\KashipanEngine.cpp">
+      <Filter>KashipanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\Texture.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Collider.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Physics\ConicalPendulum.cpp">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Physics\Pendulum.cpp">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\MathObjects\AABB.cpp">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Lines.cpp">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Plane.cpp">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Sphere.cpp">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\MathObjects\Triangle.cpp">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\WorldTransform.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\UIManager.cpp">
+      <Filter>KashipanEngine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Vector2.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Matrix3x3.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp">
+      <Filter>KashipanEngine\2d\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\UI\GUI\Button.cpp">
+      <Filter>KashipanEngine\2d\UI\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp">
+      <Filter>KashipanEngine\2d\UI\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\2d\UI\UIGroup.cpp">
+      <Filter>KashipanEngine\2d\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Easings.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\KeyFrameAnimation.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\GridLine.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Math\Vector4.cpp">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Lines.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Text.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Font\FontLoader.cpp">
+      <Filter>KashipanEngine\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\ScreenBuffer.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLines\Shader.cpp">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\JsoncLoader.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLines\RootSignature.cpp">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLineManager.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\PipeLines\ShaderReflection.cpp">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\DirectoryLoader.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Descriptors\UAV.cpp">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\KeyConfig.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\SceneBase.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Base\SceneManager.cpp">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Common\Random.cpp">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Cube.cpp">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <!-- Header files (ClInclude) -->
+  <ItemGroup>
+    <ClInclude Include="KashipanEngine\Math\MathObjects\AABB.h">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\AffineMatrix.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStd\AnyUnorderedMap.h">
+      <Filter>MyStd</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStd\AnyVector.h">
+      <Filter>MyStd</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Physics\Ball.h">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h">
+      <Filter>KashipanEngine\2d\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\BillBoard.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\BlendState.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\GUI\Button.h">
+      <Filter>KashipanEngine\2d\UI\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Camera.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\CameraPerspective.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\CameraViewport.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Collider.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\ComputePIpeLineState.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Physics\ConicalPendulum.h">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\ConvertColor.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\ConvertString.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\CrashHandler.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Cube.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\KeyConfig\DefineMaps.h">
+      <Filter>KashipanEngine\Common\KeyConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DefineMaps.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DepthStencilState.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\DescriptorRange.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\3d\DiffuseLight.h">
+      <Filter>KashipanEngine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\3d\DirectionalLight.h">
+      <Filter>KashipanEngine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\DirectoryLoader.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\DirectXCommon.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\DrawInfo.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Descriptors\DSV.h">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Easings.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\EnumMaps.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Font\FontLoader.h">
+      <Filter>KashipanEngine\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Font\FontStructs.h">
+      <Filter>KashipanEngine\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\GraphicsPipeLineState.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\GridLine.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imconfig.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_internal.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\ImGuiManager.h">
+      <Filter>KashipanEngine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_textedit.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_truetype.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\Input.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\Component\InputDetector.h">
+      <Filter>KashipanEngine\2d\UI\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\InputLayout.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\JsoncLoader.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\KashipanEngine.h">
+      <Filter>KashipanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\KeyConfig.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\KeyFrameAnimation.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\LineOption.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Lines.h">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Lines.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Logs.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Material.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Matrix3x3.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Matrix4x4.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Mesh.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Model.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Object.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects.h">
+      <Filter>KashipanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStd\OnlyPointer.h">
+      <Filter>MyStd</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\ParseInt.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Physics\Pendulum.h">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLineManager.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\PipeLines.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\PipeLineSet.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Plane.h">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Plane.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\3d\PrimitiveDrawer.h">
+      <Filter>KashipanEngine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Random.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RasterizerState.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\Renderer.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\RenderingPipeline.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\ResourceLeakChecker.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootConstants.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootDescriptor.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootParameter.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\RootSignature.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Descriptors\RTV.h">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\Sampler.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\SceneBase.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\SceneManager.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\ScreenBuffer.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h">
+      <Filter>KashipanEngine\Base\PipeLines</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\Sound.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Sphere.h">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Sphere.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\SphericalCoordinateSystem.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Physics\Spring.h">
+      <Filter>KashipanEngine\Math\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Sprite.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Descriptors\SRV.h">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\GUI\Switch.h">
+      <Filter>KashipanEngine\2d\UI\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Tetrahedron.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Text.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\Texture.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\TextureData.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\TimeGet.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Transform.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\TransformationMatrix.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Triangle.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\MathObjects\Triangle.h">
+      <Filter>KashipanEngine\Math\MathObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\Descriptors\UAV.h">
+      <Filter>KashipanEngine\Common\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\UIElements.h">
+      <Filter>KashipanEngine\2d\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UI\UIGroup.h">
+      <Filter>KashipanEngine\2d\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\2d\UIManager.h">
+      <Filter>KashipanEngine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Vector2.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Vector3.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Math\Vector4.h">
+      <Filter>KashipanEngine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MyStd\VectorMap.h">
+      <Filter>MyStd</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\VertexData.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Common\VertexDataLine.h">
+      <Filter>KashipanEngine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Base\WinApp.h">
+      <Filter>KashipanEngine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\WorldTransform.h">
+      <Filter>KashipanEngine\Objects</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <!-- HLSL (FxCompile) -->
+  <ItemGroup>
+    <FxCompile Include="KashipanEngine\Shader\Object3d.VS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Object3d.PS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Line.GS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Line.VS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Line.PS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="KashipanEngine\Shader\Simple.MS.hlsl">
+      <Filter>KashipanEngine\Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <!-- Text files -->
+  <ItemGroup>
+    <Text Include="Externals\imgui\LICENSE.txt">
+      <Filter>Externals\imgui</Filter>
+    </Text>
+  </ItemGroup>
+  <!-- None items -->
+  <ItemGroup>
+    <None Include="KashipanEngine\Shader\Object3d.hlsli">
+      <Filter>KashipanEngine\Shader</Filter>
+    </None>
+    <None Include="KashipanEngine\Shader\Line.hlsli">
+      <Filter>KashipanEngine\Shader</Filter>
+    </None>
+    <None Include="KashipanEngine\Shader\TransformationMatrix.hlsli">
+      <Filter>KashipanEngine\Shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>

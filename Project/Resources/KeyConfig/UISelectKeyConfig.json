@@ -1,0 +1,161 @@
+﻿{
+	"SelectUp": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "UpArrow",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "W",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "DPadUp",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "LeftStick",
+				"Axis": "Y",
+				"Event": "Trigger",
+				"Scale": 1.0
+			}
+		]
+	},
+	"SelectDown": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "DownArrow",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "S",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "DPadDown",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "LeftStick",
+				"Axis": "Y",
+				"Event": "Release",
+				"Scale": -1.0
+			}
+		]
+	},
+	"SelectLeft": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "LeftArrow",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "A",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "DPadLeft",
+				"Event": "Trigger"
+			}
+		]
+	},
+	"SelectRight": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "RightArrow",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "D",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "DPadRight",
+				"Event": "Trigger"
+			}
+		]
+	},
+	"SelectConfirm": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "Enter",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Keyboard",
+				"Input": "Space",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "ButtonA",
+				"Event": "Trigger"
+			}
+		]
+	},
+	"SelectCancel": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "Escape",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "ButtonB",
+				"Event": "Trigger"
+			}
+		]
+	},
+	"TogglePause": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "Escape",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "Start",
+				"Event": "Trigger"
+			}
+		]
+	},
+	"ResultBackTitle": {
+		"InputType": "Digital",
+		"Bindings": [
+			{
+				"Device": "Keyboard",
+				"Input": "Escape",
+				"Event": "Trigger"
+			},
+			{
+				"Device": "Controller",
+				"Input": "ButtonB",
+				"Event": "Trigger"
+			}
+		]
+	}
+}
