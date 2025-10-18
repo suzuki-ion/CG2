@@ -229,13 +229,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::End();
 #else
-        static_cast<void>(isXZGrid);
-        static_cast<void>(isXYGrid);
-        static_cast<void>(isYZGrid);
-        static_cast<void>(isLoop);
-        static_cast<void>(pitch);
-        static_cast<void>(volume);
-        static_cast<void>(soundIndex);
 #endif
 
         // モデルの移動
