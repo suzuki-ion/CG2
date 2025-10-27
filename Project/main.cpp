@@ -41,18 +41,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // WinAppクラスへのポインタ
     WinApp *winApp = myGameEngine->GetWinApp();
     winApp->SetSizeChangeMode(SizeChangeMode::kNormal);
-    // DirectXCommonクラスへのポインタ
-    DirectXCommon *dxCommon = myGameEngine->GetDxCommon();
-    // レンダラーへのポインタ
-    Renderer *renderer = myGameEngine->GetRenderer();
 
     // テクスチャを読み込む
     uint32_t textures[2];
     textures[0] = Texture::Load("Resources/uvChecker.png");
     textures[1] = Texture::Load("Resources/testPlayer.png");
-
-    // ウィンドウモード
-    WindowMode windowMode = kWindow;
 
     // フレームレート
     int frameRate = 60;
