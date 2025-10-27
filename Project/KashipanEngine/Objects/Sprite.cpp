@@ -24,17 +24,33 @@ void Sprite::SetTexture(const uint32_t textureIndex) {
     LoadTexture(Texture::GetTexture(useTextureIndex_));
 }
 
-void Sprite::SetPivot(const Vector2 &pivot) {
-    if (pivot_ == pivot) {
+void Sprite::SetAnchor(const Vector2 &pivot) {
+    if (anchor_ == pivot) {
         return;
     }
-    if (pivot_.x != pivot.x) {
+    if (anchor_.x != pivot.x) {
         AdjustVertexPosX(pivot.x);
     }
-    if (pivot_.y != pivot.y) {
+    if (anchor_.y != pivot.y) {
         AdjustVertexPosY(pivot.y);
     }
-    pivot_ = pivot;
+    anchor_ = pivot;
+}
+
+void Sprite::SetFlipX(bool isFlip) {
+    if (isFlipX_ == isFlip) {
+        return;
+    }
+    isFlipX_ = isFlip;
+    AdjustFlipX();
+}
+
+void Sprite::SetFlipY(bool isFlip) {
+    if (isFlipY_ == isFlip) {
+        return;
+    }
+    isFlipY_ = isFlip;
+    AdjustFlipY();
 }
 
 void Sprite::Initialize() {
@@ -64,7 +80,7 @@ void Sprite::Initialize() {
 void Sprite::AdjustVertexPosX(float newPivotX) {
     // 座標を一度原点に戻す
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.x += width_ * pivot_.x;
+        mesh_->vertexBufferMap[i].position.x += width_ * anchor_.x;
     }
     // 新しいピボットで座標を調整
     for (int i = 0; i < 4; i++) {
@@ -75,11 +91,25 @@ void Sprite::AdjustVertexPosX(float newPivotX) {
 void Sprite::AdjustVertexPosY(float newPivotY) {
     // 座標を一度原点に戻す
     for (int i = 0; i < 4; i++) {
-        mesh_->vertexBufferMap[i].position.y += height_ * pivot_.y;
+        mesh_->vertexBufferMap[i].position.y += height_ * anchor_.y;
     }
     // 新しいピボットで座標を調整
     for (int i = 0; i < 4; i++) {
         mesh_->vertexBufferMap[i].position.y -= height_ * newPivotY;
+    }
+}
+
+void Sprite::AdjustFlipX() {
+    // UVを左右反転
+    for (int i = 0; i < 4; i++) {
+        mesh_->vertexBufferMap[i].texCoord.x = 1.0f - mesh_->vertexBufferMap[i].texCoord.x;
+    }
+}
+
+void Sprite::AdjustFlipY() {
+    // UVを上下反転
+    for (int i = 0; i < 4; i++) {
+        mesh_->vertexBufferMap[i].texCoord.y = 1.0f - mesh_->vertexBufferMap[i].texCoord.y;
     }
 }
 
@@ -93,9 +123,9 @@ void Sprite::LoadTexture(const TextureData &textureData) {
     mesh_->vertexBufferMap[3].position = { width_,  0.0f,       0.0f, 1.0f };
 
     // ピボットの位置で頂点を調整
-    Vector2 currentPivot = pivot_;
-    pivot_ = { 0.0f, 0.0f };
-    SetPivot(currentPivot);
+    Vector2 currentPivot = anchor_;
+    anchor_ = { 0.0f, 0.0f };
+    SetAnchor(currentPivot);
 }
 
 } // namespace KashipanEngine

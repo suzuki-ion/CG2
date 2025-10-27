@@ -48,8 +48,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // テクスチャを読み込む
     uint32_t textures[2];
-    textures[0] = Texture::Load("Resources/uvChecker2.png");
-    textures[1] = Texture::Load("Resources/testPlayer2.png");
+    textures[0] = Texture::Load("Resources/uvChecker.png");
+    textures[1] = Texture::Load("Resources/testPlayer.png");
 
     // ウィンドウモード
     WindowMode windowMode = kWindow;
@@ -59,66 +59,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     myGameEngine->SetFrameRate(frameRate);
 
     //==================================================
-    // カメラ
+    // スプライト
     //==================================================
 
-    std::unique_ptr<Camera> camera = std::make_unique<Camera>(
-        Vector3( 0.0f, 2.0f, -16.0f ),
-        Vector3( 0.0f, 0.0f, 0.0f ),
-        Vector3( 1.0f, 1.0f, 1.0f )
-    );
-    // デバッグカメラの有効化フラグ
-    bool isUseDebugCamera = true;
-    renderer->ToggleDebugCamera();
-    // レンダラーにカメラを設定
-    renderer->SetCamera(camera.get());
+    // スプライトをまとめる用のvector
+    std::vector<std::unique_ptr<Sprite>> sprites;
 
-    //==================================================
-    // 背景の色
-    //==================================================
-
-    Vector4 clearColor = { 32.0f, 32.0f, 32.0f, 255.0f };
-    dxCommon->SetClearColor(ConvertColor(clearColor));
-
-    //==================================================
-    // 平行光源
-    //==================================================
-
-    DirectionalLight directionalLight = {
-        { 255.0f, 255.0f, 255.0f, 255.0f },
-        { -0.5f, -0.75f, -0.5f },
-        16.0f
-    };
-
-    //==================================================
-    // キーコンフィグ
-    //==================================================
-
-    KeyConfig keyConfig;
-    keyConfig.LoadFromJson("Resources/KeyConfig/PlayerKeyConfig.json");
-
-    //==================================================
-    // モデル
-    //==================================================
-
-    Model model("Resources/nahida", "nahida.obj");
-
-    //==================================================
-    // グリッド線
-    //==================================================
-
-    GridLine gridLineXZ(GridLineType::XZ, 1.0f, 10000);
-    GridLine gridLineXY(GridLineType::XY, 1.0f, 10000);
-    GridLine gridLineYZ(GridLineType::YZ, 1.0f, 10000);
-    gridLineXZ.SetRenderer(renderer);
-    gridLineXY.SetRenderer(renderer);
-    gridLineYZ.SetRenderer(renderer);
-    // XZグリッド描画フラグ
-    bool isXZGrid = true;
-    // XYグリッド描画フラグ
-    bool isXYGrid = false;
-    // YZグリッド描画フラグ
-    bool isYZGrid = false;
+    // スプライトの生成
+    for (int i = 0; i < 10; i++) {
+        sprites.push_back(std::make_unique<Sprite>(textures[1]));
+        sprites[i]->SetAnchor({ 0.5f, 0.5f });
+        auto spriteState = sprites[i]->GetStatePtr();
+        spriteState.transform->translate = {
+            64.0f + static_cast<float>(i) * 128.0f,
+            1080.0f / 2.0f,
+            0.0f
+        };
+        *spriteState.useTextureIndex = ((i % 2) == 0) ? textures[0] : textures[1];
+        if (i % 3 == 0) {
+            sprites[i]->SetFlipX(true);
+        }
+    }
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -130,22 +91,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         //==================================================
         // 更新処理
         //==================================================
-
-        // F3キーでデバッグカメラの有効化
-        if (Input::IsKeyTrigger(DIK_F3)) {
-            isUseDebugCamera = !isUseDebugCamera;
-            renderer->ToggleDebugCamera();
-        }
-
-        // F11キーでウィンドウとフルスクリーン切り替え
-        if (Input::IsKeyTrigger(DIK_F11)) {
-            if (windowMode == kWindow) {
-                windowMode = kFullScreenBorderLess;
-            } else if (windowMode == kFullScreenBorderLess) {
-                windowMode = kWindow;
-            }
-            winApp->SetWindowMode(windowMode);
-        }
 
 #if !RELEASE_BUILD
         ImGuiManager::Begin("KashipanEngine");
@@ -189,78 +134,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         ImGui::Begin("オブジェクト");
 
-        // カメラ位置の表示
-        ImGui::Text("カメラ位置: (%.2f, %.2f, %.2f)", camera->GetTranslate().x, camera->GetTranslate().y, camera->GetTranslate().z);
-        // カメラの回転の表示
-        ImGui::Text("カメラの回転: (%.2f, %.2f, %.2f)", camera->GetRotate().x, camera->GetRotate().y, camera->GetRotate().z);
         // マウスの座標
         ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
         
-        // キーコンフィグのテスト用表示
-        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveX").actionName.c_str());
-        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveX")));
-        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveY").actionName.c_str());
-        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveY")));
-        ImGui::Text("キーコンフィグテスト: %s", keyConfig.GetKeyConfig("MoveZ").actionName.c_str());
-        ImGui::Text("GetInputValue: %f", std::get<float>(keyConfig.GetInputValue("MoveZ")));
+        ImGui::End();
 
-        // デバッグカメラの有効化
-        if (ImGui::Checkbox("デバッグカメラ有効化", &isUseDebugCamera)) {
-            renderer->ToggleDebugCamera();
+        // スプライト
+        ImGui::Begin("スプライト");
+        for (size_t i = 0; i < sprites.size(); i++) {
+            auto spriteState = sprites[i]->GetStatePtr();
+            ImGui::Text("スプライト %zu", i);
+            ImGui::InputFloat3(("位置##sprite" + std::to_string(i)).c_str(), &spriteState.transform->translate.x);
+            ImGui::InputFloat3(("回転##sprite" + std::to_string(i)).c_str(), &spriteState.transform->rotate.x);
+            ImGui::InputFloat3(("拡縮##sprite" + std::to_string(i)).c_str(), &spriteState.transform->scale.x);
         }
-
-        // XZグリッドの描画フラグ
-        ImGui::Checkbox("XZグリッド描画", &isXZGrid);
-        // XYグリッドの描画フラグ
-        ImGui::Checkbox("XYグリッド描画", &isXYGrid);
-        // YZグリッドの描画フラグ
-        ImGui::Checkbox("YZグリッド描画", &isYZGrid);
-
-        // 背景色
-        ImGui::DragFloat4("背景色", &clearColor.x, 1.0f, 0.0f, 255.0f);
-
-        // 平行光源
-        if (ImGui::TreeNode("平行光源")) {
-            ImGui::DragFloat3("DirectionalLight Direction", &directionalLight.direction.x, 0.01f);
-            ImGui::DragFloat4("DirectionalLight Color", &directionalLight.color.x, 1.0f, 0.0f, 255.0f);
-            ImGui::DragFloat("DirectionalLight Intensity", &directionalLight.intensity, 0.01f);
-            ImGui::TreePop();
-        }
-
         ImGui::End();
 #else
+
 #endif
 
-        // モデルの移動
-        if (std::get<float>(keyConfig.GetInputValue("MoveX")) != 0.0f) {
-            auto statePtr = model.GetStatePtr();
-            statePtr.transform->translate.x += std::get<float>(keyConfig.GetInputValue("MoveX")) * Engine::GetDeltaTime() * 10.0f;
-        }
-        if (std::get<float>(keyConfig.GetInputValue("MoveY"))) {
-            auto statePtr = model.GetStatePtr();
-            statePtr.transform->translate.y += std::get<float>(keyConfig.GetInputValue("MoveY")) * Engine::GetDeltaTime() * 10.0f;
-        }
-        if (std::get<float>(keyConfig.GetInputValue("MoveZ"))) {
-            auto statePtr = model.GetStatePtr();
-            statePtr.transform->translate.z += std::get<float>(keyConfig.GetInputValue("MoveZ")) * Engine::GetDeltaTime() * 10.0f;
-        }
 
         //==================================================
         // 描画処理
         //==================================================
 
-        // 背景色を設定
-        dxCommon->SetClearColor(ConvertColor(clearColor));
-        // 平行光源を設定
-        renderer->SetLight(&directionalLight);
-
-        // グリッド線の描画
-        if (isXZGrid) gridLineXZ.Draw();
-        if (isXYGrid) gridLineXY.Draw();
-        if (isYZGrid) gridLineYZ.Draw();
-
-        // モデルの描画
-        model.Draw();
+        for (size_t i = 0; i < sprites.size(); i++) {
+            sprites[i]->Draw();
+        }
 
         myGameEngine->EndFrame();
         // ESCで終了

@@ -26,16 +26,26 @@ public:
 
     /// @brief ピボットの設定
     /// @param pivot ピボット(0.0~1.0)
-    void SetPivot(const Vector2 &pivot);
+    void SetAnchor(const Vector2 &pivot);
+
+    /// @brief 左右反転の設定
+    void SetFlipX(bool isFlip);
+    /// @brief 上下反転の設定
+    void SetFlipY(bool isFlip);
 
 private:
     /// @brief 初期化処理
     void Initialize();
 
-    /// @brief ピボットによる頂点位置Xの調整
+    /// @brief アンカーによる頂点位置Xの調整
     void AdjustVertexPosX(float newPivotX);
-    /// @brief ピボットによる頂点位置Yの調整
+    /// @brief アンカーによる頂点位置Yの調整
     void AdjustVertexPosY(float newPivotY);
+
+    /// @brief 左右反転の頂点UV調整
+    void AdjustFlipX();
+    /// @brief 上下反転の頂点UV調整
+    void AdjustFlipY();
 
     /// @brief テクスチャのロード
     /// @param textureData テクスチャデータ
@@ -46,7 +56,12 @@ private:
     /// @brief スプライトの高さ
     float height_ = 0.0f;
     /// @brief ピボット(0.0~1.0)
-    Vector2 pivot_ = { 0.5f, 0.5f };
+    Vector2 anchor_ = { 0.5f, 0.5f };
+
+    /// @brief 左右反転フラグ
+    bool isFlipX_ = false;
+    /// @brief 上下反転フラグ
+    bool isFlipY_ = false;
 };
 
 } // namespace KashipanEngine
