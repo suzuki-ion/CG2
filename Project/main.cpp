@@ -69,8 +69,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // モデルに使用するカメラ
     std::unique_ptr<Camera> camera = std::make_unique<Camera>();
-    camera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
-    camera->SetTranslate({ 0.0f, 4.0f, 16.0f });
+    camera->SetTranslate({ 0.0f, 1.0f, -16.0f });
     // カメラをレンダラーにセット
     myGameEngine->GetRenderer()->SetCamera(camera.get());
 
@@ -157,7 +156,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
         ImGui::End();
 #else
-
+        static_cast<void>(isDebugCameraActive);
 #endif
 
         //==================================================
