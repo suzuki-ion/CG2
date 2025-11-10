@@ -228,6 +228,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Objects\Lines.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Model.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Object.cpp" />
+    <ClCompile Include="KashipanEngine\Objects\Particle.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Plane.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Sphere.cpp" />
     <ClCompile Include="KashipanEngine\Objects\Sprite.cpp" />
@@ -311,6 +312,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Font\FontStructs.h" />
     <ClInclude Include="KashipanEngine\Objects\Cube.h" />
     <ClInclude Include="KashipanEngine\Objects\Lines.h" />
+    <ClInclude Include="KashipanEngine\Objects\Particle.h" />
     <ClInclude Include="MyStd\AnyUnorderedMap.h" />
     <ClInclude Include="MyStd\AnyVector.h" />
     <ClInclude Include="MyStd\OnlyPointer.h" />

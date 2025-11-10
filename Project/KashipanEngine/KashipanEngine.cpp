@@ -41,6 +41,7 @@
 #include "Objects/Model.h"
 #include "Objects/Lines.h"
 #include "Objects/Sprite.h"
+#include "Objects/Particle.h"
 #include "KashipanEngine.h"
 
 using namespace KashipanEngine;
@@ -183,6 +184,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 
 Engine::~Engine() {
     LogInsertPartition("\n================= Engine Finalize ================\n");
+    ParticleManager::ClearAllParticleGroups();
     // 各クラスの終了処理
     ModelData::ClearAllModelData();
     sMainScreenBuffer.reset();

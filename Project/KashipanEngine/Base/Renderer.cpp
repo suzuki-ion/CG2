@@ -16,6 +16,7 @@
 #include "Common/ConvertColor.h"
 #include "Common/Descriptors/SRV.h"
 #include "Common/Descriptors/DSV.h"
+#include "Objects/Particle.h" // 追加
 
 #define M_PI (4.0f * std::atanf(1.0f))
 
@@ -128,12 +129,6 @@ void Renderer::PreDraw() {
 }
 
 void Renderer::PostDraw() {
-    // 描画オブジェクトをパイプライン名でソート
-    //std::sort(drawObjects_.begin(), drawObjects_.end(), ComparePipelineNameObject);
-    //std::sort(drawAlphaObjects_.begin(), drawAlphaObjects_.end(), ComparePipelineNameObject);
-    //std::sort(draw2DObjects_.begin(), draw2DObjects_.end(), ComparePipelineNameObject);
-    //std::sort(drawLines_.begin(), drawLines_.end(), ComparePipelineNameLine);
-
     // 光源が設定されていなければデフォルトの光源を設定
     if (directionalLight_ == nullptr) {
         directionalLight_ = &sDefaultDirectionalLight;
@@ -289,6 +284,36 @@ void Renderer::DrawLine(LineState *lineState) {
     } else {
         dxCommon_->GetCommandList()->DrawInstanced(lineState->vertexCount, 1, 0, 0);
     }
+}
+
+void Renderer::DrawParticles(ParticleGroup *group) {
+    if (!group) { return; }
+
+    pipeLineManager_->SetCommandListPipeLine("Particle.Solid.BlendNormal");
+
+    Matrix4x4 viewProj;
+    if (isUseDebugCamera_) {
+        sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
+        sDebugCamera->CalculateMatrix();
+        viewProj = sDebugCamera->GetViewMatrix() * sDebugCamera->GetProjectionMatrix();
+    } else {
+        sCameraPtr->SetWorldMatrix(Matrix4x4::Identity());
+        sCameraPtr->CalculateMatrix();
+        viewProj = sCameraPtr->GetViewMatrix() * sCameraPtr->GetProjectionMatrix();
+    }
+
+    group->UpdateMatrices(viewProj);
+    UINT instanceCount = group->GetInstanceCount();
+    if (instanceCount == 0) { return; }
+
+    dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, group->GetMatricesSrvGPU());
+    dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(group->GetTextureIndex()).srvHandleGPU);
+    dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, group->GetMaterialResource()->GetGPUVirtualAddress());
+
+    dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &group->GetMesh()->vertexBufferView);
+    dxCommon_->GetCommandList()->IASetIndexBuffer(&group->GetMesh()->indexBufferView);
+
+    dxCommon_->GetCommandList()->DrawIndexedInstanced(group->GetIndexCount(), instanceCount, 0, 0, 0);
 }
 
 } // namespace KashipanEngine

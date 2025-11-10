@@ -1,0 +1,39 @@
+﻿{
+	"Name": "Particle.VS",
+	"Type": "Vertex",
+	"Path": "Resources/PipeLines/Preset/Shader/Particle/Vertex.hlsl",
+	"TargetProfile": "vs_6_0",
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_VERTEX",
+				"Descriptor": {
+					"ShaderRegister": 0
+				}
+			}
+		]
+	},
+	"InputLayout": {
+		"Elements": [
+			{
+				"SemanticName": "POSITION",
+				"SemanticIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32A32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			},
+			{
+				"SemanticName": "TEXCOORD",
+				"SemanticIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			},
+			{
+				"SemanticName": "NORMAL",
+				"SemanticIndex": 0,
+				"Format": "DXGI_FORMAT_R32G32B32_FLOAT",
+				"AlignedByteOffset": "D3D12_APPEND_ALIGNED_ELEMENT"
+			}
+		]
+	}
+}

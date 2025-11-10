@@ -18,6 +18,7 @@ class DirectXCommon;
 class ImGuiManager;
 class Camera;
 class PipeLineManager;
+class ParticleGroup; // 追加: パーティクル描画用
 
 struct DirectionalLight;
 
@@ -128,6 +129,10 @@ public:
     /// @param isUseCamera カメラを使用しているかどうか
     /// @param isSemitransparent 半透明オブジェクトかどうか
     void DrawSet(const ObjectState &objectState, bool isUseCamera, bool isSemitransparent);
+
+    /// @brief パーティクル描画
+    /// @param group パーティクルグループ
+    void DrawParticles(ParticleGroup *group);
 
 private:
     /// @brief 平行光源の設定

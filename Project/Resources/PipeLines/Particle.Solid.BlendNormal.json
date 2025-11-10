@@ -1,0 +1,27 @@
+﻿{
+	"PipeLineType": "Render",
+	"Name": "Particle.Solid.BlendNormal",
+	"Shader": {
+		"Vertex": {
+			"UsePreset": "Particle.VS"
+		},
+		"Pixel": {
+			"UsePreset": "Particle.PS"
+		}
+	},
+	"RootSignature": {
+		"UsePreset": "Particle"
+	},
+	"RasterizerState": {
+		"UsePreset": "DoubleSidedCulling"
+	},
+	"BlendState": {
+		"UsePreset": "Normal"
+	},
+	"DepthStencilState": {
+		"UsePreset": "DepthEnable"
+	},
+	"PipelineState": {
+		"UsePreset": "Default"
+	}
+}

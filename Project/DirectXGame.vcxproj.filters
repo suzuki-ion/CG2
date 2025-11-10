@@ -296,6 +296,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Application</Filter>
     </ClCompile>
+    <ClCompile Include="KashipanEngine\Objects\Particle.cpp" />
   </ItemGroup>
   <!-- Header files (ClInclude) -->
   <ItemGroup>
@@ -647,6 +648,7 @@
     <ClInclude Include="KashipanEngine\Objects\WorldTransform.h">
       <Filter>KashipanEngine\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="KashipanEngine\Objects\Particle.h" />
   </ItemGroup>
   <!-- HLSL (FxCompile) -->
   <ItemGroup>
