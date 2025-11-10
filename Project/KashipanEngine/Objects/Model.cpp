@@ -1,6 +1,8 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include <unordered_map>
+#include <memory>
 
 #include "Model.h"
 #include "Math/Vector2.h"
@@ -12,6 +14,8 @@
 namespace KashipanEngine {
 
 namespace {
+/// @brief モデルデータのマップ
+std::unordered_map<std::string, std::vector<std::unique_ptr<ModelData>>> sModelDataMap;
 
 /// @brief 指定のマテリアル情報を取得
 /// @param directoryPath ディレクトリのパス
@@ -74,6 +78,10 @@ MaterialData LoadMaterialFile(const std::string &directoryPath, const std::strin
 
 } // namespace
 
+void ModelData::ClearAllModelData() {
+    sModelDataMap.clear();
+}
+
 void ModelData::CreateData(std::vector<VertexData> &vertexData, std::vector<uint32_t> &indexData, MaterialData &materialData) {
     isUseCamera_ = true;
     // メッシュの生成
@@ -107,6 +115,14 @@ Model::Model(std::string directoryPath, std::string fileName) {
     // ディレクトリパス + ファイル名をオブジェクトの名前にする
     name_ = directoryPath + '/' + fileName;
 
+    // 既に読み込まれている場合は共有データを参照するだけ
+    if (auto it = sModelDataMap.find(name_); it != sModelDataMap.end()) {
+        for (auto &mdl : it->second) {
+            models_.push_back(mdl.get());
+        }
+        return;
+    }
+
     std::vector<Vector4> positions;     // 位置
     std::vector<Vector3> normals;       // 法線
     std::vector<Vector2> texCoords;     // テクスチャ座標
@@ -122,6 +138,9 @@ Model::Model(std::string directoryPath, std::string fileName) {
         Log("Failed to open file: " + directoryPath + "/" + fileName, kLogLevelFlagError);
         assert(false);
     }
+
+    // ロード結果を一時的に保持する（ロード後にキャッシュへ移動）
+    std::vector<std::unique_ptr<ModelData>> loadedModels;
 
     // ファイルを1行ずつ読み込む
     std::string preIdentifier;
@@ -142,7 +161,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
         // かつ今は面情報じゃない行を読み込んでいたらモデルデータに書き込み
         if (preIdentifier == "f" && identifier != "f") {
             MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-            models_.back()->CreateData(vertices, index, materialData);
+            loadedModels.back()->CreateData(vertices, index, materialData);
 
             // 読み込んだデータを一部リセット
             vertices.clear();
@@ -196,7 +215,7 @@ Model::Model(std::string directoryPath, std::string fileName) {
 
             // 前までのIDがfでなければ新しくモデルデータを追加
             if (preIdentifier != "f") {
-                models_.push_back(std::make_unique<ModelData>());
+                loadedModels.push_back(std::make_unique<ModelData>());
             }
 
             std::vector<VertexData> faceVertices;
@@ -275,9 +294,19 @@ Model::Model(std::string directoryPath, std::string fileName) {
     }
 
     // モデルデータの最後の要素のmeshがemptyなら書き込み
-    if (!models_.back()->isMeshExist()) {
+    if (!loadedModels.empty() && !loadedModels.back()->isMeshExist()) {
         MaterialData materialData = LoadMaterialFile(directoryPath, materialFileName, usemtl);
-        models_.back()->CreateData(vertices, index, materialData);
+        loadedModels.back()->CreateData(vertices, index, materialData);
+    }
+
+    // キャッシュに登録
+    for (auto &mdl : loadedModels) {
+        sModelDataMap[name_].push_back(std::move(mdl));
+    }
+
+    // 参照を保持
+    for (auto &mdl : sModelDataMap[name_]) {
+        models_.push_back(mdl.get());
     }
 }
 

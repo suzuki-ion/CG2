@@ -51,28 +51,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     int frameRate = 60;
     myGameEngine->SetFrameRate(frameRate);
 
+    // デバッグカメラ切り替え用フラグ
+    bool isDebugCameraActive = false;
+
     //==================================================
-    // スプライト
+    // 平行光源
     //==================================================
 
-    // スプライトをまとめる用のvector
-    std::vector<std::unique_ptr<Sprite>> sprites;
+    DirectionalLight directionalLight{};
+    directionalLight.color = Vector4(255.0f, 255.0f, 255.0f, 255.0f);
+    directionalLight.direction = Vector3(0.5f, -0.75f, -0.5f).Normalize();
+    directionalLight.intensity = 16.0f;
 
-    // スプライトの生成
-    for (int i = 0; i < 10; i++) {
-        sprites.push_back(std::make_unique<Sprite>(textures[1]));
-        sprites[i]->SetAnchor({ 0.5f, 0.5f });
-        auto spriteState = sprites[i]->GetStatePtr();
-        spriteState.transform->translate = {
-            64.0f + static_cast<float>(i) * 128.0f,
-            1080.0f / 2.0f,
-            0.0f
-        };
-        *spriteState.useTextureIndex = ((i % 2) == 0) ? textures[0] : textures[1];
-        if (i % 3 == 0) {
-            sprites[i]->SetFlipX(true);
-        }
-    }
+    //==================================================
+    // モデル
+    //==================================================
+
+    // モデルに使用するカメラ
+    std::unique_ptr<Camera> camera = std::make_unique<Camera>();
+    camera->SetCoordinateSystem(Camera::CoordinateSystem::kSpherical);
+    camera->SetTranslate({ 0.0f, 4.0f, 16.0f });
+    // カメラをレンダラーにセット
+    myGameEngine->GetRenderer()->SetCamera(camera.get());
+
+    // モデルコンテナ
+    std::vector<std::unique_ptr<Model>> models;
+    // モデルの生成
+    models.push_back(std::make_unique<Model>("Resources/nahida", "nahida.obj"));
+    models.back()->GetStatePtr().transform->translate = { 0.0f, 0.0f, 0.0f };
+    models.push_back(std::make_unique<Model>("Resources/Ground", "ground.obj"));
+    models.back()->GetStatePtr().transform->translate = { 0.0f, 0.0f, 0.0f };
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -85,6 +93,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 更新処理
         //==================================================
 
+        // 平行光源をレンダラーにセット
+        myGameEngine->GetRenderer()->SetLight(&directionalLight);
 #if !RELEASE_BUILD
         ImGuiManager::Begin("KashipanEngine");
         // FPSの表示
@@ -94,6 +104,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::InputInt("フレームレート", &frameRate);
         if (ImGui::Button("フレームレートを設定")) {
             myGameEngine->SetFrameRate(frameRate);
+        }
+        // デバッグカメラの有効化
+        if (ImGui::Checkbox("デバッグカメラの有効化", &isDebugCameraActive)) {
+            myGameEngine->GetRenderer()->ToggleDebugCamera();
         }
         ImGui::End();
 
@@ -129,30 +143,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // マウスの座標
         ImGui::Text("マウス座標: x.%d y.%d", static_cast<int>(Input::GetMouseX()), static_cast<int>(Input::GetMouseY()));
-        
+
         ImGui::End();
 
-        // スプライト
-        ImGui::Begin("スプライト");
-        for (size_t i = 0; i < sprites.size(); i++) {
-            auto spriteState = sprites[i]->GetStatePtr();
-            ImGui::Text("スプライト %zu", i);
-            ImGui::InputFloat3(("位置##sprite" + std::to_string(i)).c_str(), &spriteState.transform->translate.x);
-            ImGui::InputFloat3(("回転##sprite" + std::to_string(i)).c_str(), &spriteState.transform->rotate.x);
-            ImGui::InputFloat3(("拡縮##sprite" + std::to_string(i)).c_str(), &spriteState.transform->scale.x);
+        // モデル
+        ImGui::Begin("モデル");
+        for (size_t i = 0; i < models.size(); i++) {
+            auto modelState = models[i]->GetStatePtr();
+            ImGui::Text("モデル %zu", i);
+            ImGui::InputFloat3(("位置##model" + std::to_string(i)).c_str(), &modelState.transform->translate.x);
+            ImGui::InputFloat3(("回転##model" + std::to_string(i)).c_str(), &modelState.transform->rotate.x);
+            ImGui::InputFloat3(("拡縮##model" + std::to_string(i)).c_str(), &modelState.transform->scale.x);
         }
         ImGui::End();
 #else
 
 #endif
 
-
         //==================================================
         // 描画処理
         //==================================================
 
-        for (size_t i = 0; i < sprites.size(); i++) {
-            sprites[i]->Draw();
+        for (size_t i = 0; i < models.size(); i++) {
+            models[i]->Draw();
         }
 
         myGameEngine->EndFrame();

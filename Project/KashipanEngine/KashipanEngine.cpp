@@ -184,6 +184,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
 Engine::~Engine() {
     LogInsertPartition("\n================= Engine Finalize ================\n");
     // 各クラスの終了処理
+    ModelData::ClearAllModelData();
     sMainScreenBuffer.reset();
     sPipeLineManager.reset();
     sRenderer.reset();

@@ -17,6 +17,9 @@ struct MaterialData {
 /// @brief モデルデータ
 class ModelData : public Object {
 public:
+    /// @brief 読み込んだモデルデータの全削除
+    static void ClearAllModelData();
+
     ModelData() = default;
 
     /// @brief モデルデータの作成
@@ -54,6 +57,7 @@ public:
     /// @param directoryPath モデルのディレクトリパス
     /// @param fileName モデルのファイル名
     Model(std::string directoryPath, std::string fileName);
+    ~Model() = default;
 
     /// @brief 描画処理
     void Draw();
@@ -74,13 +78,13 @@ public:
 
     /// @brief modelデータへのアクセス
     /// @return モデルデータの参照
-    const std::vector<std::unique_ptr<ModelData>> &GetModels() {
+    const std::vector<ModelData *> &GetModels() {
         return models_;
     }
 
 private:
     /// @brief モデルデータ
-    std::vector<std::unique_ptr<ModelData>> models_;
+    std::vector<ModelData *> models_;
 };
 
 } // namespace KashipanEngine
