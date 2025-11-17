@@ -1,5 +1,5 @@
 #pragma once
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
 
 #include <d3d12.h>
 #include <imgui.h>

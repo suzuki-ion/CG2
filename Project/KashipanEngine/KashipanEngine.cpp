@@ -28,7 +28,7 @@
 #include "Base/ScreenBuffer.h"
 #include "Base/PipeLines/PipeLines.h"
 #include "Base/PipeLineManager.h"
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
 #include "2d/ImGuiManager.h"
 #endif
 #include "3d/PrimitiveDrawer.h"
@@ -60,7 +60,7 @@ D3DResourceLeakChecker leakCheck_;
 // 各エンジン用クラスのグローバル変数
 std::unique_ptr<WinApp> sWinApp;
 std::unique_ptr<DirectXCommon> sDxCommon;
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
 std::unique_ptr<ImGuiManager> sImGuiManager;
 #endif
 std::unique_ptr<Renderer> sRenderer;
@@ -131,7 +131,7 @@ Engine::Engine(const char *title, int width, int height, bool enableDebugLayer,
     // srvDescriptorHeapの初期化
     SRV::Initialize(sDxCommon.get());
 
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
     // ImGui初期化
     sImGuiManager = std::make_unique<ImGuiManager>(sWinApp.get(), sDxCommon.get());
 #endif
@@ -192,7 +192,7 @@ Engine::~Engine() {
     sRenderer.reset();
     Sound::Finalize();
     Texture::Finalize();
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
     sImGuiManager.reset();
 #endif
     sDxCommon.reset();
@@ -245,7 +245,7 @@ bool Engine::BeginGameLoop() {
         sCountFps = static_cast<unsigned int>(1.0f / sDeltaTime);
         
         sMainScreenBuffer->PreDraw();
-#if !RELEASE_BUILD
+#ifdef USE_IMGUI
         sImGuiManager->BeginFrame();
 #endif
         sRenderer->PreDraw();
@@ -268,7 +268,9 @@ void Engine::EndFrame() {
     sRenderer->PostDraw();
 #else
     sMainScreenBuffer->DrawToImGui();
+#ifdef USE_IMGUI
     sImGuiManager->EndFrame();
+#endif
 #endif
     sDxCommon->PostDraw();
 }
@@ -310,7 +312,7 @@ KashipanEngine::Renderer *Engine::GetRenderer() const {
 }
 
 KashipanEngine::ImGuiManager *Engine::GetImGuiManager() const {
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
     return sImGuiManager.get();
 #else
     return nullptr;
@@ -329,7 +331,9 @@ FinalizeChecker::~FinalizeChecker() {
     // エンジンが完全に終了しているかチェック
     assert(!sWinApp);
     assert(!sDxCommon);
+#ifdef USE_IMGUI
     assert(!sImGuiManager);
+#endif
     // 初期化完了のログを出力
     Log("Complete Finalize Engine.");
 }

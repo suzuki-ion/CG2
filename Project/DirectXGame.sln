@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXGame", "DirectXGame.vcxproj", "{6A034FA6-58FF-488A-9071-8F5F4EB05300}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B575E64A-9F5C-4027-9225-5D150C861E01} = {B575E64A-9F5C-4027-9225-5D150C861E01}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{D23E7A96-19A0-488E-8DCA-2A3BA24BD61E}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "Externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj", "{371B9FA9-4C90-4AC6-A123-ACED756D6C77}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "..\ImGui\ImGui.vcxproj", "{B575E64A-9F5C-4027-9225-5D150C861E01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,8 +36,17 @@ Global
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Development|x64.Build.0 = Development|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.ActiveCfg = Release|x64
 		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.Build.0 = Release|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Debug|x64.ActiveCfg = Debug|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Debug|x64.Build.0 = Debug|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Development|x64.ActiveCfg = Development|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Development|x64.Build.0 = Development|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Release|x64.ActiveCfg = Release|x64
+		{B575E64A-9F5C-4027-9225-5D150C861E01}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {507A034F-8A6A-4AE6-9575-AB5FF62BA2B1}
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,5 @@
 #include <cassert>
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
 #include <imgui.h>
 #endif
 #include "Base/WinApp.h"
@@ -160,7 +160,7 @@ void ScreenBuffer::PostDraw() {
 }
 
 void ScreenBuffer::DrawToImGui() {
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
     ImGui::Begin(screenName_.c_str());
     
     // ウィンドウの位置情報を事前に取得

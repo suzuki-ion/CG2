@@ -6,7 +6,9 @@
 #include "Base/DirectXCommon.h"
 #include "Base/Texture.h"
 #include "Base/PipeLineManager.h"
+#ifdef USE_IMGUI
 #include "2d/ImGuiManager.h"
+#endif
 
 #include "Math/Camera.h"
 #include "Math/RenderingPipeline.h"
@@ -56,7 +58,7 @@ Renderer::Renderer(WinApp *winApp, DirectXCommon *dxCommon, ImGuiManager *imguiM
         Log("dxCommon is null.", kLogLevelFlagError);
         assert(false);
     }
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
     if (!imguiManager) {
         Log("imguiManager is null.", kLogLevelFlagError);
         assert(false);

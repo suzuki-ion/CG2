@@ -2,7 +2,7 @@
 #include <memory>
 #include <fstream>
 #include <cmath>
-#if DEBUG_BUILD || DEVELOP_BUILD
+#ifdef USE_IMGUI
 #include <imgui.h>
 #endif
 
@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // パーティクル
     //==================================================
 
-    const int kInstanceCount = 4096;
+    const int kInstanceCount = 1024;
     ParticleGroup *particleGroup = ParticleManager::CreateParticleGroup(
         "TestParticles",
         myGameEngine->GetDxCommon(),
@@ -120,7 +120,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // 平行光源をレンダラーにセット
         myGameEngine->GetRenderer()->SetLight(&directionalLight);
-#if !RELEASE_BUILD
+#ifdef USE_IMGUI
         ImGuiManager::Begin("KashipanEngine");
         // FPSの表示
         ImGui::Text("FPS: %d", myGameEngine->GetFPS());
