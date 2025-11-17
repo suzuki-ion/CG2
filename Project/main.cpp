@@ -27,7 +27,7 @@
 
 #include "2d/UI/GUI/Button.h"
 #include "2d/UI/UIGroup.h"
-#include "Objects/Particle.h" // 追加: パーティクル
+#include "Objects/Particle.h"
 
 using namespace KashipanEngine;
 
@@ -106,6 +106,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     float particleTime = 0.0f;
+
+    //==================================================
+    // スプライト
+    //==================================================
+
+    std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>(textures[0]);
+    sprite->GetStatePtr().transform->translate = { 256.0f, 256.0f, 0.0f };
 
     // ウィンドウのxボタンが押されるまでループ
     while (myGameEngine->ProccessMessage() != -1) {
@@ -189,6 +196,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ImGui::InputFloat3("発生位置", &spawnPos.x);
         particleGroup->SetSpawnPosition(spawnPos);
         ImGui::End();
+
+        // スプライト
+        ImGui::Begin("スプライト");
+        auto spriteState = sprite->GetStatePtr();
+        ImGui::DragFloat3("位置", &spriteState.transform->translate.x);
+        ImGui::DragFloat3("回転", &spriteState.transform->rotate.x);
+        ImGui::DragFloat3("拡縮", &spriteState.transform->scale.x);
+        ImGui::End();
 #else
         static_cast<void>(isDebugCameraActive);
 #endif
@@ -228,6 +243,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
         // パーティクルの描画
         particleGroup->Draw();
+        // スプライトの描画
+        sprite->Draw();
 
         myGameEngine->EndFrame();
         // ESCで終了
