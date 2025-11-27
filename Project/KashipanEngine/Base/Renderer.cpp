@@ -269,7 +269,7 @@ void Renderer::DrawLine(LineState *lineState) {
         lineState->transformationMatrixMap->wvp = sCameraPtr->GetWVPMatrix();
         lineState->transformationMatrixMap->viewportInverse = sCameraPtr->GetViewportMatrix().Inverse();
     }
-
+    
     // TransformationMatrix用のCBufferの場所を指定
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, lineState->transformationMatrixResource->GetGPUVirtualAddress());
     // LineOption用のCBufferの場所を指定

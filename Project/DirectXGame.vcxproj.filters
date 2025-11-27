@@ -297,6 +297,9 @@
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="KashipanEngine\Objects\Particle.cpp" />
+    <ClCompile Include="Application\Scenes\GameScene.cpp" />
+    <ClCompile Include="Application\Objects\Player.cpp" />
+    <ClCompile Include="Application\CameraController.cpp" />
   </ItemGroup>
   <!-- Header files (ClInclude) -->
   <ItemGroup>
@@ -649,6 +652,12 @@
       <Filter>KashipanEngine\Objects</Filter>
     </ClInclude>
     <ClInclude Include="KashipanEngine\Objects\Particle.h" />
+    <ClInclude Include="Application\Scenes\TitleScene.h" />
+    <ClInclude Include="Application\Scenes\GameScene.h" />
+    <ClInclude Include="Application\Scenes\ClearScene.h" />
+    <ClInclude Include="Application\Objects\Player.h" />
+    <ClInclude Include="KashipanEngine\Objects\Player.h" />
+    <ClInclude Include="Application\CameraController.h" />
   </ItemGroup>
   <!-- HLSL (FxCompile) -->
   <ItemGroup>
