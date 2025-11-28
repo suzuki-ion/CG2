@@ -54,23 +54,23 @@ cbuffer ParticleUpdateCB : register(b0) {
 	float3 boxHalfExtent;
 }
 
-float hash(float3 p) {
+float HashFloat3(float3 p) {
 	return frac(sin(dot(p, float3(127.1, 311.7, 74.7))) * 43758.5453);
 }
 
-float noise3(float3 p) {
+float Noise3(float3 p) {
 	float3 i = floor(p);
 	float3 f = frac(p);
 	float3 u = f * f * (3.0 - 2.0 * f);
 
-	float n000 = hash(i + float3(0.0, 0.0, 0.0));
-	float n100 = hash(i + float3(1.0, 0.0, 0.0));
-	float n010 = hash(i + float3(0.0, 1.0, 0.0));
-	float n110 = hash(i + float3(1.0, 1.0, 0.0));
-	float n001 = hash(i + float3(0.0, 0.0, 1.0));
-	float n101 = hash(i + float3(1.0, 0.0, 1.0));
-	float n011 = hash(i + float3(0.0, 1.0, 1.0));
-	float n111 = hash(i + float3(1.0, 1.0, 1.0));
+	float n000 = HashFloat3(i + float3(0.0, 0.0, 0.0));
+	float n100 = HashFloat3(i + float3(1.0, 0.0, 0.0));
+	float n010 = HashFloat3(i + float3(0.0, 1.0, 0.0));
+	float n110 = HashFloat3(i + float3(1.0, 1.0, 0.0));
+	float n001 = HashFloat3(i + float3(0.0, 0.0, 1.0));
+	float n101 = HashFloat3(i + float3(1.0, 0.0, 1.0));
+	float n011 = HashFloat3(i + float3(0.0, 1.0, 1.0));
+	float n111 = HashFloat3(i + float3(1.0, 1.0, 1.0));
 
 	float nx00 = lerp(n000, n100, u.x);
 	float nx10 = lerp(n010, n110, u.x);
@@ -83,61 +83,60 @@ float noise3(float3 p) {
 	return lerp(nxy0, nxy1, u.z);
 }
 
-float fbm(float3 p) {
+float Fbm(float3 p) {
 	float value = 0.0;
 	float amplitude = 0.5;
 	for (int i = 0; i < 4; ++i) {
-		value += amplitude * noise3(p);
+		value += amplitude * Noise3(p);
 		p *= 2.0;
 		amplitude *= 0.5;
 	}
 	return value;
 }
 
-float3 curlNoise(float3 p) {
-	float eps_local = max(eps, 1e-5);
-	float3 dx = float3(eps_local, 0.0, 0.0);
-	float3 dy = float3(0.0, eps_local, 0.0);
-	float3 dz = float3(0.0, 0.0, eps_local);
+float3 CurlNoise(float3 p) {
+	float epsLocal = max(eps, 1e-5);
+	float3 dx = float3(epsLocal, 0.0, 0.0);
+	float3 dy = float3(0.0, epsLocal, 0.0);
+	float3 dz = float3(0.0, 0.0, epsLocal);
 	
 	const float3 o1 = float3(12.9898, 78.233, 45.164);
 	const float3 o2 = float3(31.4159, 61.4159, 14.159);
 	
-	float F_x1 = fbm(p + dx);
-	float F_x0 = fbm(p - dx);
-	float F_y1 = fbm(p + dy);
-	float F_y0 = fbm(p - dy);
-	float F_z1 = fbm(p + dz);
-	float F_z0 = fbm(p - dz);
+	float fx1 = Fbm(p + dx);
+	float fx0 = Fbm(p - dx);
+	float fy1 = Fbm(p + dy);
+	float fy0 = Fbm(p - dy);
+	float fz1 = Fbm(p + dz);
+	float fz0 = Fbm(p - dz);
 
-	float G_x1 = fbm(p + o1 + dx);
-	float G_x0 = fbm(p + o1 - dx);
-	float G_y1 = fbm(p + o1 + dy);
-	float G_y0 = fbm(p + o1 - dy);
-	float G_z1 = fbm(p + o1 + dz);
-	float G_z0 = fbm(p + o1 - dz);
+	float gx1 = Fbm(p + o1 + dx);
+	float gx0 = Fbm(p + o1 - dx);
+	float gy1 = Fbm(p + o1 + dy);
+	float gy0 = Fbm(p + o1 - dy);
+	float gz1 = Fbm(p + o1 + dz);
+	float gz0 = Fbm(p + o1 - dz);
 
-	float H_x1 = fbm(p + o2 + dx);
-	float H_x0 = fbm(p + o2 - dx);
-	float H_y1 = fbm(p + o2 + dy);
-	float H_y0 = fbm(p + o2 - dy);
-	float H_z1 = fbm(p + o2 + dz);
-	float H_z0 = fbm(p + o2 - dz);
+	float Hx1 = Fbm(p + o2 + dx);
+	float Hx0 = Fbm(p + o2 - dx);
+	float Hy1 = Fbm(p + o2 + dy);
+	float Hy0 = Fbm(p + o2 - dy);
+	float Hz1 = Fbm(p + o2 + dz);
+	float Hz0 = Fbm(p + o2 - dz);
 
-	float dFdx = (F_x1 - F_x0) / (2.0 * eps_local);
-	float dFdy = (F_y1 - F_y0) / (2.0 * eps_local);
-	float dFdz = (F_z1 - F_z0) / (2.0 * eps_local);
+	float dfdx = (fx1 - fx0) / (2.0 * epsLocal);
+	float dfdy = (fy1 - fy0) / (2.0 * epsLocal);
+	float dfdz = (fz1 - fz0) / (2.0 * epsLocal);
 
-	float dGdx = (G_x1 - G_x0) / (2.0 * eps_local);
-	float dGdy = (G_y1 - G_y0) / (2.0 * eps_local);
-	float dGdz = (G_z1 - G_z0) / (2.0 * eps_local);
+	float dgdx = (gx1 - gx0) / (2.0 * epsLocal);
+	float dgdy = (gy1 - gy0) / (2.0 * epsLocal);
+	float dgdz = (gz1 - gz0) / (2.0 * epsLocal);
 
-	float dHdx = (H_x1 - H_x0) / (2.0 * eps_local);
-	float dHdy = (H_y1 - H_y0) / (2.0 * eps_local);
-	float dHdz = (H_z1 - H_z0) / (2.0 * eps_local);
-
-	// curl of vector field (F,G,H)
-	return float3(dHdy - dGdz, dFdz - dHdx, dGdx - dFdy);
+	float dhdx = (Hx1 - Hx0) / (2.0 * epsLocal);
+	float dhdy = (Hy1 - Hy0) / (2.0 * epsLocal);
+	float dhdz = (Hz1 - Hz0) / (2.0 * epsLocal);
+	
+	return float3(dhdy - dgdz, dfdz - dhdx, dgdx - dfdy);
 }
 
 float4x4 MakeTranslate(float3 t) {
@@ -194,26 +193,26 @@ float4x4 MakeRotate(float3 r) {
 }
 
 [numthreads(1024, 1, 1)]
-void main(uint3 DTid : SV_DispatchThreadID) {
-	if (DTid.x >= instanceCount || gParticles[DTid.x].isActive == 0 || gParticles[DTid.x].isAlive == 0) {
+void main(uint3 dtid : SV_DispatchThreadID) {
+	if (dtid.x >= instanceCount || gParticles[dtid.x].isActive == 0 || gParticles[dtid.x].isAlive == 0) {
 		return;
 	}
 
-	float3 pos = gParticles[DTid.x].transform.translate;
-	float3 rot = gParticles[DTid.x].transform.rotate;
-	float3 scl = gParticles[DTid.x].transform.scale;
-	float3 vel = gParticles[DTid.x].velocity; // read velocity
+	float3 pos = gParticles[dtid.x].transform.translate;
+	float3 rot = gParticles[dtid.x].transform.rotate;
+	float3 scl = gParticles[dtid.x].transform.scale;
+	float3 vel = gParticles[dtid.x].velocity;
 	
 	{
-		float idf = float(DTid.x);
-		int texIdx = gParticles[DTid.x].textureIndex;
-		float s0 = hash(float3(idf, float(texIdx), 12.9898));
-		float s1 = hash(float3(idf, float(texIdx), 78.233));
-		float s2 = hash(float3(idf, float(texIdx), 45.164));
+		float idf = float(dtid.x);
+		int texIdx = gParticles[dtid.x].textureIndex;
+		float s0 = HashFloat3(float3(idf, float(texIdx), 12.9898));
+		float s1 = HashFloat3(float3(idf, float(texIdx), 78.233));
+		float s2 = HashFloat3(float3(idf, float(texIdx), 45.164));
 		float3 seed = float3(s0, s1, s2);
 
 		float3 samplePos = pos * noiseScale + seed * 10.0;
-		float3 curl = curlNoise(samplePos + float3(noiseTime, noiseTime * 0.7, noiseTime * 1.3));
+		float3 curl = CurlNoise(samplePos + float3(noiseTime, noiseTime * 0.7, noiseTime * 1.3));
 		
 		vel = vel * damping + normalize(curl) * curlStrength * deltaTime;
 		
@@ -222,19 +221,19 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 		}
 
 		{
-			float3 p = pos * noiseScale + seed * 10.0; // spatial offset per particle
-			float nx = fbm(p + float3(noiseTime * timeSpeedX + seed.x * 10.0, 0.0, 0.0));
-			float ny = fbm(p + float3(0.0, noiseTime * timeSpeedY + seed.y * 10.0, 0.0));
-			float nz = fbm(p + float3(0.0, 0.0, noiseTime * timeSpeedZ + seed.z * 10.0));
+			float3 p = pos * noiseScale + seed * 10.0;
+			float nx = Fbm(p + float3(noiseTime * timeSpeedX + seed.x * 10.0, 0.0, 0.0));
+			float ny = Fbm(p + float3(0.0, noiseTime * timeSpeedY + seed.y * 10.0, 0.0));
+			float nz = Fbm(p + float3(0.0, 0.0, noiseTime * timeSpeedZ + seed.z * 10.0));
 			float3 nvec = float3(nx, ny, nz) - 0.5f;
-			float noiseAmplitude = noiseAmplitudeBase * (0.5f + seed.y); // vary amplitude per particle
+			float noiseAmplitude = noiseAmplitudeBase * (0.5f + seed.y);
 			pos += nvec * noiseAmplitude * deltaTime * 0.1f;
 		}
 		{
 			float3 r = rot * noiseScale + seed * 5.0;
-			float nx = fbm(r + float3(noiseTime * timeSpeedX + seed.x * 5.0, 0.0, 0.0));
-			float ny = fbm(r + float3(0.0, noiseTime * timeSpeedY + seed.y * 5.0, 0.0));
-			float nz = fbm(r + float3(0.0, 0.0, noiseTime * timeSpeedZ + seed.z * 5.0));
+			float nx = Fbm(r + float3(noiseTime * timeSpeedX + seed.x * 5.0, 0.0, 0.0));
+			float ny = Fbm(r + float3(0.0, noiseTime * timeSpeedY + seed.y * 5.0, 0.0));
+			float nz = Fbm(r + float3(0.0, 0.0, noiseTime * timeSpeedZ + seed.z * 5.0));
 			float3 nvec = float3(nx, ny, nz) - 0.5f;
 			float rotAmp = 1.0f + seed.x;
 			rot += nvec * rotAmp * deltaTime;
@@ -248,17 +247,17 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 		vel = float3(0.0, 0.0, 0.0);
 	}
 
-	gParticles[DTid.x].transform.translate = pos;
-	gParticles[DTid.x].transform.rotate = rot;
-	gParticles[DTid.x].transform.scale = scl;
-	gParticles[DTid.x].velocity = vel;
+	gParticles[dtid.x].transform.translate = pos;
+	gParticles[dtid.x].transform.rotate = rot;
+	gParticles[dtid.x].transform.scale = scl;
+	gParticles[dtid.x].velocity = vel;
 	
 	float4x4 scaleM = MakeScale(scl);
 	float4x4 rotM = MakeRotate(rot);
 	float4x4 transM = MakeTranslate(pos);
 	float4x4 world = mul(mul(scaleM, rotM), transM);
 
-	gMatricesOut[DTid.x].World = world;
-	gMatricesOut[DTid.x].WVP = mul(world, viewProjection);
-	gMatricesOut[DTid.x].ViewportInverse = (float4x4) 0;
+	gMatricesOut[dtid.x].World = world;
+	gMatricesOut[dtid.x].WVP = mul(world, viewProjection);
+	gMatricesOut[dtid.x].ViewportInverse = (float4x4) 0;
 }
