@@ -1,0 +1,38 @@
+﻿{
+	"Name": "ParticleUpdate",
+	"Flags": "D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT",
+	"RootParameter": {
+		"Parameters": [
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL",
+				"DescriptorTable": {
+					"Ranges": [
+						{
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_UAV",
+							"NumDescriptors": 1,
+							"BaseShaderRegister": 0,
+							"RegisterSpace": 0,
+							"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+						},
+						{
+							"RangeType": "D3D12_DESCRIPTOR_RANGE_TYPE_UAV",
+							"NumDescriptors": 1,
+							"BaseShaderRegister": 1,
+							"RegisterSpace": 0,
+							"OffsetInDescriptorsFromTableStart": "D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND"
+						}
+					]
+				}
+			},
+			{
+				"ParameterType": "D3D12_ROOT_PARAMETER_TYPE_CBV",
+				"ShaderVisibility": "D3D12_SHADER_VISIBILITY_ALL",
+				"Descriptor": {
+					"ShaderRegister": 0,
+					"RegisterSpace": 0
+				}
+			}
+		]
+	}
+}

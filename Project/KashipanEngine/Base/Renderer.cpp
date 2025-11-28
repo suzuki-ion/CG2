@@ -290,9 +290,6 @@ void Renderer::DrawLine(LineState *lineState) {
 
 void Renderer::DrawParticles(ParticleGroup *group) {
     if (!group) { return; }
-
-    pipeLineManager_->SetCommandListPipeLine("Particle.Solid.BlendNormal");
-
     Matrix4x4 viewProj;
     if (isUseDebugCamera_) {
         sDebugCamera->SetWorldMatrix(Matrix4x4::Identity());
@@ -308,6 +305,7 @@ void Renderer::DrawParticles(ParticleGroup *group) {
     UINT instanceCount = group->GetInstanceCount();
     if (instanceCount == 0) { return; }
 
+    pipeLineManager_->SetCommandListPipeLine("Particle.Solid.BlendNormal");
     dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, group->GetMatricesSrvGPU());
     dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(group->GetTextureIndex()).srvHandleGPU);
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, group->GetMaterialResource()->GetGPUVirtualAddress());
@@ -316,6 +314,10 @@ void Renderer::DrawParticles(ParticleGroup *group) {
     dxCommon_->GetCommandList()->IASetIndexBuffer(&group->GetMesh()->indexBufferView);
 
     dxCommon_->GetCommandList()->DrawIndexedInstanced(group->GetIndexCount(), instanceCount, 0, 0, 0);
+}
+
+void Renderer::SetPipeLine(const std::string &pipeLineName) {
+    pipeLineManager_->SetCommandListPipeLine(pipeLineName);
 }
 
 } // namespace KashipanEngine

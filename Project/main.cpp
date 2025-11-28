@@ -87,21 +87,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // パーティクル
     //==================================================
 
-    const int kInstanceCount = 1024;
+    const int kInstanceCount = static_cast<int>(pow(2, 20));
     ParticleGroup *particleGroup = ParticleManager::CreateParticleGroup(
         "TestParticles",
         myGameEngine->GetDxCommon(),
         kInstanceCount, // 最大インスタンス数
-        textures[0]     // 使用テクスチャ
+        0 // 使用テクスチャ
     );
+    particleGroup->SetUseCompute(true);
+
     for (int i = 0; i < kInstanceCount; ++i) {
         if (auto *p = particleGroup->SpawnParticle()) {
-            // 円状に配置
-            float angle = (static_cast<float>(i) / static_cast<float>(kInstanceCount)) * 6.2831853f;
-            float radius = 4.0f + (i % 10) * 0.1f;
-            p->transform.translate += { std::cos(angle) * radius, 0.2f * (i % 10), std::sin(angle) * radius };
-            p->transform.scale = { 0.5f, 0.5f, 0.5f };
-            p->transform.rotate = { 0.0f, angle, 0.0f };
+            p->transform.translate = { 0.0f, 0.0f, 0.0f };
+            p->transform.scale = { 0.12f, 0.12f, 0.12f };
+            p->transform.rotate = { 0.0f, 0.0f, 0.0f };
         }
     }
 
@@ -192,9 +191,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // パーティクル
         ImGui::Begin("パーティクル");
         ImGui::Text("アクティブパーティクル数: %d", particleGroup->GetInstanceCount());
-        Vector3 spawnPos = particleGroup->GetSpawnPosition();
-        ImGui::InputFloat3("発生位置", &spawnPos.x);
-        particleGroup->SetSpawnPosition(spawnPos);
+        auto *particleCB = particleGroup->GetGpuParticleCB();
+
+        ImGui::InputFloat3("Spawn Position", &particleCB->spawnPos.x);
+        ImGui::Separator();
+        ImGui::Text("Noise / Motion Parameters");
+        ImGui::SliderFloat("Noise Scale", &particleCB->noiseScale, 0.01f, 10.0f);
+        ImGui::SliderFloat("Noise Amplitude", &particleCB->noiseAmplitudeBase, 0.0f, 10.0f);
+        ImGui::SliderFloat("Time Speed X", &particleCB->timeSpeedX, 0.0f, 5.0f);
+        ImGui::SliderFloat("Time Speed Y", &particleCB->timeSpeedY, 0.0f, 5.0f);
+        ImGui::SliderFloat("Time Speed Z", &particleCB->timeSpeedZ, 0.0f, 5.0f);
+        ImGui::SliderFloat("Curl Strength", &particleCB->curlStrength, 0.0f, 50.0f);
+        ImGui::SliderFloat("Damping", &particleCB->damping, 0.0f, 1.0f);
+        ImGui::SliderFloat("Epsilon", &particleCB->eps, 0.00001f, 0.1f);
+        ImGui::Separator();
+        ImGui::Text("Bounding Box (half-extent)");
+        ImGui::InputFloat3("Box Half Extent", &particleCB->boxHalfExtent.x);
+
         ImGui::End();
 
         // スプライト
@@ -208,8 +221,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         static_cast<void>(isDebugCameraActive);
 #endif
 
-        // パーティクルのアニメーション
-        {
+        // パーティクルのアニメーション (CPU側の手動更新はCompute時はスキップ)
+        if (!particleGroup->IsUseCompute()) {
             float dt = myGameEngine->GetDeltaTime();
             particleTime += dt;
             const auto &list = particleGroup->GetParticles();
@@ -226,9 +239,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                     if (auto *newP = particleGroup->SpawnParticle()) {
                         float angle = (static_cast<float>(i) / static_cast<float>(kInstanceCount)) * 6.2831853f;
                         float radius = 4.0f + (static_cast<int>(i) % 10) * 0.1f;
-                        p->transform.translate += { std::cos(angle) * radius, 0.0f, std::sin(angle) * radius };
-                        p->transform.scale = { 0.5f, 0.5f, 0.5f };
-                        p->transform.rotate = { 0.0f, angle, 0.0f };
+                        newP->transform.translate += { std::cos(angle) * radius, 0.0f, std::sin(angle) * radius };
+                        newP->transform.scale = { 0.5f, 0.5f, 0.5f };
+                        newP->transform.rotate = { 0.0f, angle, 0.0f };
                     }
                 }
             }

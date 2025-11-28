@@ -50,11 +50,19 @@ void PipeLineManager::SetCommandListPipeLine(const std::string &pipeLineName) {
     auto it = pipeLineInfos_.find(pipeLineName);
     if (it != pipeLineInfos_.end()) {
         currentPipeLineName_ = pipeLineName;
-        auto topology = it->second.topologyType;
-        auto &pipeLineSet = it->second.pipeLineSet;
-        dxCommon_->GetCommandList()->IASetPrimitiveTopology(topology);
-        dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipeLineSet.rootSignature.Get());
-        dxCommon_->GetCommandList()->SetPipelineState(pipeLineSet.pipelineState.Get());
+        auto &info = it->second;
+        auto &pipeLineSet = info.pipeLineSet;
+        // レンダーパイプラインとコンピュートパイプラインで設定方法を分岐
+        if (info.type == "Render") {
+            dxCommon_->GetCommandList()->IASetPrimitiveTopology(info.topologyType);
+            dxCommon_->GetCommandList()->SetGraphicsRootSignature(pipeLineSet.rootSignature.Get());
+            dxCommon_->GetCommandList()->SetPipelineState(pipeLineSet.pipelineState.Get());
+        } else if (info.type == "Compute") {
+            dxCommon_->GetCommandList()->SetComputeRootSignature(pipeLineSet.rootSignature.Get());
+            dxCommon_->GetCommandList()->SetPipelineState(pipeLineSet.pipelineState.Get());
+        } else {
+            LogSimple("Unknown pipeline type when setting command list: " + info.type, kLogLevelFlagWarning);
+        }
     } else {
         LogSimple("PipeLine not found: " + pipeLineName, kLogLevelFlagError);
         assert(false);
@@ -450,17 +458,36 @@ void PipeLineManager::LoadComputePipeLine(const Json &json) {
                 auto customRootParameters = pipeLines_.rootParameter->GetRootParameter(name);
                 rootParameters.insert(rootParameters.end(), customRootParameters.begin(), customRootParameters.end());
             }
+            rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
+            rootSignatureDesc.pParameters = rootParameters.data();
         }
     } else {
-        LogSimple("RootSignature is required but not found in PipeLine JSON.", kLogLevelFlagWarning);
+        LogSimple("RootSignature is required but not found in Compute PipeLine JSON.", kLogLevelFlagWarning);
         return;
     }
 
+
     // ルートシグネチャの作成
-    rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
-    rootSignatureDesc.pParameters = rootParameters.data();
+    if (!rootParameters.empty()) {
+        rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters.size());
+        rootSignatureDesc.pParameters = rootParameters.data();
+    }
+    Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob;
+    Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
+    hr = D3D12SerializeRootSignature(
+        &rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+        signatureBlob.GetAddressOf(), errorBlob.GetAddressOf());
+    if (FAILED(hr)) {
+        if (errorBlob) {
+            LogSimple("Root signature serialization failed: " + std::string(static_cast<const char *>(errorBlob->GetBufferPointer())), kLogLevelFlagError);
+        } else {
+            LogSimple("Root signature serialization failed with unknown error.", kLogLevelFlagError);
+        }
+        return;
+    }
     hr = dxCommon_->GetDevice()->CreateRootSignature(
-        0, &rootSignatureDesc, sizeof(rootSignatureDesc), IID_PPV_ARGS(&rootSignature));
+        0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(),
+        IID_PPV_ARGS(&rootSignature));
     if (FAILED(hr)) {
         LogSimple("Failed to create root signature: " + name, kLogLevelFlagError);
         return;

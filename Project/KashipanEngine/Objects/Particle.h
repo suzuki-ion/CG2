@@ -15,12 +15,62 @@ namespace KashipanEngine {
 class Renderer;
 class DirectXCommon;
 
+// GPU 用の Transform / Material / Particle レイアウト(シェーダと一致させる)
+struct GpuTransform {
+    float scale[3]; float _pad0;
+    float rotate[3]; float _pad1;
+    float translate[3]; float _pad2;
+};
+
+struct GpuMaterial {
+    float color[4];
+    int32_t lightingType;
+    int32_t _pad0[3];
+    float uvTransform[16];
+    float diffuseColor[4];
+    float specularColor[4];
+    float emissiveColor[4];
+};
+
+struct GpuParticle {
+    uint32_t isActive;
+    uint32_t isAlive;
+    int32_t textureIndex;
+    int32_t _pad0;
+    GpuTransform transform;
+    GpuMaterial material;
+    float velocity[3];
+    float _padV;
+};
+
 struct Particle {
     bool isActive = true;        // 更新対象かどうか
     bool isAlive = true;         // 生存しているかどうか
     uint32_t textureIndex = 0;   // 使用テクスチャ
     Transform transform;         // 個別トランスフォーム
     Material material;           // 個別マテリアル(未対応)
+    Vector3 velocity = {0.0f, 0.0f, 0.0f};
+};
+
+struct GpuParticleCB {
+    float deltaTime;
+    float pad0[3];
+    Vector4 spawnPos;
+    uint32_t maxCount;
+    float pad1;
+    uint32_t instanceCount;
+    float noiseTime;
+    Matrix4x4 viewProjection;
+
+    float noiseScale;
+    float noiseAmplitudeBase;
+    float timeSpeedX;
+    float timeSpeedY;
+    float timeSpeedZ;
+    float curlStrength;
+    float damping;
+    float eps;
+    Vector3 boxHalfExtent;
 };
 
 /// @brief パーティクルグループクラス
@@ -58,20 +108,23 @@ public:
     /// @brief マテリアルリソース取得
     [[nodiscard]] ID3D12Resource *GetMaterialResource() const { return materialResource_.Get(); }
     /// @brief TransformationMatrices 用 SRV GPUハンドル取得
-    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetMatricesSrvGPU() const { return matricesSrvGPU_; }
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetMatricesSrvGPU() const { return useCompute_ ? matricesSrvGPUDefault_ : matricesSrvGPUUpload_; }
     /// @brief テクスチャインデックス取得
     [[nodiscard]] int GetTextureIndex() const { return static_cast<int>(textureIndex_); }
 
-    /// @brief 生成(発生)位置を設定
-    void SetSpawnPosition(const Vector3 &position) { spawnPosition_ = position; }
-    /// @brief 生成(発生)位置を取得
-    [[nodiscard]] const Vector3 &GetSpawnPosition() const { return spawnPosition_; }
+    /// @brief パーティクル定数バッファ取得
+    [[nodiscard]] GpuParticleCB *GetGpuParticleCB() { return &particleCB_; }
 
     void UpdateMatrices(const Matrix4x4 &viewProjection);
     void Draw() override;
 
+    // コンピュートシェーダー使用有効化/無効化
+    void SetUseCompute(bool use) { useCompute_ = use; }
+    bool IsUseCompute() const { return useCompute_; }
+
 private:
     void InitializeResources();
+    void DispatchCompute(float deltaTime, const Matrix4x4 &viewProjection); // コンピュート更新
 
     DirectXCommon *dxCommon_ = nullptr;
     uint32_t maxInstances_ = 0;
@@ -83,13 +136,35 @@ private:
     // アクティブインスタンス数
     uint32_t activeInstanceCount_ = 0;
 
-    // 行列配列用
+    // 行列配列用（CPU更新用: Upload + SRV）
     Microsoft::WRL::ComPtr<ID3D12Resource> matricesResource_;
     TransformationMatrix *matricesMap_ = nullptr;
-    D3D12_GPU_DESCRIPTOR_HANDLE matricesSrvGPU_{};
+    D3D12_GPU_DESCRIPTOR_HANDLE matricesSrvGPUUpload_{};
+
+    // 行列配列用（GPU更新用: Default + UAV/SRV）
+    Microsoft::WRL::ComPtr<ID3D12Resource> matricesResourceDefault_;
+    D3D12_GPU_DESCRIPTOR_HANDLE matricesSrvGPUDefault_{};
+
+    // パーティクル配列（GPU更新用）
+    Microsoft::WRL::ComPtr<ID3D12Resource> particlesUpload_;
+    Microsoft::WRL::ComPtr<ID3D12Resource> particlesResourceDefault_;
+    // UAVテーブル先頭
+    D3D12_GPU_DESCRIPTOR_HANDLE uavTableStartGPU_{}; // u0: matricesOut, u1: particles
+    // CBV（GPU更新用）
+    Microsoft::WRL::ComPtr<ID3D12Resource> computeCB_;
+    void *computeCBMap_ = nullptr;
+    D3D12_GPU_DESCRIPTOR_HANDLE computeCBVGPU_{};
+
+    bool positionsInitialized_ = false;
+    bool inUAVState_ = true;
+
+    // パーティクル定数バッファ
+    GpuParticleCB particleCB_{};
 
     // 生成(発生)位置
     Vector3 spawnPosition_ = { 0.0f, 0.0f, 0.0f };
+
+    bool useCompute_ = false; // コンピュートシェーダーで更新するか
 };
 
 /// @brief パーティクルマネージャ

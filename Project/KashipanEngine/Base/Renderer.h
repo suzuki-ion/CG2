@@ -134,6 +134,9 @@ public:
     /// @param group パーティクルグループ
     void DrawParticles(ParticleGroup *group);
 
+    /// @brief パイプラインを名前で設定
+    void SetPipeLine(const std::string &pipeLineName);
+
 private:
     /// @brief 平行光源の設定
     /// @param light 平行光源へのポインタ

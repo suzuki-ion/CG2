@@ -1,0 +1,6 @@
+﻿{
+	"Name": "Particle_UpdateCS",
+	"Type": "Compute",
+	"Path": "Resources/PipeLines/Preset/Shader/Particle/UpdateCS.hlsl",
+	"TargetProfile": "cs_6_0"
+}

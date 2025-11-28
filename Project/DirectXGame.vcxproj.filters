@@ -670,6 +670,7 @@
     <FxCompile Include="KashipanEngine\Shader\Simple.MS.hlsl">
       <Filter>KashipanEngine\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\PipeLines\Preset\Shader\Particle\UpdateCS.hlsl" />
   </ItemGroup>
   <!-- Text files -->
   <ItemGroup>
@@ -688,5 +689,8 @@
     <None Include="KashipanEngine\Shader\TransformationMatrix.hlsli">
       <Filter>KashipanEngine\Shader</Filter>
     </None>
+    <None Include="Resources\PipeLines\Preset\RootSignature\ParticleUpdate.json" />
+    <None Include="Resources\PipeLines\Particle.Update.json" />
+    <None Include="Resources\PipeLines\Preset\Shader\Particle.UpdateCS.json" />
   </ItemGroup>
 </Project>

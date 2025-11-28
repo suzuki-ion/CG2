@@ -1,0 +1,13 @@
+﻿{
+	"Name": "Particle.Update",
+	"PipeLineType": "Compute",
+	"Shader": {
+		"UsePreset": "Particle_UpdateCS"
+	},
+	"RootSignature": {
+		"UsePreset": "ParticleUpdate"
+	},
+	"PipelineState": {
+		"Name": "ParticleUpdateState"
+	}
+}
