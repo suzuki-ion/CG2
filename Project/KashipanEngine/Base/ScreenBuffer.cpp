@@ -251,9 +251,9 @@ void ScreenBuffer::CreateTextureResource() {
     //==================================================
 
     clearValue_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    clearValue_.Color[0] = 0.25f;
-    clearValue_.Color[1] = 0.5f;
-    clearValue_.Color[2] = 0.75f;
+    clearValue_.Color[0] = 0.01f;
+    clearValue_.Color[1] = 0.01f;
+    clearValue_.Color[2] = 0.01f;
     clearValue_.Color[3] = 1.0f;
 
     //==================================================

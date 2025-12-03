@@ -40,7 +40,7 @@ void ParticleGroup::InitializeResources() {
     materialResource_ = PrimitiveDrawer::CreateBufferResources(sizeof(Material));
     materialResource_->Map(0, nullptr, reinterpret_cast<void **>(&materialMap_));
     materialMap_->color = {1,1,1,1};
-    materialMap_->lightingType = 0;
+    materialMap_->lightingType = 1;
     materialMap_->uvTransform = Matrix4x4::Identity();
     materialMap_->diffuseColor = {1,1,1,1};
     materialMap_->specularColor = {1,1,1,1};
@@ -283,7 +283,7 @@ void ParticleGroup::UpdateMatrices(const Matrix4x4 &viewProjection) {
     if (useCompute_) {
         float dt = Engine::GetDeltaTime();
         DispatchCompute(dt, viewProjection);
-        if (activeInstanceCount_ == 0 && !particles_.empty()) {
+        /*if (activeInstanceCount_ == 0 && !particles_.empty()) {
             uint32_t count = 0;
             for (auto &pp : particles_) {
                 if (!pp->isActive || !pp->isAlive) { continue; }
@@ -291,7 +291,7 @@ void ParticleGroup::UpdateMatrices(const Matrix4x4 &viewProjection) {
                 if (count >= maxInstances_) { break; }
             }
             activeInstanceCount_ = count;
-        }
+        }*/
         return;
     }
     activeInstanceCount_ = 0;

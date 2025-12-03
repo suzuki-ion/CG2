@@ -2,6 +2,7 @@
 #include "Objects/BillBoard.h"
 #include "Objects/Lines.h"
 #include "Objects/Model.h"
+#include "Objects/Particle.h"
 #include "Objects/Plane.h"
 #include "Objects/Sphere.h"
 #include "Objects/Sprite.h"

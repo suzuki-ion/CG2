@@ -57,6 +57,11 @@ public:
     /// @param sphericalCoordinateSystem 球面座標系
     void SetSphericalCoordinateSystem(const SphericalCoordinateSystem &sphericalCoordinateSystem) noexcept;
 
+    /// @brief 球面座標系のthetaを設定する
+    void SetTheta(float theta);
+    /// @brief 球面座標系のphiを設定する
+    void SetPhi(float phi);
+
     /// @brief マウスでのカメラ操作
     /// @param translateSpeed 平行移動速度
     /// @param rotateSpeed 回転速度
@@ -143,6 +148,12 @@ public:
     /// @return ビューポート行列
     [[nodiscard]] const Matrix4x4 &GetViewportMatrix() const noexcept {
         return viewportMatrix_;
+    }
+
+    /// @brief 球面座標系の取得
+    /// @return 球面座標系
+    [[nodiscard]] const SphericalCoordinateSystem &GetSphericalCoordinateSystem() const noexcept{
+        return sphericalCoordinateSystem_;
     }
 
 private:

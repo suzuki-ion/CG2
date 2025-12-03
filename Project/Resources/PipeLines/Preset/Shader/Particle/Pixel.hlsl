@@ -1,5 +1,9 @@
 #include "Particle.hlsli"
 
+#define LIGHTING_TYPE_NONE 0
+#define LIGHTING_TYPE_LAMBERT 1
+#define LIGHTING_TYPE_HALF_LAMBERT 2
+
 struct Material {
 	float4 color;
 	int lightingType;
@@ -10,6 +14,7 @@ struct Material {
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
@@ -165,8 +170,22 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		}
 	}
 	
-	output.color = gMaterial.color * textureColor;
-	output.color.a = textureColor.a;
+	if (gMaterial.lightingType == LIGHTING_TYPE_LAMBERT) {
+		float lambert = Lambert(input.normal, gDirectionalLight.direction);
+		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * lambert;
+		output.color.a = textureColor.a;
+
+	}
+	else if (gMaterial.lightingType == LIGHTING_TYPE_HALF_LAMBERT) {
+		float lambert = HalfLambert(input.normal, gDirectionalLight.direction);
+		output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * lambert;
+		output.color.a = textureColor.a;
+
+	}
+	else {
+		output.color = gMaterial.color * textureColor;
+		output.color.a = textureColor.a;
+	}
 	
 	return output;
 }

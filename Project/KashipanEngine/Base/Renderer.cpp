@@ -306,6 +306,7 @@ void Renderer::DrawParticles(ParticleGroup *group) {
     if (instanceCount == 0) { return; }
 
     pipeLineManager_->SetCommandListPipeLine("Particle.Solid.BlendNormal");
+    SetLightBuffer(directionalLight_);
     dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, group->GetMatricesSrvGPU());
     dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, Texture::GetTexture(group->GetTextureIndex()).srvHandleGPU);
     dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, group->GetMaterialResource()->GetGPUVirtualAddress());

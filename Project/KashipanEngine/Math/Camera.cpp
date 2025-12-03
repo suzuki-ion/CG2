@@ -116,6 +116,11 @@ void Camera::SetTranslate(const Vector3 &cameraTranslate) noexcept {
 }
 
 void Camera::SetRotate(const Vector3 &cameraRotate) noexcept {
+    if (coordinateSystem_ == CoordinateSystem::kSpherical) {
+        sphericalCoordinateSystem_.phi = cameraRotate.x;
+        sphericalCoordinateSystem_.theta = cameraRotate.y;
+        CalculateMatrixForSpherical();
+    }
     cameraRotate_ = cameraRotate;
     cameraMatrix_.SetRotate(cameraRotate);
 }
@@ -141,6 +146,14 @@ void Camera::SetSphericalCoordinateSystem(const SphericalCoordinateSystem &spher
     sphericalCoordinateSystem_ = sphericalCoordinateSystem;
 }
 
+void Camera::SetTheta(float theta) {
+    sphericalCoordinateSystem_.theta = theta;
+}
+
+void Camera::SetPhi(float phi) {
+    sphericalCoordinateSystem_.phi = phi;
+}
+
 void Camera::MoveToMouse(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
 #if DEBUG_BUILD || DEVELOP_BUILD
     // ImGuiウィンドウを触ってるときは操作しない
@@ -161,6 +174,7 @@ void Camera::Target(Vector3 *targetPos) noexcept {
         return;
     }
     targetPos_ = targetPos;
+    sphericalCoordinateSystem_.origin = *targetPos;
 }
 
 void Camera::CalculateMatrixForDecart() noexcept {
@@ -177,6 +191,7 @@ void Camera::CalculateMatrixForDecart() noexcept {
 
 void Camera::CalculateMatrixForSpherical() noexcept {
     cameraTranslate_ = sphericalCoordinateSystem_.ToVector3();
+    cameraRotate_ = sphericalCoordinateSystem_.ToRotatedVector3();
 }
 
 void Camera::MoveToMouseForDecart(const float translateSpeed, const float rotateSpeed, const float scaleSpeed) noexcept {
@@ -224,13 +239,15 @@ void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rot
             Vector3 right = CalcCameraRight(cameraRotate_);
             sphericalCoordinateSystem_.origin += up * (-mousePosDelta.y * adjustedTranslateSpeed);
             sphericalCoordinateSystem_.origin += right * (mousePosDelta.x * adjustedTranslateSpeed);
+            CalculateMatrixForSpherical();
         }
 
     } else if (Input::IsMouseButtonDown(2)) {
         sphericalCoordinateSystem_.theta += -mousePosDelta.x * rotateSpeed;
         sphericalCoordinateSystem_.phi += -mousePosDelta.y * rotateSpeed;
-        cameraRotate_.x += mousePosDelta.y * rotateSpeed;
-        cameraRotate_.y += mousePosDelta.x * rotateSpeed;
+        const float kEps = 1e-4f;
+        sphericalCoordinateSystem_.phi = std::clamp(sphericalCoordinateSystem_.phi, kEps, std::numbers::pi_v<float> - kEps);
+        CalculateMatrixForSpherical();
     }
 
     // マウスホイールで半径を変更
@@ -242,6 +259,7 @@ void Camera::MoveToMouseForSpherical(const float translateSpeed, const float rot
 
         // 半径の範囲を制限
         sphericalCoordinateSystem_.radius = std::max(sphericalCoordinateSystem_.radius, 0.1f);
+        CalculateMatrixForSpherical();
     }
 }
 
