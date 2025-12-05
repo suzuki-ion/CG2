@@ -174,11 +174,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application\MainScene.cpp" />
     <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\GUI\Button.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\UIGroup.cpp" />
+    <ClCompile Include="KashipanEngine\Base\Framework.cpp" />
     <ClCompile Include="KashipanEngine\Base\PipeLineManager.cpp" />
     <ClCompile Include="KashipanEngine\Base\PipeLines\RootSignature.cpp" />
     <ClCompile Include="KashipanEngine\Base\PipeLines\Shader.cpp" />
@@ -256,8 +258,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="KashipanEngine\Base\PipeLines\PipeLines.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application\MainScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
+    <ClInclude Include="KashipanEngine\Base\Framework.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLineManager.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\BlendState.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ComputePIpeLineState.h" />
