@@ -175,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application\MainScene.cpp" />
+    <ClCompile Include="Application\TestScene.cpp" />
     <ClCompile Include="KashipanEngine\2d\UIManager.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\BaseUI.cpp" />
     <ClCompile Include="KashipanEngine\2d\UI\Component\InputDetector.cpp" />
@@ -259,6 +260,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application\MainScene.h" />
+    <ClInclude Include="Application\TestScene.h" />
     <ClInclude Include="KashipanEngine\2d\UIManager.h" />
     <ClInclude Include="KashipanEngine\2d\UI\BaseUI.h" />
     <ClInclude Include="KashipanEngine\Base\Framework.h" />
