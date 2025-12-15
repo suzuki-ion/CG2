@@ -655,6 +655,7 @@
     <ClInclude Include="Application\MainScene.h" />
     <ClInclude Include="KashipanEngine\Base\Framework.h" />
     <ClInclude Include="Application\TestScene.h" />
+    <ClInclude Include="KashipanEngine\Base\SceneFactory.h" />
   </ItemGroup>
   <!-- HLSL (FxCompile) -->
   <ItemGroup>

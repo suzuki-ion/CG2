@@ -279,6 +279,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="KashipanEngine\Base\PipeLines\Sampler.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\Shader.h" />
     <ClInclude Include="KashipanEngine\Base\PipeLines\ShaderReflection.h" />
+    <ClInclude Include="KashipanEngine\Base\SceneFactory.h" />
     <ClInclude Include="KashipanEngine\Base\SceneManager.h" />
     <ClInclude Include="KashipanEngine\Common\CameraPerspective.h" />
     <ClInclude Include="KashipanEngine\Common\CameraViewport.h" />
